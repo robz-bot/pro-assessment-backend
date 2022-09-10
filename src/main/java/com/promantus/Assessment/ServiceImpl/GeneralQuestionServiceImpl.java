@@ -41,7 +41,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			generalQuestion.setAnswer(generalQuestionDto.getAnswer());
 			generalQuestionRepository.save(generalQuestion);
 		}
-		resultDto.setMessage("GeneralQuestion added successfully");
+		resultDto.setMessage("General Question added successfully");
 		return resultDto;
 	}
 

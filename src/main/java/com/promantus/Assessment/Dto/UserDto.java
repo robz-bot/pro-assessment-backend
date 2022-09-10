@@ -16,6 +16,7 @@ public class UserDto implements Serializable{
 	private String newPassword;
 	private String manager;
 	private String team;
+	private Long teamId;
 	private LocalDateTime registeredOn;
 	private int attempts;
 	private String updatedBy;
@@ -115,6 +116,12 @@ public class UserDto implements Serializable{
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public Long getTeamId() {
+		return teamId;
+	}
+	public void setTeamId(Long teamId) {
+		this.teamId = teamId;
 	}
 	
 	

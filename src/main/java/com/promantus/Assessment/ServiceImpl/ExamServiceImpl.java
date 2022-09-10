@@ -64,10 +64,10 @@ public class ExamServiceImpl implements ExamService {
 					resultDto.add(this.getTechQuestionDto(runningNumber, techQns.get(i)));
 				}
 			}
-
+			
 			User getUser = userRepo.findById(Long.parseLong(userId));
 			Team getTeam = teamRepo.findById(Long.parseLong(teamId));
-			if (getUser != null) {
+			if(getUser!=null) {
 				ExamDto resDto = resultDto.get(0);
 				resDto.setUserId(getUser.getId());
 				resDto.setEmail(getUser.getEmail());

@@ -42,7 +42,7 @@ public class ReportsController extends CommonController {
 			StringBuilder errorParam = new StringBuilder();
 			
 			// User Id.
-			if (reportsDto.getUserId() == null || reportsDto.getUserId().isEmpty()) {
+			if (reportsDto.getUserId() == null) {
 				errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
 			}
 			
@@ -126,7 +126,7 @@ public class ReportsController extends CommonController {
 			StringBuilder errorParam = new StringBuilder();
 	
 				//UserId
-				if (reportsDto.getUserId() == null || reportsDto.getUserId().isEmpty()) {
+				if (reportsDto.getUserId() == null) {
 					errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
 				}
 			

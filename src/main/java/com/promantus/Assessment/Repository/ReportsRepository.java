@@ -6,8 +6,9 @@ import com.promantus.Assessment.Entity.Reports;
 
 public interface ReportsRepository extends MongoRepository<Reports, String> {
 
-	Reports findByUserId(String userId);
+	Reports findByUserId(Long userId);
 
 	Reports findById(Long id);
+
 
 }

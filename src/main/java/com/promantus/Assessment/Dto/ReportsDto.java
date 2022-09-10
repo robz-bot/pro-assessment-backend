@@ -8,8 +8,8 @@ public class ReportsDto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
-	private String userId;
-	//private String teamId;
+	private Long userId;
+	private String teamId;
 	private String percentage;
 	private String totalNoOfQuestions;
 	private String noOfQuestionsAnswered;
@@ -26,10 +26,10 @@ public class ReportsDto implements Serializable{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 	public String getStatus() {
@@ -93,5 +93,9 @@ public class ReportsDto implements Serializable{
 	public void setTotalMarks(String totalMarks) {
 		this.totalMarks = totalMarks;
 	}
+	public String getTeamId() {
+		return teamId;
+	}
+	
 	
 }

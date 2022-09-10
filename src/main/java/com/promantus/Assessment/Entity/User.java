@@ -16,7 +16,7 @@ public class User {
 	private String email;
 	private String password;
 	private String manager;
-	private String teamId;
+	private Long teamId;
 	private LocalDateTime registeredOn;
 	private int attempts;
 	private LocalDateTime updatedOn;
@@ -59,12 +59,6 @@ public class User {
 		this.manager = manager;
 	}
 	
-	public String getTeamId() {
-		return teamId;
-	}
-	public void setTeamId(String teamId) {
-		this.teamId = teamId;
-	}
 	public LocalDateTime getRegisteredOn() {
 		return registeredOn;
 	}
@@ -94,6 +88,12 @@ public class User {
 	}
 	public void setUpdatedBy(String updatedBy) {
 		this.updatedBy = updatedBy;
+	}
+	public Long getTeamId() {
+		return teamId;
+	}
+	public void setTeamId(Long teamId) {
+		this.teamId = teamId;
 	}
 	
 		

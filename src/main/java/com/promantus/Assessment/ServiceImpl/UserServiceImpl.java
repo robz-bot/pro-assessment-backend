@@ -10,13 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentUtil;
-import com.promantus.Assessment.Dto.GeneralQuestionDto;
-import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
+import com.promantus.Assessment.Entity.Reports;
+import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Entity.User;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
+import com.promantus.Assessment.Repository.ReportsRepository;
+import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Repository.UserRepository;
 import com.promantus.Assessment.Service.CommonService;
@@ -39,6 +41,12 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	CommonService commonService;
 
+	@Autowired
+	ReportsRepository reportsRepository;
+
+	@Autowired
+	TeamRepository teamRepository;
+
 	@Override
 	public Boolean checkUserName(String userName) throws Exception {
 
@@ -55,18 +63,18 @@ public class UserServiceImpl implements UserService {
 		UserDto resultDto = new UserDto();
 
 		List<TechQuestion> listA = new ArrayList<TechQuestion>();
-		listA = techQuestionRepository.findByTeamId(Long.parseLong(userDto.getTeam()));
+		listA = techQuestionRepository.findByTeamId(userDto.getTeamId());
 
 		List<GeneralQuestion> listB = new ArrayList<GeneralQuestion>();
 		listB = generalQuestionRepository.findAll();
 
 		if (listA.size() > 0 && listB.size() >= 5 && listA.size() >= 25) {
 
-			User getUser = userRepository.findByEmail(userDto.getEmail());
-
-			if (getUser == null) {
+			User loginUser = userRepository.findByEmail(userDto.getEmail());
+			if (loginUser == null) {
 				Long currentUserId = commonService.nextSequenceNumber();
 				User user = new User();
+				
 				user.setId(currentUserId);
 				user.setFirstName(userDto.getFirstName());
 				user.setLastName(userDto.getLastName());
@@ -74,21 +82,35 @@ public class UserServiceImpl implements UserService {
 				user.setPassword(AssessmentUtil.encrypt(AssessmentUtil.generateUUID(7)));
 				user.setEmpCode(userDto.getEmpCode());
 				user.setManager(userDto.getManager());
-				user.setTeamId(userDto.getTeam());
+				user.setTeamId(userDto.getTeamId());
 				user.setAttempts(userDto.getAttempts());
 				user.setRegisteredOn(LocalDateTime.now());
 
 				userRepository.save(user);
-
 				resultDto.setId(currentUserId);
+			} else if (loginUser.getAttempts() != 0) {
 
-			} else {
-				resultDto.setId(getUser.getId());
+				Reports repObj = reportsRepository.findByUserId(loginUser.getId());
+				LocalDateTime reportAttemptDateTime = repObj.getReportedOn().plusDays(7);
+				System.out.println(reportAttemptDateTime);
+				if (reportAttemptDateTime.isEqual(LocalDateTime.now())
+						|| reportAttemptDateTime.isBefore(LocalDateTime.now())) {
+					resultDto = getUserDto(loginUser);
+					resultDto.setMessage("You are registered to the assessment");
+
+					return resultDto;
+				} else {
+
+					resultDto = getUserDto(loginUser);
+					resultDto.setStatus(1);
+					resultDto.setMessage("You have couple of days to attend the test, thanks for your interest");
+					return resultDto;
+				}
 			}
-
 			resultDto.setMessage("Assessment Started");
 			return resultDto;
 		} else {
+			resultDto.setStatus(1);
 			resultDto.setMessage("Something went wrong Contact admin");
 			return resultDto;
 		}
@@ -115,10 +137,12 @@ public class UserServiceImpl implements UserService {
 		userDto.setLastName(user.getLastName());
 		userDto.setEmail(user.getEmail());
 		userDto.setEmpCode(user.getEmpCode());
-		userDto.setTeam(user.getTeamId());
+		userDto.setTeamId(user.getTeamId());
 		userDto.setManager(user.getManager());
 		userDto.setAttempts(user.getAttempts());
 		userDto.setRegisteredOn(user.getRegisteredOn());
+		Team team = teamRepository.findById(user.getTeamId());
+		userDto.setTeam(team.getTeam());
 		return userDto;
 
 	}
@@ -139,10 +163,10 @@ public class UserServiceImpl implements UserService {
 		user.setLastName(userDto.getLastName());
 		user.setEmail(userDto.getEmail());
 		user.setEmpCode(userDto.getEmpCode());
-		user.setTeamId(userDto.getTeam());
+		user.setTeamId(userDto.getTeamId());
 		user.setManager(userDto.getManager());
 		user.setAttempts(userDto.getAttempts());
-		user.setRegisteredOn(user.getRegisteredOn());
+		user.setRegisteredOn(userDto.getRegisteredOn());
 		user.setUpdatedOn(LocalDateTime.now());
 
 		userRepository.save(user);
@@ -173,6 +197,13 @@ public class UserServiceImpl implements UserService {
 
 		return user != null ? this.getUserDto(user) : new UserDto();
 
+	}
+
+	@Override
+	public UserDto getUserByEmail(String email) throws Exception {
+		User user = userRepository.findByEmail(email);
+
+		return user != null ? this.getUserDto(user) : new UserDto();
 	}
 
 }

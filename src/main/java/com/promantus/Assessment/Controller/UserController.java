@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
-import com.promantus.Assessment.Dto.GeneralQuestionDto;
-import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Service.UserService;
 
@@ -65,7 +63,7 @@ public class UserController extends CommonController {
 				errorParam.append("Manager");
 			}
 			// Team.
-			if (userDto.getTeam() == null || userDto.getTeam().isEmpty()) {
+			if (userDto.getTeamId() == null) {
 				errorParam.append("Team");
 			}			
 
@@ -113,6 +111,20 @@ public class UserController extends CommonController {
 		UserDto userDto = new UserDto();
 		try {
 			userDto = userService.getUserById(userId);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return userDto;
+	}
+	
+	@GetMapping("/getUserByEmail/{email}")
+	public UserDto getUserByEmail(@PathVariable String email,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		UserDto userDto = new UserDto();
+		try {
+			userDto = userService.getUserByEmail(email);
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}

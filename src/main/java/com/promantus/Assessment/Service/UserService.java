@@ -2,8 +2,6 @@ package com.promantus.Assessment.Service;
 
 import java.util.List;
 
-import com.promantus.Assessment.Dto.GeneralQuestionDto;
-import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Dto.UserDto;
 
 
@@ -21,7 +19,9 @@ public interface UserService {
 
 	Boolean checkUserName(String userName) throws Exception;
 
-	UserDto addUser(UserDto userDto,String lang) throws Exception;
+	UserDto addUser(UserDto userDto, String lang) throws Exception;
+
+	UserDto getUserByEmail(String email)throws Exception;
 
 
 

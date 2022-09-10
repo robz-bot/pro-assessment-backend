@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Entity.Reports;
+import com.promantus.Assessment.Entity.User;
 import com.promantus.Assessment.Repository.ReportsRepository;
+import com.promantus.Assessment.Repository.UserRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.ReportsService;
 
@@ -25,13 +27,17 @@ public class ReportsServiceImpl implements ReportsService {
 	
 	@Autowired
 	CommonService commonService;
+	
+	@Autowired
+	UserRepository userRepository;
 
 	@Override
-	public ReportsDto addReports(final ReportsDto reportsDto, String lang) throws Exception {
+	public ReportsDto addReports( ReportsDto reportsDto, String lang) throws Exception {
 
 		ReportsDto resultDto = new ReportsDto();
-		if (reportsRepository.findByUserId(reportsDto.getUserId()) == null) 
-		{
+		User repUser = userRepository.findById(reportsDto.getUserId());
+		//if (reportsRepository.findByUserId(reportsDto.getUserId()) == null) 
+			
 			Reports reports = new Reports();
 			reports.setId(commonService.nextSequenceNumber());
 			reports.setUserId(reportsDto.getUserId());
@@ -41,9 +47,9 @@ public class ReportsServiceImpl implements ReportsService {
 			reports.setNoOfQuestionsAnswered(reportsDto.getNoOfQuestionsAnswered());
 			reports.setNoOfQuestionsNotAnswered(reportsDto.getNoOfQuestionsNotAnswered());
 			reports.setReportedOn(LocalDateTime.now());
-			
-			reportsRepository.save(reports);
-		}	
+			repUser.setAttempts(repUser.getAttempts()+1);
+			userRepository.save(repUser);
+			reportsRepository.save(reports);	
 		resultDto.setMessage("Reports added successfully");
         return resultDto;
 	}
@@ -83,9 +89,7 @@ public class ReportsServiceImpl implements ReportsService {
 		ReportsDto resultDto = new ReportsDto();
 		System.out.println(reportsDto.getId());
 		Reports reports = reportsRepository.findById(reportsDto.getId());
-
 		if (reports == null) {
-		
 			resultDto.setMessage("Reports does not exist");
 			return resultDto;
 		}
@@ -97,7 +101,6 @@ public class ReportsServiceImpl implements ReportsService {
 		reports.setStatus(reportsDto.getStatus());
 		reports.setReportedOn(reportsDto.getReportedOn());
 		reports.setUpdatedOn(LocalDateTime.now());
-	
 		reportsRepository.save(reports);
 		resultDto.setMessage("Record Updated successfully");
 		return resultDto;
@@ -110,24 +113,18 @@ public class ReportsServiceImpl implements ReportsService {
 		Reports reports=reportsRepository.findById(Long.parseLong(id));
 		if(reports==null)
 		{
-			
 			resultDto.setMessage("data does not exist");
 			return resultDto;
 		}
-		
 		reportsRepository.delete(reports);
 		resultDto.setMessage("Record Deleted successfully");
 		return resultDto;
 	}
 
-
 	@Override
 	public ReportsDto getReportsById(String id) throws Exception {
-		
-		Reports reports = reportsRepository.findById(Long.parseLong(id));
-		
-		return reports != null ? this.getReportsDto(reports) : new ReportsDto();
-
+			Reports reports = reportsRepository.findById(Long.parseLong(id));
+			return reports != null ? this.getReportsDto(reports) : new ReportsDto();
 	}
 
 

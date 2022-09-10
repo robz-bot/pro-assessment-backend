@@ -56,7 +56,7 @@ public class LoginServiceImpl implements LoginService {
 		resultDto.setEmpCode(user.getEmpCode());
 		resultDto.setAttempts(user.getAttempts());
 		resultDto.setManager(user.getManager());
-		resultDto.setTeam(user.getTeamId());
+		resultDto.setTeamId(user.getTeamId());
 	
 		resultDto.setStatus(AssessmentConstants.RETURN_STATUS_OK);
 		resultDto.setMessage("Login Successfully");
@@ -85,7 +85,7 @@ public class LoginServiceImpl implements LoginService {
 		user.setEmpCode(userDto.getEmpCode());
 		user.setAttempts(userDto.getAttempts());
 		user.setManager(userDto.getManager());
-		user.setTeamId(userDto.getTeam());
+		user.setTeamId(userDto.getTeamId());
 		
 		userRepository.save(user);
 

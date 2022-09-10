@@ -10,7 +10,7 @@ public class Reports {
 	
 	@Id
 	private Long id;
-	private String userId;
+	private Long userId;
 	private String firstName;
 	private String lastName;
 	private String empCode;
@@ -31,12 +31,7 @@ public class Reports {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -120,6 +115,12 @@ public class Reports {
 	}
 	public void setUpdatedOn(LocalDateTime updatedOn) {
 		this.updatedOn = updatedOn;
+	}
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 	
 
