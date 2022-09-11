@@ -17,4 +17,6 @@ public interface TechQuestionService {
 
 	TechQuestionDto deleteTechQuestionById(String id) throws Exception;
 
+	List<TechQuestionDto> findAndReplceByOtherTeamId(long findId, long replaceId)throws Exception;
+
 }

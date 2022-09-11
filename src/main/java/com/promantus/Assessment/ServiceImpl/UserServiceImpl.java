@@ -107,6 +107,7 @@ public class UserServiceImpl implements UserService {
 					return resultDto;
 				}
 			}
+			resultDto.setId(loginUser.getId());
 			resultDto.setMessage("Assessment Started");
 			return resultDto;
 		} else {
@@ -202,8 +203,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto getUserByEmail(String email) throws Exception {
 		User user = userRepository.findByEmail(email);
+		UserDto userDto = new UserDto();
+		if(user == null) {
+			userDto.setStatus(1);
+		}
 
-		return user != null ? this.getUserDto(user) : new UserDto();
+		return user != null ? this.getUserDto(user) : userDto;
 	}
 
 }

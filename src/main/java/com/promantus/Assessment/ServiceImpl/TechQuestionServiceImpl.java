@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.Dto.TechQuestionDto;
+import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
+import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.TechQuestionService;
@@ -24,6 +26,9 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 	@Autowired
 	CommonService commonService;
+	
+	@Autowired
+	TeamRepository teamRepo;
 
 	@Override
 	public TechQuestionDto addTechQuestion(final TechQuestionDto techQuestionDto, String lang) throws Exception {
@@ -60,8 +65,11 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	private TechQuestionDto getTechQuestionDto(TechQuestion techQuestion) {
 		TechQuestionDto techQuestionDto = new TechQuestionDto();
 
+		Team team = teamRepo.findById(techQuestion.getTeamId());
+		
 		techQuestionDto.setId(techQuestion.getId());
 		techQuestionDto.setTeamId(techQuestion.getTeamId());
+		techQuestionDto.setTeam(team.getTeam());
 		techQuestionDto.setQuestion(techQuestion.getQuestion());
 		techQuestionDto.setOption1(techQuestion.getOption1());
 		techQuestionDto.setOption2(techQuestion.getOption2());
@@ -121,6 +129,28 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 		return techQuestion != null ? this.getTechQuestionDto(techQuestion) : new TechQuestionDto();
 
+	}
+
+	@Override
+	public List<TechQuestionDto> findAndReplceByOtherTeamId(long findId, long replaceId) throws Exception {
+
+		List<TechQuestionDto> TechQuestionDtoList = new ArrayList<TechQuestionDto>();
+
+		// Step 1: Find all the records with findId variable
+		if (techQuestionRepository.existsByTeamId(findId)) {
+			List<TechQuestion> list = techQuestionRepository.findByTeamId(findId);
+			if (list != null) {
+				for (TechQuestion techQuestion : list) {
+					// Step 2: Replace it to new teamId ie.,replaceId
+					techQuestion.setTeamId(replaceId);
+					TechQuestionDtoList.add(this.getTechQuestionDto(techQuestion));
+
+					techQuestionRepository.save(techQuestion);
+				}
+			}
+		}
+
+		return TechQuestionDtoList;
 	}
 
 }

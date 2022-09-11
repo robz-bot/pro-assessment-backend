@@ -22,47 +22,46 @@ import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Service.TechQuestionService;
 
-
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1")
-public class TechQuestionController extends CommonController{
+public class TechQuestionController extends CommonController {
 
 	private static final Logger logger = LoggerFactory.getLogger(TechQuestionController.class);
 
 	@Autowired
 	private TechQuestionService techQuestionService;
 
-
 	@PostMapping("/addTechQuestion")
-	public TechQuestionDto addTechQuestion(@RequestBody TechQuestionDto techQuestionDto, @RequestHeader(name = "lang", required = false) String lang) {
+	public TechQuestionDto addTechQuestion(@RequestBody TechQuestionDto techQuestionDto,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
 		TechQuestionDto resultDto = new TechQuestionDto();
 		try {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-			
-			//TechQuestion
-			if (techQuestionDto.getTeamId() == null ){
+
+			// TechQuestion
+			if (techQuestionDto.getTeamId() == null) {
 				errorParam.append("Team Id Missing");
 			}
-			if (techQuestionDto.getQuestion() == null ||techQuestionDto.getQuestion().isEmpty()){
+			if (techQuestionDto.getQuestion() == null || techQuestionDto.getQuestion().isEmpty()) {
 				errorParam.append("Question is Missing");
 			}
-			if (techQuestionDto.getOption1() == null ||techQuestionDto.getOption1().isEmpty()){
+			if (techQuestionDto.getOption1() == null || techQuestionDto.getOption1().isEmpty()) {
 				errorParam.append("Option1 are Missing");
 			}
-			if (techQuestionDto.getOption2() == null ||techQuestionDto.getOption2().isEmpty()){
+			if (techQuestionDto.getOption2() == null || techQuestionDto.getOption2().isEmpty()) {
 				errorParam.append("Option2 are Missing");
 			}
-			if (techQuestionDto.getOption3() == null ||techQuestionDto.getOption3().isEmpty()){
+			if (techQuestionDto.getOption3() == null || techQuestionDto.getOption3().isEmpty()) {
 				errorParam.append("Option3 are Missing");
 			}
-			if (techQuestionDto.getOption4() == null ||techQuestionDto.getOption4().isEmpty()){
+			if (techQuestionDto.getOption4() == null || techQuestionDto.getOption4().isEmpty()) {
 				errorParam.append("Option4 are Missing");
 			}
-			if (techQuestionDto.getAnswer() == null ||techQuestionDto.getAnswer().isEmpty()){
+			if (techQuestionDto.getAnswer() == null || techQuestionDto.getAnswer().isEmpty()) {
 				errorParam.append("Answer is Missing");
 			}
 			if (errorParam.length() > 0) {
@@ -100,6 +99,7 @@ public class TechQuestionController extends CommonController{
 
 		return new ArrayList<TechQuestionDto>();
 	}
+
 	@GetMapping("/getTechQuestionById/{id}")
 	public TechQuestionDto getTechQuestionById(@PathVariable String id,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -113,6 +113,7 @@ public class TechQuestionController extends CommonController{
 
 		return techQuestionDto;
 	}
+
 	@PutMapping("/updateTechQuestion")
 	public TechQuestionDto updateTechQuestion(@RequestBody TechQuestionDto techQuestionDto,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -122,27 +123,27 @@ public class TechQuestionController extends CommonController{
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-	
-				//Email
-			if (techQuestionDto.getTeamId() == null ){
+
+			// Email
+			if (techQuestionDto.getTeamId() == null) {
 				errorParam.append("Team Id Missing");
 			}
-			if (techQuestionDto.getQuestion() == null ||techQuestionDto.getQuestion().isEmpty()){
+			if (techQuestionDto.getQuestion() == null || techQuestionDto.getQuestion().isEmpty()) {
 				errorParam.append("Question is Missing");
 			}
-			if (techQuestionDto.getOption1() == null ||techQuestionDto.getOption1().isEmpty()){
+			if (techQuestionDto.getOption1() == null || techQuestionDto.getOption1().isEmpty()) {
 				errorParam.append("Option1 are Missing");
 			}
-			if (techQuestionDto.getOption2() == null ||techQuestionDto.getOption2().isEmpty()){
+			if (techQuestionDto.getOption2() == null || techQuestionDto.getOption2().isEmpty()) {
 				errorParam.append("Option2 are Missing");
 			}
-			if (techQuestionDto.getOption3() == null ||techQuestionDto.getOption3().isEmpty()){
+			if (techQuestionDto.getOption3() == null || techQuestionDto.getOption3().isEmpty()) {
 				errorParam.append("Option3 are Missing");
 			}
-			if (techQuestionDto.getOption4() == null ||techQuestionDto.getOption4().isEmpty()){
+			if (techQuestionDto.getOption4() == null || techQuestionDto.getOption4().isEmpty()) {
 				errorParam.append("Option4 are Missing");
 			}
-			if (techQuestionDto.getAnswer() == null ||techQuestionDto.getAnswer().isEmpty()){
+			if (techQuestionDto.getAnswer() == null || techQuestionDto.getAnswer().isEmpty()) {
 				errorParam.append("Answer is Missing");
 			}
 
@@ -186,5 +187,19 @@ public class TechQuestionController extends CommonController{
 
 			return resultDto;
 		}
+	}
+
+	@GetMapping("/findAndReplceByOtherTeamId/{findId}/{replaceId}")
+	public List<TechQuestionDto> findAndReplceByOtherTeamId(@PathVariable String findId, @PathVariable String replaceId){
+		try {
+
+			return techQuestionService.findAndReplceByOtherTeamId(Long.parseLong(findId),Long.parseLong(replaceId));
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new ArrayList<TechQuestionDto>();
+		
 	}
 }

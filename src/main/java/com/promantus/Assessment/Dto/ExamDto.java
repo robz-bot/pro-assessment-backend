@@ -15,6 +15,7 @@ public class ExamDto {
 	private String email;
 	private String manager;
 	private String team;
+	private String teamId;
 
 	public Integer getId() {
 		return id;
@@ -102,6 +103,14 @@ public class ExamDto {
 
 	public void setTeam(String team) {
 		this.team = team;
+	}
+
+	public String getTeamId() {
+		return teamId;
+	}
+
+	public void setTeamId(String teamId) {
+		this.teamId = teamId;
 	}
 	
 

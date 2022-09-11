@@ -84,12 +84,12 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			resultDto.setMessage("GeneralQuestion does not exist");
 			return resultDto;
 		}
-		generalQuestion.setQuestion(generalQuestion.getQuestion());
-		generalQuestion.setOption1(generalQuestion.getOption1());
-		generalQuestion.setOption2(generalQuestion.getOption2());
-		generalQuestion.setOption3(generalQuestion.getOption3());
-		generalQuestion.setOption4(generalQuestion.getOption4());
-		generalQuestion.setAnswer(generalQuestion.getAnswer());
+		generalQuestion.setQuestion(generalQuestionDto.getQuestion());
+		generalQuestion.setOption1(generalQuestionDto.getOption1());
+		generalQuestion.setOption2(generalQuestionDto.getOption2());
+		generalQuestion.setOption3(generalQuestionDto.getOption3());
+		generalQuestion.setOption4(generalQuestionDto.getOption4());
+		generalQuestion.setAnswer(generalQuestionDto.getAnswer());
 
 		generalQuestionRepository.save(generalQuestion);
 		resultDto.setMessage("Record Updated successfully");

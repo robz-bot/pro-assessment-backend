@@ -7,6 +7,7 @@ public class TechQuestionDto implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private Long teamId;
+	private String team;
 	private String question;
 	private String option1;
 	private String option2;
@@ -85,6 +86,12 @@ public class TechQuestionDto implements Serializable{
 	}
 	public void setLength(int length) {
 		this.length = length;
+	}
+	public String getTeam() {
+		return team;
+	}
+	public void setTeam(String team) {
+		this.team = team;
 	}
 	
 }

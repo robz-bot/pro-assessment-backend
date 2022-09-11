@@ -40,6 +40,7 @@ public class ReportsServiceImpl implements ReportsService {
 			
 			Reports reports = new Reports();
 			reports.setId(commonService.nextSequenceNumber());
+			reports.setTeamId(reportsDto.getTeamId());
 			reports.setUserId(reportsDto.getUserId());
 			reports.setPercentage(reportsDto.getPercentage());
 			reports.setStatus(reportsDto.getStatus());
