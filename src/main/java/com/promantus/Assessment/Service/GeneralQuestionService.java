@@ -17,5 +17,11 @@ public interface GeneralQuestionService {
 
 	GeneralQuestionDto getGeneralQuestionById(String id) throws Exception;
 
+	List<GeneralQuestionDto> searchByQns(String question)throws Exception;
+
+	GeneralQuestionDto searchByAns(String answer) throws Exception;
+
+	
+
 
 }

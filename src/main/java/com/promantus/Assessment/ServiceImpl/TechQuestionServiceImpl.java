@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
@@ -153,4 +154,22 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		return TechQuestionDtoList;
 	}
 
-}
+	@Override
+	public TechQuestionDto searchByQuestion(String question) throws Exception{
+		
+		TechQuestion techQuestion = techQuestionRepository.findByQuestion(question);
+
+		return techQuestion != null ? this.getTechQuestionDto(techQuestion) : new TechQuestionDto();
+	}
+
+	@Override
+	public TechQuestionDto searchByAnswer(String answer) throws Exception {
+		
+		TechQuestion techQuestion = techQuestionRepository.findByAnswer(answer);
+
+		return techQuestion != null ? this.getTechQuestionDto(techQuestion) : new TechQuestionDto();
+	}
+
+	}
+
+	

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -27,19 +28,24 @@ import com.promantus.Assessment.Service.TeamService;
 		CommonService commonService;
 		
 		@Override
-		public Boolean checkTeamName(String teamName) throws Exception{
+		public Boolean checkTeamName(TeamDto teamDto) throws Exception{
 
-			if (teamRepository.findById(teamName) != null) {
-				return true;
-			}
-
-			return false;
+		Team team =teamRepository.getTeamByTeamIgnoreCase(teamDto.getTeam()); 
+			if(team != null) {
+			  return true;
+				}
+			  return false;
 		}
 
 		@Override
 		public TeamDto addTeam(final TeamDto teamDto, String lang) throws Exception {
-
-			TeamDto resultDto = new TeamDto();
+			
+			TeamDto resultDto = new TeamDto();	
+			if(this.checkTeamName(teamDto)){
+				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
+				resultDto.setMessage("Already.exists");
+				return resultDto;
+			}
 			if (teamRepository.findById(teamDto.getId()) == null) 
 			{
 				Team team = new Team();
@@ -124,6 +130,14 @@ import com.promantus.Assessment.Service.TeamService;
 			
 			return team != null ? this.getTeamDto(team) : new TeamDto();
 
+		}
+
+		@Override
+		public TeamDto searchByTeamId(Long id) throws Exception {
+			
+			Team team = teamRepository.findById(id);
+			
+			return team != null ? this.getTeamDto(team) : new TeamDto();
 		}
 
 

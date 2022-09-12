@@ -2,6 +2,7 @@ package com.promantus.Assessment.Service;
 
 import java.util.List;
 
+import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 
 
@@ -17,6 +18,12 @@ public interface TechQuestionService {
 
 	TechQuestionDto deleteTechQuestionById(String id) throws Exception;
 
-	List<TechQuestionDto> findAndReplceByOtherTeamId(long findId, long replaceId)throws Exception;
+	List<TechQuestionDto> findAndReplceByOtherTeamId(long findId, long replaceId) throws Exception;
+
+	TechQuestionDto searchByQuestion(String question) throws Exception;
+
+	TechQuestionDto searchByAnswer(String answer) throws Exception;
+
+	
 
 }

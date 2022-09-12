@@ -2,6 +2,7 @@ package com.promantus.Assessment.ServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService {
 			if (loginUser == null) {
 				Long currentUserId = commonService.nextSequenceNumber();
 				User user = new User();
-				
+
 				user.setId(currentUserId);
 				user.setFirstName(userDto.getFirstName());
 				user.setLastName(userDto.getLastName());
@@ -88,11 +89,17 @@ public class UserServiceImpl implements UserService {
 
 				userRepository.save(user);
 				resultDto.setId(currentUserId);
+				resultDto.setStatus(0);
+				resultDto.setMessage("Assessment Started");
+				return resultDto;
 			} else if (loginUser.getAttempts() != 0) {
 
-				Reports repObj = reportsRepository.findByUserId(loginUser.getId());
-				LocalDateTime reportAttemptDateTime = repObj.getReportedOn().plusDays(7);
-				System.out.println(reportAttemptDateTime);
+				List<Reports> repObj = reportsRepository.findByUserId(loginUser.getId());
+				Comparator<Reports> reportComparator=Comparator.comparing(Reports::getReportedOn);
+				Reports repMax=repObj.stream().max(reportComparator).get();
+				//System.out.println(repMax.getReportedOn());
+				LocalDateTime reportAttemptDateTime = repMax.getReportedOn().plusDays(7);
+				//System.out.println(reportAttemptDateTime);
 				if (reportAttemptDateTime.isEqual(LocalDateTime.now())
 						|| reportAttemptDateTime.isBefore(LocalDateTime.now())) {
 					resultDto = getUserDto(loginUser);
@@ -107,7 +114,8 @@ public class UserServiceImpl implements UserService {
 					return resultDto;
 				}
 			}
-			resultDto.setId(loginUser.getId());
+			resultDto = getUserDto(loginUser);
+			// resultDto.setId(loginUser.getId());
 			resultDto.setMessage("Assessment Started");
 			return resultDto;
 		} else {
@@ -204,7 +212,7 @@ public class UserServiceImpl implements UserService {
 	public UserDto getUserByEmail(String email) throws Exception {
 		User user = userRepository.findByEmail(email);
 		UserDto userDto = new UserDto();
-		if(user == null) {
+		if (user == null) {
 			userDto.setStatus(1);
 		}
 

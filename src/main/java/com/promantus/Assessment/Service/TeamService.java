@@ -12,10 +12,12 @@ public interface TeamService {
 
 	TeamDto getTeamById(String teamId) throws Exception;
 
-	Boolean checkTeamName(String teamName) throws Exception;
-
 	TeamDto updateTeam(TeamDto teamDto, String lang) throws Exception;
 
 	TeamDto deleteTeamById(String teamId) throws Exception;
+
+	Boolean checkTeamName(TeamDto teamDto) throws Exception;
+
+	TeamDto searchByTeamId(Long id) throws Exception;
 
 }

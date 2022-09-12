@@ -16,4 +16,12 @@ public interface TechQuestionRepository extends MongoRepository<TechQuestion, St
 
 	boolean existsByTeamId(long findId);
 
+	TechQuestion findByQuestion(String question);
+
+	TechQuestion findByAnswer(String answer);
+
+	List<TechQuestion> findAllQuestionDistinctBy();
+
+
+
 }

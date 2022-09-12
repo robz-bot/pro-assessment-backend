@@ -24,38 +24,42 @@ public class ReportsServiceImpl implements ReportsService {
 
 	@Autowired
 	ReportsRepository reportsRepository;
-	
+
 	@Autowired
 	CommonService commonService;
-	
+
 	@Autowired
 	UserRepository userRepository;
 
 	@Override
-	public ReportsDto addReports( ReportsDto reportsDto, String lang) throws Exception {
+	public ReportsDto addReports(ReportsDto reportsDto, String lang) throws Exception {
 
 		ReportsDto resultDto = new ReportsDto();
 		User repUser = userRepository.findById(reportsDto.getUserId());
-		//if (reportsRepository.findByUserId(reportsDto.getUserId()) == null) 
-			
-			Reports reports = new Reports();
-			reports.setId(commonService.nextSequenceNumber());
-			reports.setTeamId(reportsDto.getTeamId());
-			reports.setUserId(reportsDto.getUserId());
-			reports.setPercentage(reportsDto.getPercentage());
-			reports.setStatus(reportsDto.getStatus());
-			reports.setTotalNoOfQuestions(reportsDto.getTotalNoOfQuestions());
-			reports.setNoOfQuestionsAnswered(reportsDto.getNoOfQuestionsAnswered());
-			reports.setNoOfQuestionsNotAnswered(reportsDto.getNoOfQuestionsNotAnswered());
-			reports.setReportedOn(LocalDateTime.now());
-			repUser.setAttempts(repUser.getAttempts()+1);
-			userRepository.save(repUser);
-			reportsRepository.save(reports);	
+		// if (reportsRepository.findByUserId(reportsDto.getUserId()) == null)
+//		User userByTodayDate = reportsRepository.findByReportedOn(reportsDto.getReportedOn());
+//		String todayDate = LocalDateTime.now().toString().split("T")[0];
+//		if (userByTodayDate.getRegisteredOn().toString().split("T")[0] == todayDate) {
+//			return reportsDto;
+//		}
+
+		Reports reports = new Reports();
+		reports.setId(commonService.nextSequenceNumber());
+		reports.setTeamId(reportsDto.getTeamId());
+		reports.setUserId(reportsDto.getUserId());
+		reports.setPercentage(reportsDto.getPercentage());
+		reports.setStatus(reportsDto.getStatus());
+		reports.setTotalNoOfQuestions(reportsDto.getTotalNoOfQuestions());
+		reports.setNoOfQuestionsAnswered(reportsDto.getNoOfQuestionsAnswered());
+		reports.setNoOfQuestionsNotAnswered(reportsDto.getNoOfQuestionsNotAnswered());
+		reports.setReportedOn(LocalDateTime.now());
+		repUser.setAttempts(repUser.getAttempts() + 1);
+		userRepository.save(repUser);
+		reportsRepository.save(reports);
 		resultDto.setMessage("Reports added successfully");
-        return resultDto;
+		return resultDto;
 	}
 
-		
 	@Override
 	public List<ReportsDto> getAllReports() {
 		List<Reports> ReportssList = reportsRepository.findAll();
@@ -67,10 +71,9 @@ public class ReportsServiceImpl implements ReportsService {
 
 		return ReportsDtoList;
 	}
-	
-	
+
 	private ReportsDto getReportsDto(Reports reports) {
-		ReportsDto reportsDto=new ReportsDto();
+		ReportsDto reportsDto = new ReportsDto();
 
 		reportsDto.setId(reports.getId());
 		reportsDto.setUserId(reports.getUserId());
@@ -80,10 +83,11 @@ public class ReportsServiceImpl implements ReportsService {
 		reportsDto.setNoOfQuestionsNotAnswered(reports.getNoOfQuestionsNotAnswered());
 		reportsDto.setStatus(reports.getStatus());
 		reportsDto.setReportedOn(reports.getReportedOn());
-		
+
 		return reportsDto;
-		
+
 	}
+
 	@Override
 	public ReportsDto updateReports(ReportsDto reportsDto, String lang) {
 
@@ -105,15 +109,14 @@ public class ReportsServiceImpl implements ReportsService {
 		reportsRepository.save(reports);
 		resultDto.setMessage("Record Updated successfully");
 		return resultDto;
-       
+
 	}
 
 	@Override
 	public ReportsDto deleteReportsById(String id) {
-		ReportsDto resultDto=new ReportsDto();
-		Reports reports=reportsRepository.findById(Long.parseLong(id));
-		if(reports==null)
-		{
+		ReportsDto resultDto = new ReportsDto();
+		Reports reports = reportsRepository.findById(Long.parseLong(id));
+		if (reports == null) {
 			resultDto.setMessage("data does not exist");
 			return resultDto;
 		}
@@ -124,9 +127,8 @@ public class ReportsServiceImpl implements ReportsService {
 
 	@Override
 	public ReportsDto getReportsById(String id) throws Exception {
-			Reports reports = reportsRepository.findById(Long.parseLong(id));
-			return reports != null ? this.getReportsDto(reports) : new ReportsDto();
+		Reports reports = reportsRepository.findById(Long.parseLong(id));
+		return reports != null ? this.getReportsDto(reports) : new ReportsDto();
 	}
-
 
 }

@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Service.GeneralQuestionService;
-
 
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1")
-public class GeneralQuestionController extends CommonController{
+public class GeneralQuestionController extends CommonController {
 
 	private static final Logger logger = LoggerFactory.getLogger(GeneralQuestionController.class);
 
@@ -34,32 +34,33 @@ public class GeneralQuestionController extends CommonController{
 	private GeneralQuestionService generalQuestionService;
 
 	@PostMapping("/addGeneralQuestion")
-	public GeneralQuestionDto addGeneralQuestion(@RequestBody GeneralQuestionDto generalQuestionDto, @RequestHeader(name = "lang", required = false) String lang) {
+	public GeneralQuestionDto addGeneralQuestion(@RequestBody GeneralQuestionDto generalQuestionDto,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
 		GeneralQuestionDto resultDto = new GeneralQuestionDto();
 		try {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-			
-			//GeneralQuestion
 
-			if (generalQuestionDto.getQuestion() == null ||generalQuestionDto.getQuestion().isEmpty()){
+			// GeneralQuestion
+
+			if (generalQuestionDto.getQuestion() == null || generalQuestionDto.getQuestion().isEmpty()) {
 				errorParam.append("Question is Missing");
 			}
-			if (generalQuestionDto.getOption1() == null ||generalQuestionDto.getOption1().isEmpty()){
+			if (generalQuestionDto.getOption1() == null || generalQuestionDto.getOption1().isEmpty()) {
 				errorParam.append("Option1 is Missing");
 			}
-			if (generalQuestionDto.getOption2() == null ||generalQuestionDto.getOption2().isEmpty()){
+			if (generalQuestionDto.getOption2() == null || generalQuestionDto.getOption2().isEmpty()) {
 				errorParam.append("Option2 is Missing");
 			}
-			if (generalQuestionDto.getOption3() == null ||generalQuestionDto.getOption3().isEmpty()){
+			if (generalQuestionDto.getOption3() == null || generalQuestionDto.getOption3().isEmpty()) {
 				errorParam.append("Option3 is Missing");
 			}
-			if (generalQuestionDto.getOption4() == null ||generalQuestionDto.getOption4().isEmpty()){
+			if (generalQuestionDto.getOption4() == null || generalQuestionDto.getOption4().isEmpty()) {
 				errorParam.append("Option4 is Missing");
 			}
-			if (generalQuestionDto.getAnswer() == null ||generalQuestionDto.getAnswer().isEmpty()){
+			if (generalQuestionDto.getAnswer() == null || generalQuestionDto.getAnswer().isEmpty()) {
 				errorParam.append("Answer is Missing");
 			}
 			if (errorParam.length() > 0) {
@@ -85,7 +86,8 @@ public class GeneralQuestionController extends CommonController{
 	}
 
 	@GetMapping("/getAllGeneralQuestions")
-	public List<GeneralQuestionDto> getAllGeneralQuestions(@RequestHeader(name = "lang", required = false) String lang) {
+	public List<GeneralQuestionDto> getAllGeneralQuestions(
+			@RequestHeader(name = "lang", required = false) String lang) {
 
 		try {
 
@@ -97,6 +99,7 @@ public class GeneralQuestionController extends CommonController{
 
 		return new ArrayList<GeneralQuestionDto>();
 	}
+
 	@GetMapping("/getGeneralQuestionById/{id}")
 	public GeneralQuestionDto getGeneralQuestionById(@PathVariable String id,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -110,6 +113,7 @@ public class GeneralQuestionController extends CommonController{
 
 		return generalQuestionDto;
 	}
+
 	@PutMapping("/updateGeneralQuestion")
 	public GeneralQuestionDto updateGeneralQuestion(@RequestBody GeneralQuestionDto generalQuestionDto,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -119,23 +123,23 @@ public class GeneralQuestionController extends CommonController{
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-	
-			if (generalQuestionDto.getQuestion() == null ||generalQuestionDto.getQuestion().isEmpty()){
+
+			if (generalQuestionDto.getQuestion() == null || generalQuestionDto.getQuestion().isEmpty()) {
 				errorParam.append("Question is Missing");
 			}
-			if (generalQuestionDto.getOption1() == null ||generalQuestionDto.getOption1().isEmpty()){
+			if (generalQuestionDto.getOption1() == null || generalQuestionDto.getOption1().isEmpty()) {
 				errorParam.append("Option1 is Missing");
 			}
-			if (generalQuestionDto.getOption2() == null ||generalQuestionDto.getOption2().isEmpty()){
+			if (generalQuestionDto.getOption2() == null || generalQuestionDto.getOption2().isEmpty()) {
 				errorParam.append("Option2 is Missing");
 			}
-			if (generalQuestionDto.getOption3() == null ||generalQuestionDto.getOption3().isEmpty()){
+			if (generalQuestionDto.getOption3() == null || generalQuestionDto.getOption3().isEmpty()) {
 				errorParam.append("Option3 is Missing");
 			}
-			if (generalQuestionDto.getOption4() == null ||generalQuestionDto.getOption4().isEmpty()){
+			if (generalQuestionDto.getOption4() == null || generalQuestionDto.getOption4().isEmpty()) {
 				errorParam.append("Option4 is Missing");
 			}
-			if (generalQuestionDto.getAnswer() == null ||generalQuestionDto.getAnswer().isEmpty()){
+			if (generalQuestionDto.getAnswer() == null || generalQuestionDto.getAnswer().isEmpty()) {
 				errorParam.append("Answer is Missing");
 			}
 
@@ -180,4 +184,33 @@ public class GeneralQuestionController extends CommonController{
 			return resultDto;
 		}
 	}
+
+	@GetMapping("/searchByQns/{question}")
+	public List<GeneralQuestionDto> searchByQns(@PathVariable String question,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		List<GeneralQuestionDto> generalQuestionDto = new ArrayList<>();
+		try {
+			generalQuestionDto = generalQuestionService.searchByQns(question);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return generalQuestionDto;
+	}
+
+	@GetMapping("/searchByAns/{answer}")
+	public GeneralQuestionDto searchByAns(@PathVariable String answer,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		GeneralQuestionDto generalQuestionDto = new GeneralQuestionDto();
+		try {
+			generalQuestionDto = generalQuestionService.searchByAns(answer);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return generalQuestionDto;
+	}
+
 }

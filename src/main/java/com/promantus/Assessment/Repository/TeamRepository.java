@@ -10,6 +10,8 @@ public interface TeamRepository extends MongoRepository<Team, String> {
 
 	Team findByTeam(String team);
 
+	Team getTeamByTeamIgnoreCase(String team);
+
 
 
 }

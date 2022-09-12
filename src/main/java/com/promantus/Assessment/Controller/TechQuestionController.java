@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
+import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Service.TechQuestionService;
 
@@ -202,4 +203,31 @@ public class TechQuestionController extends CommonController {
 		return new ArrayList<TechQuestionDto>();
 		
 	}
-}
+	@GetMapping("/searchByQuestion/{question}")
+		public TechQuestionDto searchByQuestion(@PathVariable String question,
+				@RequestHeader(name = "lang", required = false) String lang) {
+
+			TechQuestionDto techQuestionDto = new TechQuestionDto();
+			try {
+				techQuestionDto = techQuestionService.searchByQuestion(question);
+			} catch (final Exception e) {
+				logger.error(AssessmentUtil.getErrorMessage(e));
+			}
+
+			return techQuestionDto;
+		}
+	@GetMapping("/searchByAnswer/{answer}")
+	public TechQuestionDto searchByAnswer(@PathVariable String answer,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		TechQuestionDto techQuestionDto = new TechQuestionDto();
+		try {
+			techQuestionDto = techQuestionService.searchByAnswer(answer);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return techQuestionDto;
+	}
+	}
+

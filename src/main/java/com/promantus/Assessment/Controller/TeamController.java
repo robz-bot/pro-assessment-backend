@@ -100,10 +100,10 @@ public class TeamController extends CommonController {
 	}
 	
 	@PostMapping("/checkTeamName")
-	public Boolean checkTeamName(@RequestBody String teamName,
+	public Boolean checkTeamName(@RequestBody TeamDto teamDto,
 			@RequestHeader(name = "lang", required = false) String lang) {
 		try {
-			return teamService.checkTeamName(teamName);
+			return teamService.checkTeamName(teamDto);
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}
@@ -167,7 +167,18 @@ public class TeamController extends CommonController {
 			return resultDto;
 		}
 	}
+	@GetMapping("/searchByTeamId/{id}")
+	public TeamDto searchByTeamId(@PathVariable Long id,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
-	
+		TeamDto teamDto = new TeamDto();
+		try {
+			teamDto = teamService.searchByTeamId(id);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return teamDto;
+	}
 
 }

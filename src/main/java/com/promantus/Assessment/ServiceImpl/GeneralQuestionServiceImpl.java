@@ -6,10 +6,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoAction;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
+import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.GeneralQuestionService;
@@ -24,6 +30,9 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	@Autowired
 	CommonService commonService;
+
+	@Autowired
+	MongoOperations mongoOperation;
 
 	@Override
 	public GeneralQuestionDto addGeneralQuestion(final GeneralQuestionDto generalQuestionDto, String lang)
@@ -119,6 +128,28 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 		return generalQuestion != null ? this.getGeneralQuestionDto(generalQuestion) : new GeneralQuestionDto();
 
+	}
+
+	@Override
+	public List<GeneralQuestionDto> searchByQns(String question) throws Exception {
+
+		List<GeneralQuestionDto> resultDto = new ArrayList<>();
+
+		List<GeneralQuestion> generalQuestion = generalQuestionRepository.findByQuestionRegex(question);
+
+		for (GeneralQuestion generalQuestion2 : generalQuestion) {
+			resultDto.add(getGeneralQuestionDto(generalQuestion2));
+		}
+
+		return resultDto;
+	}
+
+	@Override
+	public GeneralQuestionDto searchByAns(String answer) throws Exception {
+
+		GeneralQuestion generalQuestion = generalQuestionRepository.findByAnswer(answer);
+
+		return generalQuestion != null ? this.getGeneralQuestionDto(generalQuestion) : new GeneralQuestionDto();
 	}
 
 }
