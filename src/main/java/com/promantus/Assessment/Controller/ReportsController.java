@@ -21,7 +21,6 @@ import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Service.ReportsService;
 
-
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1")
@@ -33,19 +32,20 @@ public class ReportsController extends CommonController {
 	private ReportsService reportsService;
 
 	@PostMapping("/addReports")
-	public ReportsDto addReports(@RequestBody ReportsDto reportsDto, @RequestHeader(name = "lang", required = false) String lang) {
+	public ReportsDto addReports(@RequestBody ReportsDto reportsDto,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
 		ReportsDto resultDto = new ReportsDto();
 		try {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-			
+
 			// User Id.
 			if (reportsDto.getUserId() == null) {
 				errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
 			}
-			
+
 			// Status
 			if (reportsDto.getStatus() == null || reportsDto.getStatus().isEmpty()) {
 				errorParam.append("Status");
@@ -54,15 +54,15 @@ public class ReportsController extends CommonController {
 			if (reportsDto.getTotalNoOfQuestions() == null) {
 				errorParam.append("Total No.Of Questions");
 			}
-			//No.Of Questions Answered
+			// No.Of Questions Answered
 			if (reportsDto.getNoOfQuestionsAnswered() == null) {
 				errorParam.append("No.Of Questions Answered");
 			}
-			//No.Of Questions Not Answered
+			// No.Of Questions Not Answered
 			if (reportsDto.getNoOfQuestionsNotAnswered() == null) {
 				errorParam.append("No.Of Questions Not Answered ");
 			}
-			//Total Marks
+			// Total Marks
 			if (reportsDto.getTotalMarks() == null) {
 				errorParam.append("Total Marks");
 			}
@@ -82,9 +82,9 @@ public class ReportsController extends CommonController {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}
 
-		return resultDto;	
-}
-		
+		return resultDto;
+	}
+
 	@GetMapping("/getAllReports")
 	public List<ReportsDto> getAllReports(@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -99,7 +99,6 @@ public class ReportsController extends CommonController {
 		return new ArrayList<ReportsDto>();
 	}
 
-	 
 	@GetMapping("/getReportsById/{id}")
 	public ReportsDto getReportsById(@PathVariable String id,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -113,7 +112,6 @@ public class ReportsController extends CommonController {
 
 		return reportsDto;
 	}
-	
 
 	@PutMapping("/updateReports")
 	public ReportsDto updateReports(@RequestBody ReportsDto reportsDto,
@@ -124,35 +122,33 @@ public class ReportsController extends CommonController {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-	
-				//UserId
-				if (reportsDto.getUserId() == null) {
-					errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
-				}
-			
-				// Status
-				if (reportsDto.getStatus() == null || reportsDto.getStatus().isEmpty()) {
-					errorParam.append("Status");
-				}
-				
-				
-				// Total No.Of Questions
-				if (reportsDto.getTotalNoOfQuestions() == null) {
-					errorParam.append("Total No.Of Questions");
-				}
-				//No.Of Questions Answered
-				if (reportsDto.getNoOfQuestionsAnswered() == null) {
-					errorParam.append("No.Of Questions Answered");
-				}
-				//No.Of Questions Not Answered
-				if (reportsDto.getNoOfQuestionsNotAnswered() == null) {
-					errorParam.append("No.Of Questions Not Answered ");
-				}
-				//Total Marks
-				if (reportsDto.getTotalMarks() == null) {
-					errorParam.append("Total Marks");
-				}
-				
+
+			// UserId
+			if (reportsDto.getUserId() == null) {
+				errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
+			}
+
+			// Status
+			if (reportsDto.getStatus() == null || reportsDto.getStatus().isEmpty()) {
+				errorParam.append("Status");
+			}
+
+			// Total No.Of Questions
+			if (reportsDto.getTotalNoOfQuestions() == null) {
+				errorParam.append("Total No.Of Questions");
+			}
+			// No.Of Questions Answered
+			if (reportsDto.getNoOfQuestionsAnswered() == null) {
+				errorParam.append("No.Of Questions Answered");
+			}
+			// No.Of Questions Not Answered
+			if (reportsDto.getNoOfQuestionsNotAnswered() == null) {
+				errorParam.append("No.Of Questions Not Answered ");
+			}
+			// Total Marks
+			if (reportsDto.getTotalMarks() == null) {
+				errorParam.append("Total Marks");
+			}
 
 			if (errorParam.length() > 0) {
 				resultDto.setMessage(
@@ -165,7 +161,6 @@ public class ReportsController extends CommonController {
 			resultDto = reportsService.updateReports(reportsDto, lang);
 
 		} catch (final Exception e) {
-
 
 			resultDto.setMessage(e.getMessage());
 
@@ -194,6 +189,57 @@ public class ReportsController extends CommonController {
 		}
 	}
 
-	
+	@GetMapping("/searchByReport/{type}/{keyword}")
+	public List<ReportsDto> search(@PathVariable String type,@PathVariable String keyword,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
+		List<ReportsDto> reportsDto = new ArrayList<>();
+		try {
+			reportsDto = reportsService.search(type,keyword);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return reportsDto;
+	}
+	
+	@GetMapping("/searchByExamStartDate/{reportedOn}")
+	public List<ReportsDto> searchByExamStartDate(@PathVariable String reportedOn,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		List<ReportsDto> reportsDto = new ArrayList<>();
+		try {
+			reportsDto = reportsService.searchByExamStartDate(reportedOn);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return reportsDto;
+	}
+
+	@GetMapping("/searchByStatus/{status}")
+	public List<ReportsDto> searchByStatus(@PathVariable String status,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		List<ReportsDto> reportsDto = new ArrayList<>();
+		try {
+			return reportsService.searchByStatus(status);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+		return reportsDto;
+	}
+
+	@GetMapping("/searchByPercentage/{percentage}")
+	public List<ReportsDto> searchByPercentage(@PathVariable String percentage,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		List<ReportsDto> reportsDto = new ArrayList<>();
+		try {
+			reportsDto = reportsService.searchByPercentage(percentage);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+		return reportsDto;
+	}
 }

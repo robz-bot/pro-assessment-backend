@@ -112,6 +112,5 @@ public class ExamDto {
 	public void setTeamId(String teamId) {
 		this.teamId = teamId;
 	}
-	
 
 }

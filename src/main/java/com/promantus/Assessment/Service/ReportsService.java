@@ -8,13 +8,22 @@ public interface ReportsService {
 
 	ReportsDto addReports(ReportsDto reportsDto, String lang) throws Exception;
 
-	List<ReportsDto> getAllReports();
+	List<ReportsDto> getAllReports() throws Exception;
 
-	ReportsDto updateReports(ReportsDto reportsDto, String lang);
+	ReportsDto updateReports(ReportsDto reportsDto, String lang) throws Exception;
 
-	ReportsDto deleteReportsById(String reportsId);
+	ReportsDto deleteReportsById(String reportsId) throws Exception;
 
 	ReportsDto getReportsById(String id) throws Exception;
+
+	List<ReportsDto> searchByExamStartDate(String reportedOn) throws Exception;
+
+	List<ReportsDto> searchByPercentage(String percentage) throws Exception;
+
+	List<ReportsDto> searchByStatus(String status) throws Exception;
+
+	List<ReportsDto> search(String type, String keyword) throws Exception;
+
 	
 
 }

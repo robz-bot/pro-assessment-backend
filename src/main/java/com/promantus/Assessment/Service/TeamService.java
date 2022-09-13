@@ -18,6 +18,6 @@ public interface TeamService {
 
 	Boolean checkTeamName(TeamDto teamDto) throws Exception;
 
-	TeamDto searchByTeamId(Long id) throws Exception;
+	List<TeamDto> searchByTeam(String keyword) throws Exception;
 
 }

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
-import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Service.GeneralQuestionService;
 
 @CrossOrigin("*")
@@ -185,27 +184,13 @@ public class GeneralQuestionController extends CommonController {
 		}
 	}
 
-	@GetMapping("/searchByQns/{question}")
-	public List<GeneralQuestionDto> searchByQns(@PathVariable String question,
+	@GetMapping("/search/{type}/{keyword}")
+	public List<GeneralQuestionDto> search(@PathVariable String keyword, @PathVariable String type,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
 		List<GeneralQuestionDto> generalQuestionDto = new ArrayList<>();
 		try {
-			generalQuestionDto = generalQuestionService.searchByQns(question);
-		} catch (final Exception e) {
-			logger.error(AssessmentUtil.getErrorMessage(e));
-		}
-
-		return generalQuestionDto;
-	}
-
-	@GetMapping("/searchByAns/{answer}")
-	public GeneralQuestionDto searchByAns(@PathVariable String answer,
-			@RequestHeader(name = "lang", required = false) String lang) {
-
-		GeneralQuestionDto generalQuestionDto = new GeneralQuestionDto();
-		try {
-			generalQuestionDto = generalQuestionService.searchByAns(answer);
+			generalQuestionDto = generalQuestionService.search(type, keyword);
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}

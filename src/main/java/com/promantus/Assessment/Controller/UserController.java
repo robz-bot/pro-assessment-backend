@@ -22,7 +22,6 @@ import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Service.UserService;
 
-
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1")
@@ -33,17 +32,16 @@ public class UserController extends CommonController {
 	@Autowired
 	private UserService userService;
 
-
 	@PostMapping("/addUser")
-	public UserDto addUser(@RequestBody UserDto userDto,@RequestHeader(name = "lang", required = false) String lang) {
+	public UserDto addUser(@RequestBody UserDto userDto, @RequestHeader(name = "lang", required = false) String lang) {
 
 		UserDto resultDto = new UserDto();
 		try {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-			//Email
-			if (userDto.getEmail() == null ||userDto.getEmail().isEmpty()){
+			// Email
+			if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
 				errorParam.append("Email");
 			}
 			// First Name
@@ -65,7 +63,7 @@ public class UserController extends CommonController {
 			// Team.
 			if (userDto.getTeamId() == null) {
 				errorParam.append("Team");
-			}			
+			}
 
 			if (errorParam.length() > 0) {
 				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
@@ -76,7 +74,7 @@ public class UserController extends CommonController {
 				return resultDto;
 			}
 
-			resultDto = userService.addUser(userDto,lang);
+			resultDto = userService.addUser(userDto, lang);
 
 		} catch (final Exception e) {
 
@@ -103,7 +101,6 @@ public class UserController extends CommonController {
 		return new ArrayList<UserDto>();
 	}
 
-	 
 	@GetMapping("/getUserById/{userId}")
 	public UserDto getUserById(@PathVariable String userId,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -117,7 +114,7 @@ public class UserController extends CommonController {
 
 		return userDto;
 	}
-	
+
 	@GetMapping("/getUserByEmail/{email}")
 	public UserDto getUserByEmail(@PathVariable String email,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -131,7 +128,7 @@ public class UserController extends CommonController {
 
 		return userDto;
 	}
-	
+
 	@PostMapping("/checkUserName")
 	public Boolean checkUserName(@RequestBody String userName,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -153,27 +150,27 @@ public class UserController extends CommonController {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-	
-				//Email
-				if (userDto.getEmail() == null ||userDto.getEmail().isEmpty()){
-					errorParam.append("Email");
-				}
-				// First Name
-				if (userDto.getFirstName() == null || userDto.getLastName().isEmpty()) {
-					errorParam.append("First Name");
-				}
-				// Last Name
-				if (userDto.getLastName() == null || userDto.getLastName().isEmpty()) {
-					errorParam.append("Last Name");
-				}
-				// Employee Code.
-				if (userDto.getEmpCode() == null || userDto.getEmpCode().isEmpty()) {
-					errorParam.append(errorParam.length() > 0 ? ", Employee Code" : "Employeee Code");
-				}
-				// Manager Name.
-				if (userDto.getManager() == null || userDto.getManager().isEmpty()) {
-					errorParam.append(errorParam.length() > 0 ? ", Manager Name" : "Manager Name");
-				}
+
+			// Email
+			if (userDto.getEmail() == null || userDto.getEmail().isEmpty()) {
+				errorParam.append("Email");
+			}
+			// First Name
+			if (userDto.getFirstName() == null || userDto.getLastName().isEmpty()) {
+				errorParam.append("First Name");
+			}
+			// Last Name
+			if (userDto.getLastName() == null || userDto.getLastName().isEmpty()) {
+				errorParam.append("Last Name");
+			}
+			// Employee Code.
+			if (userDto.getEmpCode() == null || userDto.getEmpCode().isEmpty()) {
+				errorParam.append(errorParam.length() > 0 ? ", Employee Code" : "Employeee Code");
+			}
+			// Manager Name.
+			if (userDto.getManager() == null || userDto.getManager().isEmpty()) {
+				errorParam.append(errorParam.length() > 0 ? ", Manager Name" : "Manager Name");
+			}
 
 			if (errorParam.length() > 0) {
 				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
@@ -216,7 +213,5 @@ public class UserController extends CommonController {
 			return resultDto;
 		}
 	}
-
-	
 
 }

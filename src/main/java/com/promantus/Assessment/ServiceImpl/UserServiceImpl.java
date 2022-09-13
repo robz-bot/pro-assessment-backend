@@ -95,22 +95,28 @@ public class UserServiceImpl implements UserService {
 			} else if (loginUser.getAttempts() != 0) {
 
 				List<Reports> repObj = reportsRepository.findByUserId(loginUser.getId());
-				Comparator<Reports> reportComparator=Comparator.comparing(Reports::getReportedOn);
-				Reports repMax=repObj.stream().max(reportComparator).get();
-				//System.out.println(repMax.getReportedOn());
-				LocalDateTime reportAttemptDateTime = repMax.getReportedOn().plusDays(7);
-				//System.out.println(reportAttemptDateTime);
-				if (reportAttemptDateTime.isEqual(LocalDateTime.now())
-						|| reportAttemptDateTime.isBefore(LocalDateTime.now())) {
-					resultDto = getUserDto(loginUser);
-					resultDto.setMessage("You are registered to the assessment");
+				if (repObj.size() > 0) {
+					Comparator<Reports> reportComparator = Comparator.comparing(Reports::getReportedOn);
+					Reports repMax = repObj.stream().max(reportComparator).get();
+					// System.out.println(repMax.getReportedOn());
+					LocalDateTime reportAttemptDateTime = repMax.getReportedOn().plusDays(7);
+					// System.out.println(reportAttemptDateTime);
+					if (reportAttemptDateTime.isEqual(LocalDateTime.now())
+							|| reportAttemptDateTime.isBefore(LocalDateTime.now())) {
+						resultDto = getUserDto(loginUser);
+						resultDto.setMessage("You are registered to the assessment");
 
-					return resultDto;
-				} else {
+						return resultDto;
+					} else {
 
-					resultDto = getUserDto(loginUser);
+						resultDto = getUserDto(loginUser);
+						resultDto.setStatus(1);
+						resultDto.setMessage("You have couple of days to attend the test, thanks for your interest");
+						return resultDto;
+					}
+				}else {
 					resultDto.setStatus(1);
-					resultDto.setMessage("You have couple of days to attend the test, thanks for your interest");
+					resultDto.setMessage("Something went wrong Contact admin");
 					return resultDto;
 				}
 			}
@@ -152,6 +158,7 @@ public class UserServiceImpl implements UserService {
 		userDto.setRegisteredOn(user.getRegisteredOn());
 		Team team = teamRepository.findById(user.getTeamId());
 		userDto.setTeam(team.getTeam());
+		userDto.setUserName(user.getFirstName() + " " + user.getLastName());
 		return userDto;
 
 	}

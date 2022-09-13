@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.promantus.Assessment.Dto.TeamDto;
+import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
@@ -27,7 +27,7 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 	@Autowired
 	CommonService commonService;
-	
+
 	@Autowired
 	TeamRepository teamRepo;
 
@@ -67,7 +67,7 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		TechQuestionDto techQuestionDto = new TechQuestionDto();
 
 		Team team = teamRepo.findById(techQuestion.getTeamId());
-		
+
 		techQuestionDto.setId(techQuestion.getId());
 		techQuestionDto.setTeamId(techQuestion.getTeamId());
 		techQuestionDto.setTeam(team.getTeam());
@@ -155,21 +155,56 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	}
 
 	@Override
-	public TechQuestionDto searchByQuestion(String question) throws Exception{
-		
-		TechQuestion techQuestion = techQuestionRepository.findByQuestion(question);
+	public List<TechQuestionDto> searchtechQns(String type, String keyword) throws Exception {
+		List<TechQuestionDto> resultDto = new ArrayList<>();
+		List<TechQuestion> techQuestion = new ArrayList<>();
 
-		return techQuestion != null ? this.getTechQuestionDto(techQuestion) : new TechQuestionDto();
+		if (type.equals(AssessmentConstants.TYPE1)) {
+			techQuestion = techQuestionRepository.findByQuestionRegex(keyword);
+		}
+		if (type.equals(AssessmentConstants.TYPE2)) {
+			List<TechQuestion> option1List = techQuestionRepository.findByOption1Regex(keyword);
+			List<TechQuestion> option2List = techQuestionRepository.findByOption2Regex(keyword);
+			List<TechQuestion> option3List = techQuestionRepository.findByOption3Regex(keyword);
+			List<TechQuestion> option4List = techQuestionRepository.findByOption4Regex(keyword);
+
+			for (TechQuestion techQuestion2 : option1List) {
+				techQuestion.add(techQuestion2);
+			}
+
+			for (TechQuestion techQuestion3 : option2List) {
+				techQuestion.add(techQuestion3);
+			}
+
+			for (TechQuestion techQuestion4 : option3List) {
+				techQuestion.add(techQuestion4);
+			}
+
+			for (TechQuestion techQuestion5 : option4List) {
+				techQuestion.add(techQuestion5);
+			}
+		}
+		if (type.equals(AssessmentConstants.TYPE3)) {
+			techQuestion = techQuestionRepository.findByAnswerRegex(keyword);
+		}
+
+		if (type.equals(AssessmentConstants.TYPE4)) {
+			List<Team> teamList = teamRepo.findByTeamRegex(keyword);
+			List<TechQuestion> allTechQns = techQuestionRepository.findAll();
+
+			for (TechQuestion techQuestion2 : allTechQns) {
+				for (Team team : teamList) {
+					if (techQuestion2.getTeamId().equals(team.getId())) {
+						techQuestion.add(techQuestion2);
+					}
+				}
+			}
+
+		}
+		for (TechQuestion techQuestion2 : techQuestion) {
+			resultDto.add(getTechQuestionDto(techQuestion2));
+		}
+
+		return resultDto;
 	}
-
-	@Override
-	public TechQuestionDto searchByAnswer(String answer) throws Exception {
-		
-		TechQuestion techQuestion = techQuestionRepository.findByAnswer(answer);
-
-		return techQuestion != null ? this.getTechQuestionDto(techQuestion) : new TechQuestionDto();
-	}
-
-	}
-
-	
+}

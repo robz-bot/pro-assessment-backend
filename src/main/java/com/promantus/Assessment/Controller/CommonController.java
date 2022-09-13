@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.promantus.Assessment.ServiceImpl.CommonServiceImpl;
 
-
 @RestController
 public class CommonController {
 

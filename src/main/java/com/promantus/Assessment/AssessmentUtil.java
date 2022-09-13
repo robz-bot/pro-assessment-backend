@@ -114,8 +114,10 @@ public final class AssessmentUtil {
 		e.printStackTrace(new PrintWriter(errors));
 		return errors.toString();
 	}
-	
-	
+
+	public static Sort orderByUpdatedDateTimeDesc() {
+		return Sort.by(Sort.Direction.DESC, "updatedDateTime");
+	}
 	
 
 }

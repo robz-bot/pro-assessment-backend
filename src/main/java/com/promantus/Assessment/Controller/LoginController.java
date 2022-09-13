@@ -93,8 +93,7 @@ public class LoginController extends CommonController {
 			if (userDto.getLastName() == null || userDto.getLastName().isEmpty()) {
 				errorParam.append(errorParam.length() > 0 ? ", Last Name" : "Last Name");
 			}
-			
-		
+
 			if (errorParam.length() > 0) {
 				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
 				resultDto.setMessage(
@@ -173,7 +172,7 @@ public class LoginController extends CommonController {
 
 		return resultDto;
 	}
-	
+
 	/**
 	 * @param userDto
 	 * @return

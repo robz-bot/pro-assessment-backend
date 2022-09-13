@@ -132,12 +132,16 @@ import com.promantus.Assessment.Service.TeamService;
 
 		}
 
+
 		@Override
-		public TeamDto searchByTeamId(Long id) throws Exception {
+		public List<TeamDto> searchByTeam(String keyword) throws Exception {
 			
-			Team team = teamRepository.findById(id);
-			
-			return team != null ? this.getTeamDto(team) : new TeamDto();
+			List<TeamDto> resultDto = new ArrayList<>();
+	        List<Team> team = teamRepository.findByTeamRegex(keyword);
+	        for (Team team2 : team) {
+	            resultDto.add(getTeamDto(team2));
+	        }
+	        return resultDto;
 		}
 
 

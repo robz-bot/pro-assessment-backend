@@ -22,7 +22,6 @@ import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Service.TeamService;
 
-
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1")
@@ -33,7 +32,6 @@ public class TeamController extends CommonController {
 	@Autowired
 	private TeamService teamService;
 
-
 	@PostMapping("/addTeam")
 	public TeamDto addTeam(@RequestBody TeamDto teamDto, @RequestHeader(name = "lang", required = false) String lang) {
 
@@ -42,12 +40,12 @@ public class TeamController extends CommonController {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-			
-			//Team
-			if (teamDto.getTeam() == null ||teamDto.getTeam().isEmpty()){
+
+			// Team
+			if (teamDto.getTeam() == null || teamDto.getTeam().isEmpty()) {
 				errorParam.append("Team");
 			}
-			
+
 			if (errorParam.length() > 0) {
 				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
 				resultDto.setMessage(
@@ -84,7 +82,6 @@ public class TeamController extends CommonController {
 		return new ArrayList<TeamDto>();
 	}
 
-	 
 	@GetMapping("/getTeamById/{teamId}")
 	public TeamDto getTeamById(@PathVariable String teamId,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -98,7 +95,7 @@ public class TeamController extends CommonController {
 
 		return teamDto;
 	}
-	
+
 	@PostMapping("/checkTeamName")
 	public Boolean checkTeamName(@RequestBody TeamDto teamDto,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -120,13 +117,13 @@ public class TeamController extends CommonController {
 
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
-	
-				//Team
-				if (teamDto.getTeam() == null ||teamDto.getTeam().isEmpty()){
-					errorParam.append("Team");
-				}
 
-				if (errorParam.length() > 0) {
+			// Team
+			if (teamDto.getTeam() == null || teamDto.getTeam().isEmpty()) {
+				errorParam.append("Team");
+			}
+
+			if (errorParam.length() > 0) {
 				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
 				resultDto.setMessage(
 						super.getMessage("mandatory.input.param", new String[] { errorParam.toString() }, lang));
@@ -167,13 +164,14 @@ public class TeamController extends CommonController {
 			return resultDto;
 		}
 	}
-	@GetMapping("/searchByTeamId/{id}")
-	public TeamDto searchByTeamId(@PathVariable Long id,
+
+	@GetMapping("/searchByTeam/{keyword}")
+	public List<TeamDto> searchByTeam(@PathVariable String keyword,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
-		TeamDto teamDto = new TeamDto();
+		List<TeamDto> teamDto = new ArrayList<>();
 		try {
-			teamDto = teamService.searchByTeamId(id);
+			teamDto = teamService.searchByTeam(keyword);
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}

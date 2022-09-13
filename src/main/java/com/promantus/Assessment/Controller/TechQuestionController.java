@@ -191,43 +191,31 @@ public class TechQuestionController extends CommonController {
 	}
 
 	@GetMapping("/findAndReplceByOtherTeamId/{findId}/{replaceId}")
-	public List<TechQuestionDto> findAndReplceByOtherTeamId(@PathVariable String findId, @PathVariable String replaceId){
+	public List<TechQuestionDto> findAndReplceByOtherTeamId(@PathVariable String findId,
+			@PathVariable String replaceId) {
 		try {
 
-			return techQuestionService.findAndReplceByOtherTeamId(Long.parseLong(findId),Long.parseLong(replaceId));
+			return techQuestionService.findAndReplceByOtherTeamId(Long.parseLong(findId), Long.parseLong(replaceId));
 
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}
 
 		return new ArrayList<TechQuestionDto>();
-		
+
 	}
-	@GetMapping("/searchByQuestion/{question}")
-		public TechQuestionDto searchByQuestion(@PathVariable String question,
-				@RequestHeader(name = "lang", required = false) String lang) {
 
-			TechQuestionDto techQuestionDto = new TechQuestionDto();
-			try {
-				techQuestionDto = techQuestionService.searchByQuestion(question);
-			} catch (final Exception e) {
-				logger.error(AssessmentUtil.getErrorMessage(e));
-			}
-
-			return techQuestionDto;
-		}
-	@GetMapping("/searchByAnswer/{answer}")
-	public TechQuestionDto searchByAnswer(@PathVariable String answer,
+	@GetMapping("/searchtechQns/{type}/{keyword}")
+	public List<TechQuestionDto> searchtechQns(@PathVariable String keyword, @PathVariable String type,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
-		TechQuestionDto techQuestionDto = new TechQuestionDto();
+		List<TechQuestionDto> techQuestionDto = new ArrayList<>();
 		try {
-			techQuestionDto = techQuestionService.searchByAnswer(answer);
+			techQuestionDto = techQuestionService.searchtechQns(type, keyword);
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}
 
 		return techQuestionDto;
 	}
-	}
-
+}

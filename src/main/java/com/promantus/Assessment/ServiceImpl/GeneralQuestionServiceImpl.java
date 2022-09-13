@@ -6,16 +6,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoAction;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
-import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
-import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.GeneralQuestionService;
@@ -130,26 +126,45 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	}
 
+
 	@Override
-	public List<GeneralQuestionDto> searchByQns(String question) throws Exception {
-
+	public List<GeneralQuestionDto> search(String type, String keyword) throws Exception {
 		List<GeneralQuestionDto> resultDto = new ArrayList<>();
+		List<GeneralQuestion> generalQuestion = new ArrayList<>();
 
-		List<GeneralQuestion> generalQuestion = generalQuestionRepository.findByQuestionRegex(question);
+		if (type.equals(AssessmentConstants.TYPE1)) {
+			generalQuestion = generalQuestionRepository.findByQuestionRegex(keyword);
+		}
+		if (type.equals(AssessmentConstants.TYPE2)) {
+			List<GeneralQuestion> option1List = generalQuestionRepository.findByOption1Regex(keyword);
+			List<GeneralQuestion> option2List = generalQuestionRepository.findByOption2Regex(keyword);
+			List<GeneralQuestion> option3List = generalQuestionRepository.findByOption3Regex(keyword);
+			List<GeneralQuestion> option4List = generalQuestionRepository.findByOption4Regex(keyword);
 
+			for (GeneralQuestion generalQuestion2 : option1List) {
+				generalQuestion.add(generalQuestion2);
+			}
+
+			for (GeneralQuestion generalQuestion3 : option2List) {
+				generalQuestion.add(generalQuestion3);
+			}
+
+			for (GeneralQuestion generalQuestion4 : option3List) {
+				generalQuestion.add(generalQuestion4);
+			}
+
+			for (GeneralQuestion generalQuestion5 : option4List) {
+				generalQuestion.add(generalQuestion5);
+			}
+		}
+		if (type.equals(AssessmentConstants.TYPE3)) {
+			generalQuestion = generalQuestionRepository.findByAnswerRegex(keyword);
+		}
 		for (GeneralQuestion generalQuestion2 : generalQuestion) {
 			resultDto.add(getGeneralQuestionDto(generalQuestion2));
 		}
 
 		return resultDto;
-	}
-
-	@Override
-	public GeneralQuestionDto searchByAns(String answer) throws Exception {
-
-		GeneralQuestion generalQuestion = generalQuestionRepository.findByAnswer(answer);
-
-		return generalQuestion != null ? this.getGeneralQuestionDto(generalQuestion) : new GeneralQuestionDto();
 	}
 
 }

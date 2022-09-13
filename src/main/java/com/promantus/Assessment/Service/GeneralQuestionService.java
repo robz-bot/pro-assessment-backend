@@ -15,13 +15,10 @@ public interface GeneralQuestionService {
 
 	GeneralQuestionDto deleteGeneralQuestionById(String id) throws Exception;
 
-	GeneralQuestionDto getGeneralQuestionById(String id) throws Exception;
+	GeneralQuestionDto getGeneralQuestionById(String id) throws Exception;      
 
-	List<GeneralQuestionDto> searchByQns(String question)throws Exception;
-
-	GeneralQuestionDto searchByAns(String answer) throws Exception;
+	List<GeneralQuestionDto> search(String type, String keyword) throws Exception;
 
 	
-
 
 }
