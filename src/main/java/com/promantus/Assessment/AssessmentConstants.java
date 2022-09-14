@@ -33,16 +33,10 @@ public final class AssessmentConstants {
 	public static final String TYPE8 = "date";
 
 //	Percentage Range
-	public static final String RANGE0 = "<=0";
-	public static final String RANGE1 = "<=10";
-	public static final String RANGE2 = "<=20";
-	public static final String RANGE3 = "<=30";
-	public static final String RANGE4 = "<=40";
-	public static final String RANGE5 = "<=50";
-	public static final String RANGE6 = "<=60";
-	public static final String RANGE7 = "<=70";
-	public static final String RANGE8 = "<=80";
-	public static final String RANGE9 = "<=90";
+	public static final String RANGE0 = "0-25";
+	public static final String RANGE1 = "26-50";
+	public static final String RANGE2 = "51-75";
+	public static final String RANGE3 = "76-100";
 
 //	Icon Style
 	public static final String ATTEMPT_ICON_STYLE = "bi bi-compass light font-large-2";

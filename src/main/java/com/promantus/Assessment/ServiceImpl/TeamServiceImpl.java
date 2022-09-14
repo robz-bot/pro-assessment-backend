@@ -15,136 +15,127 @@ import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.TeamService;
-	
-	@Service
-	public class TeamServiceImpl implements TeamService {
 
-		private static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
+@Service
+public class TeamServiceImpl implements TeamService {
 
-		@Autowired
-		TeamRepository teamRepository;
-		
-		@Autowired
-		CommonService commonService;
-		
-		@Override
-		public Boolean checkTeamName(TeamDto teamDto) throws Exception{
+	private static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
 
-		Team team =teamRepository.getTeamByTeamIgnoreCase(teamDto.getTeam()); 
-			if(team != null) {
-			  return true;
-				}
-			  return false;
+	@Autowired
+	TeamRepository teamRepository;
+
+	@Autowired
+	CommonService commonService;
+
+	@Override
+	public Boolean checkTeamName(TeamDto teamDto) throws Exception {
+
+		Team team = teamRepository.getTeamByTeamIgnoreCase(teamDto.getTeam());
+		if (team != null) {
+			return true;
 		}
+		return false;
+	}
 
-		@Override
-		public TeamDto addTeam(final TeamDto teamDto, String lang) throws Exception {
-			
-			TeamDto resultDto = new TeamDto();	
-			if(this.checkTeamName(teamDto)){
-				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
-				resultDto.setMessage("Already.exists");
-				return resultDto;
-			}
-			if (teamRepository.findById(teamDto.getId()) == null) 
-			{
-				Team team = new Team();
-				team.setId(commonService.nextSequenceNumber());
-				team.setTeam(teamDto.getTeam());
-				team.setCreatedOn(LocalDateTime.now());
-				
-				teamRepository.save(team);
-			}	
-			resultDto.setMessage("Team added successfully");
-	        return resultDto;
+	@Override
+	public TeamDto addTeam(final TeamDto teamDto, String lang) throws Exception {
+
+		TeamDto resultDto = new TeamDto();
+		if (this.checkTeamName(teamDto)) {
+			resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
+			resultDto.setMessage("Team '" + teamDto.getTeam() + "' already exists");
+			return resultDto;
 		}
-
-			
-		@Override
-		public List<TeamDto> getAllTeams() {
-			List<Team> TeamsList = teamRepository.findAll();
-
-			List<TeamDto> TeamDtoList = new ArrayList<TeamDto>();
-			for (Team Team : TeamsList) {
-				TeamDtoList.add(this.getTeamDto(Team));
-			}
-
-			return TeamDtoList;
-		}
-		
-		
-		private TeamDto getTeamDto(Team team) {
-			TeamDto teamDto=new TeamDto();
-
-			teamDto.setId(team.getId());
-			teamDto.setTeam(team.getTeam());
-			teamDto.setCreatedOn(team.getCreatedOn());
-			return teamDto;
-			
-		}
-		@Override
-		public TeamDto updateTeam(TeamDto teamDto, String lang) {
-
-			TeamDto resultDto = new TeamDto();
-			System.out.println(teamDto.getId());
-			Team team = teamRepository.findById(teamDto.getId());
-
-			if (team == null) {
-			
-				resultDto.setMessage("Team does not exist");
-				return resultDto;
-			}
-			
+		if (teamRepository.findById(teamDto.getId()) == null) {
+			Team team = new Team();
+			team.setId(commonService.nextSequenceNumber());
 			team.setTeam(teamDto.getTeam());
-			team.setCreatedOn(team.getCreatedOn());
-			team.setUpdatedOn(LocalDateTime.now());
-		
+			team.setCreatedOn(LocalDateTime.now());
+
 			teamRepository.save(team);
-			resultDto.setMessage("Record Updated successfully");
+		}
+		resultDto.setMessage("Team added successfully");
+		return resultDto;
+	}
+
+	@Override
+	public List<TeamDto> getAllTeams() {
+		List<Team> TeamsList = teamRepository.findAll();
+
+		List<TeamDto> TeamDtoList = new ArrayList<TeamDto>();
+		for (Team Team : TeamsList) {
+			TeamDtoList.add(this.getTeamDto(Team));
+		}
+
+		return TeamDtoList;
+	}
+
+	private TeamDto getTeamDto(Team team) {
+		TeamDto teamDto = new TeamDto();
+
+		teamDto.setId(team.getId());
+		teamDto.setTeam(team.getTeam());
+		teamDto.setCreatedOn(team.getCreatedOn());
+		return teamDto;
+
+	}
+
+	@Override
+	public TeamDto updateTeam(TeamDto teamDto, String lang) {
+
+		TeamDto resultDto = new TeamDto();
+		System.out.println(teamDto.getId());
+		Team team = teamRepository.findById(teamDto.getId());
+
+		if (team == null) {
+
+			resultDto.setMessage("Team does not exist");
 			return resultDto;
-	       
 		}
 
+		team.setTeam(teamDto.getTeam());
+		team.setCreatedOn(team.getCreatedOn());
+		team.setUpdatedOn(LocalDateTime.now());
 
+		teamRepository.save(team);
+		resultDto.setMessage("Record Updated successfully");
+		return resultDto;
 
-		@Override
-		public TeamDto deleteTeamById(String teamId) {
-			TeamDto resultDto=new TeamDto();
-			Team team=teamRepository.findById(Long.parseLong(teamId));
-			if(team==null)
-			{
-				
-				resultDto.setMessage("data does not exist");
-				return resultDto;
-			}
-			
-			teamRepository.delete(team);
-			resultDto.setMessage("Record Deleted successfully");
+	}
+
+	@Override
+	public TeamDto deleteTeamById(String teamId) {
+		TeamDto resultDto = new TeamDto();
+		Team team = teamRepository.findById(Long.parseLong(teamId));
+		if (team == null) {
+
+			resultDto.setMessage("data does not exist");
 			return resultDto;
 		}
 
-		@Override
-		public TeamDto getTeamById(String teamId) throws Exception{
-			
-			Team team = teamRepository.findById(Long.parseLong(teamId));
-			
-			return team != null ? this.getTeamDto(team) : new TeamDto();
+		teamRepository.delete(team);
+		resultDto.setMessage("Record Deleted successfully");
+		return resultDto;
+	}
 
+	@Override
+	public TeamDto getTeamById(String teamId) throws Exception {
+
+		Team team = teamRepository.findById(Long.parseLong(teamId));
+
+		return team != null ? this.getTeamDto(team) : new TeamDto();
+
+	}
+
+	@Override
+	public List<TeamDto> searchByTeam(String keyword) throws Exception {
+
+		List<TeamDto> resultDto = new ArrayList<>();
+		List<Team> team = teamRepository.findByTeamRegex(keyword);
+		for (Team team2 : team) {
+			resultDto.add(getTeamDto(team2));
 		}
-
-
-		@Override
-		public List<TeamDto> searchByTeam(String keyword) throws Exception {
-			
-			List<TeamDto> resultDto = new ArrayList<>();
-	        List<Team> team = teamRepository.findByTeamRegex(keyword);
-	        for (Team team2 : team) {
-	            resultDto.add(getTeamDto(team2));
-	        }
-	        return resultDto;
-		}
-
-
-		
+		return resultDto;
+	}
 
 }

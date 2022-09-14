@@ -21,6 +21,7 @@ public class ReportsDto implements Serializable {
 	private LocalDateTime reportedOn;
 	private LocalDateTime updatedOn;
 	private String message;
+	private int attempts;
 
 	public Long getId() {
 		return id;
@@ -132,6 +133,20 @@ public class ReportsDto implements Serializable {
 
 	public void setTeamName(String teamName) {
 		this.teamName = teamName;
+	}
+
+	/**
+	 * @return the attempts
+	 */
+	public int getAttempts() {
+		return attempts;
+	}
+
+	/**
+	 * @param attempts the attempts to set
+	 */
+	public void setAttempts(int attempts) {
+		this.attempts = attempts;
 	}
 
 }

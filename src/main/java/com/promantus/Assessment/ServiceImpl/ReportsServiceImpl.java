@@ -87,6 +87,9 @@ public class ReportsServiceImpl implements ReportsService {
 		reportsDto.setStatus(reports.getStatus());
 		reportsDto.setReportedOn(reports.getReportedOn());
 		reportsDto.setTotalMarks(reports.getTotalMarks());
+		int attempts = userRepository.findById(reports.getUserId()).getAttempts();
+		
+		reportsDto.setAttempts(attempts);
 
 		if (reports.getTeamId() != null) {
 			Team team = teamRepository.findById(reports.getTeamId()).orElse(null);
@@ -190,7 +193,7 @@ public class ReportsServiceImpl implements ReportsService {
 
 		if (type.equals(AssessmentConstants.TYPE5)) {
 
-			List<User> userList = userRepository.findByFirstNameRegex(keyword);
+			List<User> userList = userRepository.findByFirstNameLastNameRegex(keyword);
 			List<Reports> allReport = reportsRepository.findAll();
 
 			for (Reports reports : allReport) {
@@ -243,61 +246,29 @@ public class ReportsServiceImpl implements ReportsService {
 			throws NumberFormatException {
 		if (keyword.equals(AssessmentConstants.RANGE0)) {
 			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 0) {
+				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) >= 0
+						&& Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 25) {
 					report.add(reports);
 				}
 			}
 		} else if (keyword.equals(AssessmentConstants.RANGE1)) {
 			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 10) {
+				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) >= 26
+						&& Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 50) {
 					report.add(reports);
 				}
 			}
 		} else if (keyword.equals(AssessmentConstants.RANGE2)) {
 			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 20) {
+				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) >= 51
+						&& Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 75) {
 					report.add(reports);
 				}
 			}
 		} else if (keyword.equals(AssessmentConstants.RANGE3)) {
 			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 30) {
-					report.add(reports);
-				}
-			}
-		} else if (keyword.equals(AssessmentConstants.RANGE4)) {
-			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 40) {
-					report.add(reports);
-				}
-			}
-		} else if (keyword.equals(AssessmentConstants.RANGE5)) {
-			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 50) {
-					report.add(reports);
-				}
-			}
-		} else if (keyword.equals(AssessmentConstants.RANGE6)) {
-			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 60) {
-					report.add(reports);
-				}
-			}
-		} else if (keyword.equals(AssessmentConstants.RANGE7)) {
-			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 70) {
-					report.add(reports);
-				}
-			}
-		} else if (keyword.equals(AssessmentConstants.RANGE8)) {
-			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 80) {
-					report.add(reports);
-				}
-			}
-		} else if (keyword.equals(AssessmentConstants.RANGE9)) {
-			for (Reports reports : allReport) {
-				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 90) {
+				if (Integer.parseInt(reports.getPercentage().split(" ")[0]) >= 76
+						&& Integer.parseInt(reports.getPercentage().split(" ")[0]) <= 100) {
 					report.add(reports);
 				}
 			}
