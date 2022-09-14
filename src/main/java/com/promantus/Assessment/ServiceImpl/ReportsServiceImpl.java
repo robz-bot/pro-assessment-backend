@@ -87,9 +87,11 @@ public class ReportsServiceImpl implements ReportsService {
 		reportsDto.setStatus(reports.getStatus());
 		reportsDto.setReportedOn(reports.getReportedOn());
 		reportsDto.setTotalMarks(reports.getTotalMarks());
-		int attempts = userRepository.findById(reports.getUserId()).getAttempts();
-		
-		reportsDto.setAttempts(attempts);
+		if (reports.getUserId() == null) {
+			int attempts = userRepository.findById(reports.getUserId()).getAttempts();
+
+			reportsDto.setAttempts(attempts);
+		}
 
 		if (reports.getTeamId() != null) {
 			Team team = teamRepository.findById(reports.getTeamId()).orElse(null);
