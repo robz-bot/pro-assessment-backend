@@ -25,4 +25,6 @@ public interface UserRepository extends MongoRepository<User, String> {
 			+ "        { lastName: { '$regex': ?0, '$options': 'i' } }\r\n"
 			+ "    ]}")
 	List<User> findByFirstNameLastNameRegex(String keyword);
+
+	List<User> findAllByAttempts(int i);
 }

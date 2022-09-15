@@ -231,6 +231,21 @@ public class ReportsServiceImpl implements ReportsService {
 			}
 		}
 
+		if (type.equals(AssessmentConstants.TYPE9)) {
+			List<User> userList = userRepository.findAllByAttempts(Integer.parseInt(keyword));
+			List<Reports> allReport = reportsRepository.findAll();
+
+			if (allReport.size() > 0 && userList.size() > 0) {
+				for (Reports reports : allReport) {
+					for (User user : userList) {
+						if (reports.getUserId().equals(user.getId())) {
+							report.add(reports);
+						}
+					}
+				}
+			}
+		}
+
 		for (Reports report1 : report) {
 			resultDto.add(getReportsDto(report1));
 		}
