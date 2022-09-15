@@ -35,6 +35,13 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	public TechQuestionDto addTechQuestion(final TechQuestionDto techQuestionDto, String lang) throws Exception {
 
 		TechQuestionDto resultDto = new TechQuestionDto();
+		
+		if(techQuestionRepository.existsByQuestion(techQuestionDto.getQuestion())) {
+			resultDto.setMessage("This Question already exists");
+			resultDto.setStatus(1);
+			return resultDto;
+		}
+		
 		if (techQuestionRepository.findById(techQuestionDto.getId()) == null) {
 			TechQuestion techQuestion = new TechQuestion();
 			techQuestion.setId(commonService.nextSequenceNumber());

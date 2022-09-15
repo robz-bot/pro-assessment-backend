@@ -37,4 +37,6 @@ public interface TechQuestionRepository extends MongoRepository<TechQuestion, St
 	@Query("{'answer': {$regex: ?0,$options: \"i\"} }})")
 	List<TechQuestion> findByOption4Regex(String keyword);
 
+	boolean existsByQuestion(String question);
+
 }

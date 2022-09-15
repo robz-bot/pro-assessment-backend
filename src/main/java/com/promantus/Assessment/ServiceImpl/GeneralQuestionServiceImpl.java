@@ -33,8 +33,16 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	@Override
 	public GeneralQuestionDto addGeneralQuestion(final GeneralQuestionDto generalQuestionDto, String lang)
 			throws Exception {
-
+		
 		GeneralQuestionDto resultDto = new GeneralQuestionDto();
+		
+		if (generalQuestionRepository.existsByQuestion(generalQuestionDto.getQuestion())) {
+			resultDto.setMessage("This Question already exists");
+			resultDto.setStatus(1);
+			return resultDto;
+		}
+
+		
 		if (generalQuestionRepository.findAll().size() > 0) {
 			GeneralQuestion generalQuestion = new GeneralQuestion();
 			generalQuestion.setId(commonService.nextSequenceNumber());

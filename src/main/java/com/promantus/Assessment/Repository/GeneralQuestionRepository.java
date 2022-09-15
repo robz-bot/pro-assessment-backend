@@ -35,4 +35,6 @@ public interface GeneralQuestionRepository extends MongoRepository<GeneralQuesti
 	@Query("{'option4': {$regex: ?0,$options: \"i\"} }})")
 	List<GeneralQuestion> findByOption4Regex(String keyword);
 
+	boolean existsByQuestion(String question);
+
 }
