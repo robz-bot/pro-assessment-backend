@@ -1,18 +1,26 @@
 package com.promantus.Assessment.ServiceImpl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
-import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.Dto.ReportsDto;
-import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Reports;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.User;
@@ -38,6 +46,9 @@ public class ReportsServiceImpl implements ReportsService {
 
 	@Autowired
 	TeamRepository teamRepository;
+
+	@Autowired
+	ResourceLoader resourceLoader;
 
 	@Override
 	public ReportsDto addReports(ReportsDto reportsDto, String lang) throws Exception {
@@ -65,10 +76,10 @@ public class ReportsServiceImpl implements ReportsService {
 
 	@Override
 	public List<ReportsDto> getAllReports() throws Exception {
-		List<Reports> ReportssList = reportsRepository.findAll();
+		List<Reports> ReportsList = reportsRepository.findAll();
 
 		List<ReportsDto> ReportsDtoList = new ArrayList<ReportsDto>();
-		for (Reports Reports : ReportssList) {
+		for (Reports Reports : ReportsList) {
 			ReportsDtoList.add(this.getReportsDto(Reports));
 		}
 
@@ -168,9 +179,9 @@ public class ReportsServiceImpl implements ReportsService {
 	public List<ReportsDto> searchByStatus(String status) throws Exception {
 
 		List<ReportsDto> ReportsDtoList = new ArrayList<ReportsDto>();
-		List<Reports> ReportssList = reportsRepository.findByStatus(status);
+		List<Reports> ReportsList = reportsRepository.findByStatus(status);
 
-		for (Reports Reports : ReportssList) {
+		for (Reports Reports : ReportsList) {
 			ReportsDtoList.add(this.getReportsDto(Reports));
 		}
 		return ReportsDtoList;
@@ -180,9 +191,9 @@ public class ReportsServiceImpl implements ReportsService {
 	public List<ReportsDto> searchByPercentage(String percentage) throws Exception {
 
 		List<ReportsDto> ReportsDtoList = new ArrayList<ReportsDto>();
-		List<Reports> ReportssList = reportsRepository.findByPercentage(percentage);
+		List<Reports> ReportsList = reportsRepository.findByPercentage(percentage);
 
-		for (Reports Reports : ReportssList) {
+		for (Reports Reports : ReportsList) {
 			ReportsDtoList.add(this.getReportsDto(Reports));
 		}
 		return ReportsDtoList;
@@ -291,6 +302,64 @@ public class ReportsServiceImpl implements ReportsService {
 			}
 		}
 		return report;
+	}
+
+	@Override
+	public byte[] downloadReports(List<ReportsDto> reportsDtoList, String lang) throws IOException {
+
+		File file = resourceLoader.getResource("classpath:excel-templates/Assessment_Report.xlsx").getFile();
+		try (Workbook resourceAssessmentWB = new XSSFWorkbook(file)) {
+
+			System.out.println("Size" + reportsDtoList.size());
+			Sheet sheet = resourceAssessmentWB.getSheetAt(0);
+
+			AssessmentDefaultMethods.cleanSheet(sheet);
+			int rowNum = 2;
+			for (ReportsDto reportsDto : reportsDtoList) {
+
+				Row dataRow = sheet.createRow(rowNum);
+
+				Cell slNo = dataRow.createCell(0);
+				slNo.setCellValue(rowNum - 1);
+
+				dataRow.createCell(1).setCellValue(reportsDto.getUserName());
+				if (reportsDto.getUserId() != null) {
+					User user = userRepository.findById(reportsDto.getUserId());
+					Team team = teamRepository.findById(user.getTeamId());
+					if (team != null) {
+						dataRow.createCell(2).setCellValue(team.getTeam());
+					}
+				}
+
+				if (reportsDto.getUserId() != null) {
+					User user = userRepository.findById(reportsDto.getUserId());
+					if (user != null) {
+						dataRow.createCell(3).setCellValue(user.getManager());
+					}
+				}
+
+				dataRow.createCell(4).setCellValue(reportsDto.getPercentage());
+				dataRow.createCell(5).setCellValue(reportsDto.getStatus());
+				dataRow.createCell(6).setCellValue(reportsDto.getAttempts());
+				dataRow.createCell(7).setCellValue(
+						reportsDto.getReportedOn() == null ? "-" : reportsDto.getReportedOn().toLocalDate().toString());
+				dataRow.createCell(8).setCellValue("");
+
+				rowNum++;
+			}
+
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			resourceAssessmentWB.write(outputStream);
+
+			resourceAssessmentWB.close();
+
+			return outputStream.toByteArray();
+
+		} catch (Exception ex) {
+			logger.error("Error during Customer Details download file", ex);
+			return null;
+		}
+
 	}
 
 }

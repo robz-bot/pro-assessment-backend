@@ -1,11 +1,14 @@
 package com.promantus.Assessment.Entity;
 
+import java.io.Serializable;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "techQuestion")
-public class TechQuestion {
+public class TechQuestion implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	@Id
 	private Long id;
 	private Long teamId;

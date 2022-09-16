@@ -1,6 +1,9 @@
 package com.promantus.Assessment.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
 
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
 
@@ -18,6 +21,8 @@ public interface GeneralQuestionService {
 	GeneralQuestionDto getGeneralQuestionById(String id) throws Exception;      
 
 	List<GeneralQuestionDto> search(String type, String keyword) throws Exception;
+
+	Map<String, Object> getAllGeneralQuestionsPage(Pageable paging) throws Exception;
 
 	
 

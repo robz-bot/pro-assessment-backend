@@ -1,11 +1,20 @@
 package com.promantus.Assessment.Controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.common.net.HttpHeaders;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Service.ReportsService;
@@ -30,6 +40,9 @@ public class ReportsController extends CommonController {
 
 	@Autowired
 	private ReportsService reportsService;
+	
+	@Value("${download.path}")
+	private String downloadsPath;
 
 	@PostMapping("/addReports")
 	public ReportsDto addReports(@RequestBody ReportsDto reportsDto,
@@ -241,5 +254,51 @@ public class ReportsController extends CommonController {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}
 		return reportsDto;
+	}
+	
+	@PutMapping("/downloadReports")
+	public void downloadReports(@RequestBody List<ReportsDto> reportsDtoList,
+			@RequestHeader(name = "lang", required = false) String lang, HttpServletResponse response) {
+
+		BufferedInputStream inStream = null;
+		BufferedOutputStream outStream = null;
+		try {
+
+			File assessmentReportsFile = new File(downloadsPath + "Assessment_Reports.xlsx");
+			FileUtils.writeByteArrayToFile(assessmentReportsFile,
+		    reportsService.downloadReports(reportsDtoList, lang));
+
+			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + assessmentReportsFile.getName());
+			response.setContentLength((int) assessmentReportsFile.length());
+
+			inStream = new BufferedInputStream(new FileInputStream(assessmentReportsFile));
+			outStream = new BufferedOutputStream(response.getOutputStream());
+
+			byte[] buffer = new byte[1024];
+			int bytesRead = 0;
+			while ((bytesRead = inStream.read(buffer)) != -1) {
+				outStream.write(buffer, 0, bytesRead);
+			}
+
+			response.flushBuffer();
+			assessmentReportsFile.deleteOnExit();
+
+		} catch (final Exception e) {
+
+			logger.error(AssessmentUtil.getErrorMessage(e));
+
+		} finally {
+			try {
+				if (outStream != null) {
+					outStream.flush();
+				}
+				if (inStream != null) {
+					inStream.close();
+				}
+			} catch (IOException e) {
+				logger.error(AssessmentUtil.getErrorMessage(e));
+			}
+		}
 	}
 }

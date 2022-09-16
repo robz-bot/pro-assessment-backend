@@ -1,6 +1,9 @@
 package com.promantus.Assessment.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
 
 import com.promantus.Assessment.Dto.TechQuestionDto;
 
@@ -20,6 +23,8 @@ public interface TechQuestionService {
 	List<TechQuestionDto> findAndReplceByOtherTeamId(long findId, long replaceId) throws Exception;
 
 	List<TechQuestionDto> searchtechQns(String type, String keyword) throws Exception;
+
+	Map<String, Object> getAllTechQuestionsPage(Pageable paging) throws Exception;
 	
 
 }

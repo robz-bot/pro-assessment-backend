@@ -2,11 +2,15 @@ package com.promantus.Assessment.ServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
@@ -136,6 +140,22 @@ public class TeamServiceImpl implements TeamService {
 			resultDto.add(getTeamDto(team2));
 		}
 		return resultDto;
+	}
+
+	@Override
+	public Map<String, Object> getAllTeamsPage(Pageable paging) throws Exception {
+		Page<Team> teamPage = teamRepository.findAll(paging);
+		List<TeamDto> resultDto = new ArrayList<>();
+		List<Team> TeamsList  = teamPage.getContent();
+		for (Team Team : TeamsList) {
+			resultDto.add(this.getTeamDto(Team));
+		}
+		Map<String, Object> response = new HashMap<>();
+	      response.put("teams", TeamsList);
+	      response.put("currentPage", teamPage.getNumber());
+	      response.put("totalItems", teamPage.getTotalElements());
+	      response.put("totalPages", teamPage.getTotalPages());
+		return response;
 	}
 
 }

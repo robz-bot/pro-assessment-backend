@@ -1,5 +1,6 @@
 package com.promantus.Assessment.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.promantus.Assessment.Dto.ReportsDto;
@@ -24,6 +25,7 @@ public interface ReportsService {
 
 	List<ReportsDto> search(String type, String keyword) throws Exception;
 
-	
+	byte[] downloadReports(List<ReportsDto> reportsDtoList, String lang) throws IOException;
+
 
 }

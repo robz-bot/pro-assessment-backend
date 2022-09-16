@@ -1,17 +1,23 @@
 package com.promantus.Assessment.ServiceImpl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
+import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.GeneralQuestionService;
@@ -33,16 +39,15 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	@Override
 	public GeneralQuestionDto addGeneralQuestion(final GeneralQuestionDto generalQuestionDto, String lang)
 			throws Exception {
-		
+
 		GeneralQuestionDto resultDto = new GeneralQuestionDto();
-		
+
 		if (generalQuestionRepository.existsByQuestion(generalQuestionDto.getQuestion())) {
 			resultDto.setMessage("This Question already exists");
 			resultDto.setStatus(1);
 			return resultDto;
 		}
 
-		
 		if (generalQuestionRepository.findAll().size() > 0) {
 			GeneralQuestion generalQuestion = new GeneralQuestion();
 			generalQuestion.setId(commonService.nextSequenceNumber());
@@ -134,7 +139,6 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	}
 
-
 	@Override
 	public List<GeneralQuestionDto> search(String type, String keyword) throws Exception {
 		List<GeneralQuestionDto> resultDto = new ArrayList<>();
@@ -173,6 +177,23 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		}
 
 		return resultDto;
+	}
+
+	@Override
+	public Map<String, Object> getAllGeneralQuestionsPage(Pageable paging) throws Exception {
+		Page<GeneralQuestion> genQnPage = generalQuestionRepository.findAll(paging);
+		List<GeneralQuestionDto> resultDto = new ArrayList<>();
+		List<GeneralQuestion> GeneralQuestionsList = genQnPage.getContent();
+		for (GeneralQuestion GeneralQuestion : GeneralQuestionsList) {
+			resultDto.add(this.getGeneralQuestionDto(GeneralQuestion));
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+	      response.put("generalQns", GeneralQuestionsList);
+	      response.put("currentPage", genQnPage.getNumber());
+	      response.put("totalItems", genQnPage.getTotalElements());
+	      response.put("totalPages", genQnPage.getTotalPages());
+		return response;
 	}
 
 }

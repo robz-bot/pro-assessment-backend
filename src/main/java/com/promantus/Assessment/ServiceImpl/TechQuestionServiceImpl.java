@@ -1,15 +1,23 @@
 package com.promantus.Assessment.ServiceImpl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
+import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -35,13 +43,13 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	public TechQuestionDto addTechQuestion(final TechQuestionDto techQuestionDto, String lang) throws Exception {
 
 		TechQuestionDto resultDto = new TechQuestionDto();
-		
-		if(techQuestionRepository.existsByQuestion(techQuestionDto.getQuestion())) {
+
+		if (techQuestionRepository.existsByQuestion(techQuestionDto.getQuestion())) {
 			resultDto.setMessage("This Question already exists");
 			resultDto.setStatus(1);
 			return resultDto;
 		}
-		
+
 		if (techQuestionRepository.findById(techQuestionDto.getId()) == null) {
 			TechQuestion techQuestion = new TechQuestion();
 			techQuestion.setId(commonService.nextSequenceNumber());
@@ -214,4 +222,46 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 		return resultDto;
 	}
+	
+	@CacheEvict(value = "cacheTechQnList")
+	private void clearTechCache() {
+		
+	}
+
+	@Override
+	@Cacheable(value = "cacheTechQnList")
+	public Map<String, Object> getAllTechQuestionsPage(Pageable paging) throws Exception {
+		//clearTechCache();
+		long startTime = System.nanoTime();
+
+		System.out.println("Inside tech Qn Page List");
+		simulateSlowService();
+		Page<TechQuestion> techQnPage = techQuestionRepository.findAll(paging);
+//		List<TechQuestionDto> resultDto = new ArrayList<>();
+		List<TechQuestion> TechQuestionsList = techQnPage.getContent();
+//		for (TechQuestion TechQuestion : TechQuestionsList) {
+//			resultDto.add(this.getTechQuestionDto(TechQuestion));
+//		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("techQns", TechQuestionsList);
+		response.put("currentPage", techQnPage.getNumber());
+		response.put("totalItems", techQnPage.getTotalElements());
+		response.put("totalPages", techQnPage.getTotalPages());
+
+		long endTime = System.nanoTime();
+		System.out.println("Start Time: " + (startTime/1000)%60);
+		System.out.println("End Time: " + (endTime/1000)%60);
+		return response;
+	}
+
+	private void simulateSlowService() {
+		try {
+			long time = 3000L;
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 }

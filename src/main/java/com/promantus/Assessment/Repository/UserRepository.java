@@ -27,4 +27,6 @@ public interface UserRepository extends MongoRepository<User, String> {
 	List<User> findByFirstNameLastNameRegex(String keyword);
 
 	List<User> findAllByAttempts(int i);
+
+	User findByTeamId(String teamId);
 }

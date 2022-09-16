@@ -1,6 +1,9 @@
 package com.promantus.Assessment.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
 
 import com.promantus.Assessment.Dto.TeamDto;
 
@@ -19,5 +22,7 @@ public interface TeamService {
 	Boolean checkTeamName(TeamDto teamDto) throws Exception;
 
 	List<TeamDto> searchByTeam(String keyword) throws Exception;
+
+	Map<String, Object> getAllTeamsPage(Pageable paging) throws Exception;
 
 }
