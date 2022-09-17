@@ -1,5 +1,7 @@
 package com.promantus.Assessment.Entity;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +16,9 @@ public class GeneralQuestion {
 	private String option3;
 	private String option4;
 	private String answer;
+	private String updatedBy;
+	private LocalDateTime updatedon;
+	private boolean isActive;
 
 	public Long getId() {
 		return id;
@@ -71,4 +76,28 @@ public class GeneralQuestion {
 		this.option4 = option4;
 	}
 
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public LocalDateTime getUpdatedon() {
+		return updatedon;
+	}
+
+	public void setUpdatedon(LocalDateTime updatedon) {
+		this.updatedon = updatedon;
+	}
+
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
 }

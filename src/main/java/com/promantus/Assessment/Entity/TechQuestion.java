@@ -1,6 +1,7 @@
 package com.promantus.Assessment.Entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,6 +19,9 @@ public class TechQuestion implements Serializable{
 	private String option3;
 	private String option4;
 	private String answer;
+	private String updatedBy;
+	private LocalDateTime updatedOn;
+	private boolean isActive;
 
 	public Long getId() {
 		return id;
@@ -82,4 +86,34 @@ public class TechQuestion implements Serializable{
 	public void setOption4(String option4) {
 		this.option4 = option4;
 	}
+
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public LocalDateTime getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(LocalDateTime updatedOn) {
+		this.updatedOn = updatedOn;
+	}
+
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	
+	
 }

@@ -1,31 +1,28 @@
 package com.promantus.Assessment.ServiceImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
-import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
-import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.GeneralQuestionService;
 
 @Service
 public class GeneralQuestionServiceImpl implements GeneralQuestionService {
-
-	private static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
 
 	@Autowired
 	GeneralQuestionRepository generalQuestionRepository;
@@ -57,6 +54,8 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			generalQuestion.setOption3(generalQuestionDto.getOption3());
 			generalQuestion.setOption4(generalQuestionDto.getOption4());
 			generalQuestion.setAnswer(generalQuestionDto.getAnswer());
+			generalQuestion.setUpdatedon(LocalDateTime.now());
+			generalQuestion.setisActive(true);
 			generalQuestionRepository.save(generalQuestion);
 		}
 		resultDto.setMessage("General Question added successfully");
@@ -65,7 +64,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	@Override
 	public List<GeneralQuestionDto> getAllGeneralQuestions() throws Exception {
-		List<GeneralQuestion> GeneralQuestionsList = generalQuestionRepository.findAll();
+		List<GeneralQuestion> GeneralQuestionsList = generalQuestionRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<GeneralQuestionDto> GeneralQuestionDtoList = new ArrayList<GeneralQuestionDto>();
 		for (GeneralQuestion GeneralQuestion : GeneralQuestionsList) {
@@ -85,6 +84,8 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		generalQuestionDto.setOption3(generalQuestion.getOption3());
 		generalQuestionDto.setOption4(generalQuestion.getOption4());
 		generalQuestionDto.setAnswer(generalQuestion.getAnswer());
+		generalQuestionDto.setisActive(generalQuestion.getisActive());
+		generalQuestionDto.setUpdatedon(generalQuestion.getUpdatedon());
 		return generalQuestionDto;
 
 	}
@@ -99,7 +100,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 		if (generalQuestion == null) {
 
-			resultDto.setMessage("GeneralQuestion does not exist");
+			resultDto.setMessage("General Question does not exist");
 			return resultDto;
 		}
 		generalQuestion.setQuestion(generalQuestionDto.getQuestion());
@@ -108,7 +109,10 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		generalQuestion.setOption3(generalQuestionDto.getOption3());
 		generalQuestion.setOption4(generalQuestionDto.getOption4());
 		generalQuestion.setAnswer(generalQuestionDto.getAnswer());
-
+		generalQuestion.setisActive(generalQuestionDto.getisActive());
+		generalQuestion.setUpdatedBy(generalQuestionDto.getUpdatedBy());
+		generalQuestion.setUpdatedon(LocalDateTime.now());
+		generalQuestion.setisActive(true);
 		generalQuestionRepository.save(generalQuestion);
 		resultDto.setMessage("Record Updated successfully");
 		return resultDto;
@@ -118,14 +122,14 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	@Override
 	public GeneralQuestionDto deleteGeneralQuestionById(String id) throws Exception {
 		GeneralQuestionDto resultDto = new GeneralQuestionDto();
-		GeneralQuestion generalQuestion = generalQuestionRepository.findById(Long.parseLong(id));
+		GeneralQuestion generalQuestion = generalQuestionRepository.findByIdAndIsActive(Long.parseLong(id),true);
 		if (generalQuestion == null) {
-
 			resultDto.setMessage("data does not exist");
 			return resultDto;
 		}
-
-		generalQuestionRepository.delete(generalQuestion);
+		
+		generalQuestion.setisActive(false);
+		generalQuestionRepository.save(generalQuestion);
 		resultDto.setMessage("Record Deleted successfully");
 		return resultDto;
 	}
@@ -145,13 +149,13 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		List<GeneralQuestion> generalQuestion = new ArrayList<>();
 
 		if (type.equals(AssessmentConstants.TYPE1)) {
-			generalQuestion = generalQuestionRepository.findByQuestionRegex(keyword);
+			generalQuestion = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword,true);
 		}
 		if (type.equals(AssessmentConstants.TYPE2)) {
-			List<GeneralQuestion> option1List = generalQuestionRepository.findByOption1Regex(keyword);
-			List<GeneralQuestion> option2List = generalQuestionRepository.findByOption2Regex(keyword);
-			List<GeneralQuestion> option3List = generalQuestionRepository.findByOption3Regex(keyword);
-			List<GeneralQuestion> option4List = generalQuestionRepository.findByOption4Regex(keyword);
+			List<GeneralQuestion> option1List = generalQuestionRepository.findByOption1AndIsActiveRegex(keyword,true);
+			List<GeneralQuestion> option2List = generalQuestionRepository.findByOption2AndIsActiveRegex(keyword,true);
+			List<GeneralQuestion> option3List = generalQuestionRepository.findByOption3AndIsActiveRegex(keyword,true);
+			List<GeneralQuestion> option4List = generalQuestionRepository.findByOption4AndIsActiveRegex(keyword,true);
 
 			for (GeneralQuestion generalQuestion2 : option1List) {
 				generalQuestion.add(generalQuestion2);
@@ -170,7 +174,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			}
 		}
 		if (type.equals(AssessmentConstants.TYPE3)) {
-			generalQuestion = generalQuestionRepository.findByAnswerRegex(keyword);
+			generalQuestion = generalQuestionRepository.findByAnswerAndIsActiveRegex(keyword,true);
 		}
 		for (GeneralQuestion generalQuestion2 : generalQuestion) {
 			resultDto.add(getGeneralQuestionDto(generalQuestion2));
@@ -180,9 +184,11 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	}
 
 	@Override
+	@Cacheable(value = "cacheGenQnList")
 	public Map<String, Object> getAllGeneralQuestionsPage(Pageable paging) throws Exception {
-		Page<GeneralQuestion> genQnPage = generalQuestionRepository.findAll(paging);
-		List<GeneralQuestionDto> resultDto = new ArrayList<>();
+		paging.getSort();
+		Page<GeneralQuestion> genQnPage = generalQuestionRepository.findAllByIsActive(true,paging);
+		List<GeneralQuestionDto> resultDto = new ArrayList<>(); 
 		List<GeneralQuestion> GeneralQuestionsList = genQnPage.getContent();
 		for (GeneralQuestion GeneralQuestion : GeneralQuestionsList) {
 			resultDto.add(this.getGeneralQuestionDto(GeneralQuestion));
@@ -193,7 +199,23 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	      response.put("currentPage", genQnPage.getNumber());
 	      response.put("totalItems", genQnPage.getTotalElements());
 	      response.put("totalPages", genQnPage.getTotalPages());
+	      response.put("totalRecords", genQnPage.getTotalPages());
 		return response;
+	}
+
+	@Override
+	public List<GeneralQuestionDto> activateAllGenQns() throws Exception {
+		
+		List<GeneralQuestion> GeneralQuestionsList = generalQuestionRepository.findAllByIsActive(false,AssessmentUtil.orderByUpdatedOnDesc());
+
+		List<GeneralQuestionDto> GeneralQuestionDtoList = new ArrayList<GeneralQuestionDto>();
+		for (GeneralQuestion GeneralQuestion : GeneralQuestionsList) {
+			GeneralQuestion.setisActive(true);
+			generalQuestionRepository.save(GeneralQuestion);
+			GeneralQuestionDtoList.add(this.getGeneralQuestionDto(GeneralQuestion));
+		}
+
+		return GeneralQuestionDtoList;
 	}
 
 }

@@ -2,6 +2,9 @@ package com.promantus.Assessment.Repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -38,5 +41,11 @@ public interface TechQuestionRepository extends MongoRepository<TechQuestion, St
 	List<TechQuestion> findByOption4Regex(String keyword);
 
 	boolean existsByQuestion(String question);
+
+	List<TechQuestion> findAllByIsActive(boolean b, Sort orderByUpdatedOnDesc);
+
+	TechQuestion findByIdAndIsActive(Long id, boolean b);
+
+	Page<TechQuestion> findAllByIsActive(boolean b,Pageable paging);
 
 }

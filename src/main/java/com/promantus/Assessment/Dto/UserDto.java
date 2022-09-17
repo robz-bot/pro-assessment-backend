@@ -24,6 +24,7 @@ public class UserDto implements Serializable {
 	private LocalDateTime updatedOn;
 	private int status;
 	private String message;
+	private boolean isActive; 
 
 	public Long getId() {
 		return id;
@@ -164,5 +165,12 @@ public class UserDto implements Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	public boolean getisActive() {
+		return isActive;
+	}
 
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+		
 }

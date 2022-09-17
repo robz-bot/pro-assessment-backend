@@ -25,6 +25,8 @@ public interface TechQuestionService {
 	List<TechQuestionDto> searchtechQns(String type, String keyword) throws Exception;
 
 	Map<String, Object> getAllTechQuestionsPage(Pageable paging) throws Exception;
+
+	List<TechQuestionDto> activateAllTechQns()throws Exception;
 	
 
 }

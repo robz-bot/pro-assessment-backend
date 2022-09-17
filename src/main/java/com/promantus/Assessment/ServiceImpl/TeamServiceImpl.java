@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -22,8 +22,6 @@ import com.promantus.Assessment.Service.TeamService;
 
 @Service
 public class TeamServiceImpl implements TeamService {
-
-	private static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
 
 	@Autowired
 	TeamRepository teamRepository;
@@ -55,6 +53,7 @@ public class TeamServiceImpl implements TeamService {
 			team.setId(commonService.nextSequenceNumber());
 			team.setTeam(teamDto.getTeam());
 			team.setCreatedOn(LocalDateTime.now());
+			team.setisActive(true);
 
 			teamRepository.save(team);
 		}
@@ -64,7 +63,7 @@ public class TeamServiceImpl implements TeamService {
 
 	@Override
 	public List<TeamDto> getAllTeams() {
-		List<Team> TeamsList = teamRepository.findAll();
+		List<Team> TeamsList = teamRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<TeamDto> TeamDtoList = new ArrayList<TeamDto>();
 		for (Team Team : TeamsList) {
@@ -80,6 +79,8 @@ public class TeamServiceImpl implements TeamService {
 		teamDto.setId(team.getId());
 		teamDto.setTeam(team.getTeam());
 		teamDto.setCreatedOn(team.getCreatedOn());
+		teamDto.setisActive(team.getisActive());
+		teamDto.setUpdatedOn(team.getUpdatedOn());
 		return teamDto;
 
 	}
@@ -100,6 +101,8 @@ public class TeamServiceImpl implements TeamService {
 		team.setTeam(teamDto.getTeam());
 		team.setCreatedOn(team.getCreatedOn());
 		team.setUpdatedOn(LocalDateTime.now());
+		team.setUpdatedBy(teamDto.getUpdatedBy());
+		team.setisActive(true);
 
 		teamRepository.save(team);
 		resultDto.setMessage("Record Updated successfully");
@@ -143,6 +146,7 @@ public class TeamServiceImpl implements TeamService {
 	}
 
 	@Override
+	@Cacheable(value = "cacheTeamList")
 	public Map<String, Object> getAllTeamsPage(Pageable paging) throws Exception {
 		Page<Team> teamPage = teamRepository.findAll(paging);
 		List<TeamDto> resultDto = new ArrayList<>();

@@ -2,6 +2,9 @@ package com.promantus.Assessment.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
 
 import com.promantus.Assessment.Dto.ReportsDto;
 
@@ -26,6 +29,8 @@ public interface ReportsService {
 	List<ReportsDto> search(String type, String keyword) throws Exception;
 
 	byte[] downloadReports(List<ReportsDto> reportsDtoList, String lang) throws IOException;
+
+	Map<String, Object> getAllReportsPage(Pageable paging) throws IOException;
 
 
 }

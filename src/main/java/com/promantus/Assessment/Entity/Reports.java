@@ -25,6 +25,9 @@ public class Reports {
 	private String totalMarks;
 	private LocalDateTime reportedOn;
 	private LocalDateTime updatedOn;
+	private String updatedBy;
+	private boolean isActive;
+	private int attempts;
 
 	public Long getId() {
 		return id;
@@ -154,4 +157,29 @@ public class Reports {
 		this.userId = userId;
 	}
 
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+	
+
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public int getAttempts() {
+		return attempts;
+	}
+
+	public void setAttempts(int attempts) {
+		this.attempts = attempts;
+	}
+	
 }

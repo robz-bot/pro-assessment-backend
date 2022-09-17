@@ -21,6 +21,7 @@ public class User {
 	private int attempts;
 	private LocalDateTime updatedOn;
 	private String updatedBy;
+	private boolean isActive;
 
 	public Long getId() {
 		return id;
@@ -118,4 +119,12 @@ public class User {
 		this.teamId = teamId;
 	}
 
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
 }

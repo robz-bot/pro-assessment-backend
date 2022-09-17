@@ -40,8 +40,8 @@ public final class AssessmentUtil {
 	/**
 	 * @return
 	 */
-	public static Sort orderByChangedDateTimeDesc() {
-		return Sort.by(Sort.Direction.DESC, "changedDateTime");
+	public static Sort orderByUpdatedOnDesc() {
+		return Sort.by(Sort.Direction.DESC, "updatedOn");
 	}
 
 

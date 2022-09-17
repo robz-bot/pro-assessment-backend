@@ -2,6 +2,9 @@ package com.promantus.Assessment.Repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -36,5 +39,30 @@ public interface GeneralQuestionRepository extends MongoRepository<GeneralQuesti
 	List<GeneralQuestion> findByOption4Regex(String keyword);
 
 	boolean existsByQuestion(String question);
+
+	Page<GeneralQuestion> findAllByIsActive(boolean b, Pageable paging);
+
+	GeneralQuestion findByIdAndIsActive(Long id, boolean getisActive);
+
+	@Query("{'question': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	List<GeneralQuestion> findByQuestionAndIsActiveRegex(String keyword, boolean b);
+
+	@Query("{'option1': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	List<GeneralQuestion> findByOption1AndIsActiveRegex(String keyword, boolean b);
+
+	@Query("{'option3': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	List<GeneralQuestion> findByOption3AndIsActiveRegex(String keyword, boolean b);
+
+	@Query("{'option2': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	List<GeneralQuestion> findByOption2AndIsActiveRegex(String keyword, boolean b);
+
+	@Query("{'option4': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	List<GeneralQuestion> findByOption4AndIsActiveRegex(String keyword, boolean b);
+
+	@Query("{'answer': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	List<GeneralQuestion> findByAnswerAndIsActiveRegex(String keyword, boolean b);
+
+	List<GeneralQuestion> findAllByIsActive(boolean b, Sort orderByUpdatedOnDesc);
+
 
 }

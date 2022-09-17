@@ -1,23 +1,20 @@
 package com.promantus.Assessment.ServiceImpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
-import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.TechQuestionDto;
-import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -27,8 +24,6 @@ import com.promantus.Assessment.Service.TechQuestionService;
 
 @Service
 public class TechQuestionServiceImpl implements TechQuestionService {
-
-	private static final Logger logger = LoggerFactory.getLogger(TeamServiceImpl.class);
 
 	@Autowired
 	TechQuestionRepository techQuestionRepository;
@@ -60,6 +55,8 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 			techQuestion.setOption3(techQuestionDto.getOption3());
 			techQuestion.setOption4(techQuestionDto.getOption4());
 			techQuestion.setAnswer(techQuestionDto.getAnswer());
+			techQuestion.setUpdatedOn(LocalDateTime.now());
+			techQuestion.setisActive(true);
 			techQuestionRepository.save(techQuestion);
 		}
 		resultDto.setMessage("TechQuestion added successfully");
@@ -68,7 +65,7 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 	@Override
 	public List<TechQuestionDto> getAllTechQuestions() throws Exception {
-		List<TechQuestion> TechQuestionsList = techQuestionRepository.findAll();
+		List<TechQuestion> TechQuestionsList = techQuestionRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<TechQuestionDto> TechQuestionDtoList = new ArrayList<TechQuestionDto>();
 		for (TechQuestion TechQuestion : TechQuestionsList) {
@@ -92,6 +89,8 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		techQuestionDto.setOption3(techQuestion.getOption3());
 		techQuestionDto.setOption4(techQuestion.getOption4());
 		techQuestionDto.setAnswer(techQuestion.getAnswer());
+		techQuestionDto.setisActive(true);
+		techQuestionDto.setUpdatedOn(techQuestion.getUpdatedOn());
 		return techQuestionDto;
 
 	}
@@ -116,7 +115,9 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		techQuestion.setOption3(techQuestionDto.getOption3());
 		techQuestion.setOption4(techQuestionDto.getOption4());
 		techQuestion.setAnswer(techQuestionDto.getAnswer());
-
+		techQuestion.setUpdatedBy(techQuestionDto.getUpdatedBy());
+		techQuestion.setUpdatedOn(LocalDateTime.now());
+		techQuestion.setisActive(true);
 		techQuestionRepository.save(techQuestion);
 		resultDto.setMessage("Record Updated successfully");
 		return resultDto;
@@ -126,14 +127,15 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	@Override
 	public TechQuestionDto deleteTechQuestionById(String id) throws Exception {
 		TechQuestionDto resultDto = new TechQuestionDto();
-		TechQuestion techQuestion = techQuestionRepository.findById(Long.parseLong(id));
+		TechQuestion techQuestion = techQuestionRepository.findByIdAndIsActive(Long.parseLong(id),true);
 		if (techQuestion == null) {
 
 			resultDto.setMessage("data does not exist");
 			return resultDto;
 		}
 
-		techQuestionRepository.delete(techQuestion);
+		techQuestion.setisActive(false);
+		techQuestionRepository.save(techQuestion);
 		resultDto.setMessage("Record Deleted successfully");
 		return resultDto;
 	}
@@ -222,29 +224,25 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 		return resultDto;
 	}
-	
-	@CacheEvict(value = "cacheTechQnList")
-	private void clearTechCache() {
-		
-	}
+
 
 	@Override
 	@Cacheable(value = "cacheTechQnList")
 	public Map<String, Object> getAllTechQuestionsPage(Pageable paging) throws Exception {
-		//clearTechCache();
 		long startTime = System.nanoTime();
 
 		System.out.println("Inside tech Qn Page List");
 		simulateSlowService();
-		Page<TechQuestion> techQnPage = techQuestionRepository.findAll(paging);
-//		List<TechQuestionDto> resultDto = new ArrayList<>();
+		Page<TechQuestion> techQnPage = techQuestionRepository.findAllByIsActive(true,paging);
+		
 		List<TechQuestion> TechQuestionsList = techQnPage.getContent();
-//		for (TechQuestion TechQuestion : TechQuestionsList) {
-//			resultDto.add(this.getTechQuestionDto(TechQuestion));
-//		}
+		List<TechQuestionDto> resultDto = new ArrayList<>();
+		for (TechQuestion techQuestion : TechQuestionsList) {
+			resultDto.add(this.getTechQuestionDto(techQuestion));
+		}
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("techQns", TechQuestionsList);
+		response.put("techQns", resultDto);
 		response.put("currentPage", techQnPage.getNumber());
 		response.put("totalItems", techQnPage.getTotalElements());
 		response.put("totalPages", techQnPage.getTotalPages());
@@ -262,6 +260,20 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		} catch (InterruptedException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	@Override
+	public List<TechQuestionDto> activateAllTechQns() throws Exception {
+		List<TechQuestion> TechQuestionList = techQuestionRepository.findAllByIsActive(false,AssessmentUtil.orderByUpdatedOnDesc());
+
+		List<TechQuestionDto> GeneralQuestionDtoList = new ArrayList<TechQuestionDto>();
+		for (TechQuestion TechQuestion : TechQuestionList) {
+			TechQuestion.setisActive(true);
+			techQuestionRepository.save(TechQuestion);
+			GeneralQuestionDtoList.add(this.getTechQuestionDto(TechQuestion));
+		}
+
+		return GeneralQuestionDtoList;
 	}
 
 }

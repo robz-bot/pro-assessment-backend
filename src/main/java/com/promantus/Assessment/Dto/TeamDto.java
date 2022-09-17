@@ -11,6 +11,8 @@ public class TeamDto implements Serializable {
 	private String team;
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
+	private String updatedBy;
+	private boolean isActive;
 	private int status;
 	private String message;
 
@@ -66,4 +68,20 @@ public class TeamDto implements Serializable {
 		return serialVersionUID;
 	}
 
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
 }

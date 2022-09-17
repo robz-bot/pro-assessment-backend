@@ -13,6 +13,8 @@ public class Team {
 	private String team;
 	private LocalDateTime createdOn;
 	private LocalDateTime updatedOn;
+	private String updatedBy;
+	private boolean isActive;
 
 	public Long getId() {
 		return id;
@@ -45,5 +47,21 @@ public class Team {
 	public void setUpdatedOn(LocalDateTime updatedOn) {
 		this.updatedOn = updatedOn;
 	}
+	
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
 
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
 }

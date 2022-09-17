@@ -26,7 +26,7 @@ import com.promantus.Assessment.Service.DashboardService;
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1")
-public class DashboardControlller extends CommonController {
+public class DashboardController extends CommonController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExamController.class);
 

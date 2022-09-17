@@ -2,10 +2,10 @@ package com.promantus.Assessment.Repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
-import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.User;
 
 public interface UserRepository extends MongoRepository<User, String> {
@@ -29,4 +29,6 @@ public interface UserRepository extends MongoRepository<User, String> {
 	List<User> findAllByAttempts(int i);
 
 	User findByTeamId(String teamId);
+
+	List<User> findAllByIsActive(boolean b, Sort orderByUpdatedOnDesc);
 }

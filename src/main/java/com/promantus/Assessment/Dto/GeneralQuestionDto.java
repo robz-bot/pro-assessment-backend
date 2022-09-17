@@ -1,6 +1,7 @@
 package com.promantus.Assessment.Dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class GeneralQuestionDto implements Serializable {
 
@@ -14,6 +15,9 @@ public class GeneralQuestionDto implements Serializable {
 	private String answer;
 	private int status;
 	private String message;
+	private String updatedBy;
+	private LocalDateTime updatedon;
+	private boolean isActive;
 
 	public Long getId() {
 		return id;
@@ -91,4 +95,29 @@ public class GeneralQuestionDto implements Serializable {
 		this.option4 = option4;
 	}
 
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public LocalDateTime getUpdatedon() {
+		return updatedon;
+	}
+
+	public void setUpdatedon(LocalDateTime updatedon) {
+		this.updatedon = updatedon;
+	}
+
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+	
+	
 }

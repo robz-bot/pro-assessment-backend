@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +25,6 @@ import com.promantus.Assessment.Service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Autowired
 	TechQuestionRepository techQuestionRepository;
@@ -86,6 +82,7 @@ public class UserServiceImpl implements UserService {
 				user.setTeamId(userDto.getTeamId());
 				user.setAttempts(userDto.getAttempts());
 				user.setRegisteredOn(LocalDateTime.now());
+				user.setisActive(true);
 
 				userRepository.save(user);
 				resultDto.setId(currentUserId);
@@ -134,7 +131,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDto> getAllUsers() {
-		List<User> UsersList = userRepository.findAll();
+		List<User> UsersList = userRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<UserDto> UserDtoList = new ArrayList<UserDto>();
 		for (User User : UsersList) {
@@ -156,6 +153,9 @@ public class UserServiceImpl implements UserService {
 		userDto.setManager(user.getManager());
 		userDto.setAttempts(user.getAttempts());
 		userDto.setRegisteredOn(user.getRegisteredOn());
+		userDto.setisActive(user.getisActive());
+		userDto.setUpdatedBy(user.getUpdatedBy());
+		userDto.setUpdatedOn(user.getUpdatedOn());
 		Team team = teamRepository.findById(user.getTeamId());
 		userDto.setTeam(team.getTeam());
 		userDto.setUserName(user.getFirstName() + " " + user.getLastName());
@@ -184,6 +184,8 @@ public class UserServiceImpl implements UserService {
 		user.setAttempts(userDto.getAttempts());
 		user.setRegisteredOn(userDto.getRegisteredOn());
 		user.setUpdatedOn(LocalDateTime.now());
+		user.setUpdatedBy(userDto.getUpdatedBy());
+		user.setisActive(true);
 
 		userRepository.save(user);
 		resultDto.setMessage("Record Updated Successfully");

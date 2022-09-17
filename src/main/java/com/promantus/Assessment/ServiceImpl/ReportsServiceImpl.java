@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
@@ -67,6 +71,9 @@ public class ReportsServiceImpl implements ReportsService {
 		reports.setNoOfQuestionsNotAnswered(reportsDto.getNoOfQuestionsNotAnswered());
 		reports.setReportedOn(LocalDateTime.now());
 		reports.setTotalMarks(reportsDto.getTotalMarks());
+		reports.setisActive(true);
+		reports.setAttempts(repUser.getAttempts() + 1);
+		
 		repUser.setAttempts(repUser.getAttempts() + 1);
 		userRepository.save(repUser);
 		reportsRepository.save(reports);
@@ -98,6 +105,9 @@ public class ReportsServiceImpl implements ReportsService {
 		reportsDto.setStatus(reports.getStatus());
 		reportsDto.setReportedOn(reports.getReportedOn());
 		reportsDto.setTotalMarks(reports.getTotalMarks());
+		reportsDto.setisActive(reports.getisActive());
+		reportsDto.setUpdatedOn(reports.getUpdatedOn());
+		reportsDto.setUpdatedBy(reports.getUpdatedBy());
 		if (reports.getUserId() != null) {
 			int attempts = userRepository.findById(reports.getUserId()).getAttempts();
 
@@ -139,6 +149,8 @@ public class ReportsServiceImpl implements ReportsService {
 		reports.setStatus(reportsDto.getStatus());
 		reports.setReportedOn(reportsDto.getReportedOn());
 		reports.setUpdatedOn(LocalDateTime.now());
+		reports.setUpdatedBy(reportsDto.getUpdatedBy());
+		reports.setisActive(true);
 		reportsRepository.save(reports);
 		resultDto.setMessage("Record Updated successfully");
 		return resultDto;
@@ -360,6 +372,24 @@ public class ReportsServiceImpl implements ReportsService {
 			return null;
 		}
 
+	}
+
+	@Override
+	public Map<String, Object> getAllReportsPage(Pageable paging) throws IOException {
+		paging.getSort();
+		Page<Reports> reportPage = reportsRepository.findAll(paging);
+		List<ReportsDto> resultDto = new ArrayList<>(); 
+		List<Reports> ReportsList = reportPage.getContent();
+		for (Reports Reports : ReportsList) {
+			resultDto.add(this.getReportsDto(Reports));
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+	      response.put("reports", ReportsList);
+	      response.put("currentPage", reportPage.getNumber());
+	      response.put("totalItems", reportPage.getTotalElements());
+	      response.put("totalPages", reportPage.getTotalPages());
+		return response;
 	}
 
 }

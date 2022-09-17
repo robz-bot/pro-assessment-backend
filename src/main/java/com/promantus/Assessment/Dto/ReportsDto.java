@@ -22,6 +22,8 @@ public class ReportsDto implements Serializable {
 	private LocalDateTime updatedOn;
 	private String message;
 	private int attempts;
+	private String updatedBy;
+	private boolean isActive;
 
 	public Long getId() {
 		return id;
@@ -149,4 +151,24 @@ public class ReportsDto implements Serializable {
 		this.attempts = attempts;
 	}
 
+	public String getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(String updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	public boolean getisActive() {
+		return isActive;
+	}
+
+	public void setisActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public void setTeamId(String teamId) {
+		this.teamId = teamId;
+	}
+	
 }
