@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +35,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.net.HttpHeaders;
+import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
+import com.promantus.Assessment.TwilioMethods;
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Service.ReportsService;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 @CrossOrigin("*")
 @RestController
@@ -46,9 +53,10 @@ public class ReportsController extends CommonController {
 
 	@Autowired
 	private ReportsService reportsService;
-	
+
 	@Value("${download.path}")
 	private String downloadsPath;
+
 
 	@PostMapping("/addReports")
 	public ReportsDto addReports(@RequestBody ReportsDto reportsDto,
@@ -117,7 +125,7 @@ public class ReportsController extends CommonController {
 
 		return new ArrayList<ReportsDto>();
 	}
-	
+
 	@GetMapping("/getAllReportsPage")
 	public Map<String, Object> getAllReportsPage(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "3") int size, @RequestHeader(name = "lang", required = false) String lang) {
@@ -225,19 +233,19 @@ public class ReportsController extends CommonController {
 	}
 
 	@GetMapping("/searchByReport/{type}/{keyword}")
-	public List<ReportsDto> search(@PathVariable String type,@PathVariable String keyword,
+	public List<ReportsDto> search(@PathVariable String type, @PathVariable String keyword,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
 		List<ReportsDto> reportsDto = new ArrayList<>();
 		try {
-			reportsDto = reportsService.search(type,keyword);
+			reportsDto = reportsService.search(type, keyword);
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}
 
 		return reportsDto;
 	}
-	
+
 	@GetMapping("/searchByExamStartDate/{reportedOn}")
 	public List<ReportsDto> searchByExamStartDate(@PathVariable String reportedOn,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -277,7 +285,7 @@ public class ReportsController extends CommonController {
 		}
 		return reportsDto;
 	}
-	
+
 	@PutMapping("/downloadReports")
 	public void downloadReports(@RequestBody List<ReportsDto> reportsDtoList,
 			@RequestHeader(name = "lang", required = false) String lang, HttpServletResponse response) {
@@ -287,11 +295,11 @@ public class ReportsController extends CommonController {
 		try {
 
 			File assessmentReportsFile = new File(downloadsPath + "Assessment_Reports.xlsx");
-			FileUtils.writeByteArrayToFile(assessmentReportsFile,
-		    reportsService.downloadReports(reportsDtoList, lang));
+			FileUtils.writeByteArrayToFile(assessmentReportsFile, reportsService.downloadReports(reportsDtoList, lang));
 
 			response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-			response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + assessmentReportsFile.getName());
+			response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+					"attachment;filename=" + assessmentReportsFile.getName());
 			response.setContentLength((int) assessmentReportsFile.length());
 
 			inStream = new BufferedInputStream(new FileInputStream(assessmentReportsFile));
@@ -322,5 +330,24 @@ public class ReportsController extends CommonController {
 				logger.error(AssessmentUtil.getErrorMessage(e));
 			}
 		}
+	}
+
+	@GetMapping(value = "/sendSMS")
+	public ResponseEntity<String> sendSMS() {
+
+		Twilio.init(AssessmentConstants.ACCOUNT_SID, AssessmentConstants.AUTH_TOKEN);
+
+		Message message = Message.creator(new PhoneNumber("+918526774450"), new PhoneNumber("+18156271503"),
+				"Pro Assessment Results - 25/30. Pass").create();
+
+		System.out.print(message.getSid().toString());
+
+		return new ResponseEntity<String>("Message sent successfully", HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/validatePhnNumber/{number}")
+	public boolean validatePhnNumber(@PathVariable String number) {
+
+		return TwilioMethods.verifyPhnNumber(number);
 	}
 }

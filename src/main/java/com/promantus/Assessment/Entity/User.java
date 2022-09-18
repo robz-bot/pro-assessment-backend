@@ -22,6 +22,8 @@ public class User {
 	private LocalDateTime updatedOn;
 	private String updatedBy;
 	private boolean isActive;
+	private String code;
+	private String phnNumber;
 
 	public Long getId() {
 		return id;
@@ -125,6 +127,22 @@ public class User {
 
 	public void setisActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public String getPhnNumber() {
+		return phnNumber;
+	}
+
+	public void setPhnNumber(String phnNumber) {
+		this.phnNumber = phnNumber;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 	
 }

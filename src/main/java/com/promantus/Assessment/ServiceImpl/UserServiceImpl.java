@@ -84,7 +84,15 @@ public class UserServiceImpl implements UserService {
 				user.setRegisteredOn(LocalDateTime.now());
 				user.setisActive(true);
 
+//				user.setCode(userDto.getCode());
+//				user.setPhnNumber(userDto.getPhnNumber());
+
 				userRepository.save(user);
+
+//				String phnNumber = userDto.getCode() + userDto.getPhnNumber();
+
+//				TwilioSMS.sendSMS(phnNumber);
+
 				resultDto.setId(currentUserId);
 				resultDto.setStatus(0);
 				resultDto.setMessage("Assessment Started");
@@ -111,7 +119,7 @@ public class UserServiceImpl implements UserService {
 						resultDto.setMessage("You have couple of days to attend the test, thanks for your interest");
 						return resultDto;
 					}
-				}else {
+				} else {
 					resultDto.setStatus(1);
 					resultDto.setMessage("Something went wrong Contact admin");
 					return resultDto;
@@ -131,7 +139,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDto> getAllUsers() {
-		List<User> UsersList = userRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
+		List<User> UsersList = userRepository.findAllByIsActive(true, AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<UserDto> UserDtoList = new ArrayList<UserDto>();
 		for (User User : UsersList) {

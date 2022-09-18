@@ -33,6 +33,9 @@ import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.UserRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.ReportsService;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 @Service
 public class ReportsServiceImpl implements ReportsService {
@@ -73,11 +76,17 @@ public class ReportsServiceImpl implements ReportsService {
 		reports.setTotalMarks(reportsDto.getTotalMarks());
 		reports.setisActive(true);
 		reports.setAttempts(repUser.getAttempts() + 1);
-		
+
 		repUser.setAttempts(repUser.getAttempts() + 1);
 		userRepository.save(repUser);
 		reportsRepository.save(reports);
 		resultDto.setMessage("Reports added successfully");
+
+		Twilio.init(AssessmentConstants.ACCOUNT_SID, AssessmentConstants.AUTH_TOKEN);
+
+		Message.creator(new PhoneNumber(repUser.getPhnNumber()), new PhoneNumber("+18156271503"),
+				"Pro Assessment Results - " + reports.getTotalMarks() + "/30. " + reports.getStatus()).create();
+
 		return resultDto;
 	}
 
@@ -127,6 +136,7 @@ public class ReportsServiceImpl implements ReportsService {
 				reportsDto.setUserName(user.getFirstName() + " " + user.getLastName());
 			}
 		}
+
 		return reportsDto;
 
 	}
@@ -378,17 +388,17 @@ public class ReportsServiceImpl implements ReportsService {
 	public Map<String, Object> getAllReportsPage(Pageable paging) throws IOException {
 		paging.getSort();
 		Page<Reports> reportPage = reportsRepository.findAll(paging);
-		List<ReportsDto> resultDto = new ArrayList<>(); 
+		List<ReportsDto> resultDto = new ArrayList<>();
 		List<Reports> ReportsList = reportPage.getContent();
 		for (Reports Reports : ReportsList) {
 			resultDto.add(this.getReportsDto(Reports));
 		}
-		
+
 		Map<String, Object> response = new HashMap<>();
-	      response.put("reports", ReportsList);
-	      response.put("currentPage", reportPage.getNumber());
-	      response.put("totalItems", reportPage.getTotalElements());
-	      response.put("totalPages", reportPage.getTotalPages());
+		response.put("reports", ReportsList);
+		response.put("currentPage", reportPage.getNumber());
+		response.put("totalItems", reportPage.getTotalElements());
+		response.put("totalPages", reportPage.getTotalPages());
 		return response;
 	}
 

@@ -25,6 +25,8 @@ public class UserDto implements Serializable {
 	private int status;
 	private String message;
 	private boolean isActive; 
+	private String code;
+	private String phnNumber;
 
 	public Long getId() {
 		return id;
@@ -171,6 +173,22 @@ public class UserDto implements Serializable {
 
 	public void setisActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public String getPhnNumber() {
+		return phnNumber;
+	}
+
+	public void setPhnNumber(String phnNumber) {
+		this.phnNumber = phnNumber;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 		
 }

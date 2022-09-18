@@ -2,9 +2,13 @@ package com.promantus.Assessment.ServiceImpl;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,19 +91,109 @@ public class DashboardServiceImpl implements DashboardService {
 		team.setCount("" + teamRepo.findAll().size() + "");
 		team.setStyleClass(AssessmentConstants.TEAM_ICON_STYLE);
 
-		WidgetDto question = new WidgetDto();
-		question.setTitle("General | Technical");
-		question.setCount("" + genRepo.findAll().size() + " | " + techRepo.findAll().size());
-		question.setStyleClass(AssessmentConstants.QUES_ICON_STYLE);
+		WidgetDto genQuestion = new WidgetDto();
+		genQuestion.setTitle("General");
+		genQuestion.setCount("" + genRepo.findAll().size());
+		genQuestion.setStyleClass(AssessmentConstants.QUES_ICON_STYLE);
+
+		WidgetDto techQuestion = new WidgetDto();
+		techQuestion.setTitle("Technical");
+		techQuestion.setCount("" + techRepo.findAll().size());
+		techQuestion.setStyleClass(AssessmentConstants.QUES_ICON_STYLE);
 
 		resultDto.add(attempt);
 		resultDto.add(user);
 		resultDto.add(pass);
 		resultDto.add(fail);
 		resultDto.add(team);
-		resultDto.add(question);
+		resultDto.add(genQuestion);
+		resultDto.add(techQuestion);
 
 		return resultDto;
+	}
+
+	@Override
+	public Map<Object, Object> userAttemptsChart() throws Exception {
+
+		List<Reports> reportList = reportRepo.findAll();
+
+		ArrayList<String> getRecentDates = new ArrayList<>();
+		ArrayList<Integer> getRecentDatesCount = new ArrayList<>();
+		getRecentDates = DashboardServiceImpl.getRecentDates();
+		Map<Object, Object> map = new HashMap<>();
+		int count1 = 0;
+		int count2 = 0;
+		int count3 = 0;
+		int count4 = 0;
+		int count5 = 0;
+		for (int i = 0; i < reportList.size(); i++) {
+			if (getRecentDates.get(0).equals(reportList.get(i).getReportedOn().toString().split("T")[0].toString())) {
+				count1++;
+			}
+			if (getRecentDates.get(1).equals(reportList.get(i).getReportedOn().toString().split("T")[0].toString())) {
+				count2++;
+			}
+			if (getRecentDates.get(2).equals(reportList.get(i).getReportedOn().toString().split("T")[0].toString())) {
+				count3++;
+			}
+			if (getRecentDates.get(3).equals(reportList.get(i).getReportedOn().toString().split("T")[0].toString())) {
+				count4++;
+			}
+			if (getRecentDates.get(4).equals(reportList.get(i).getReportedOn().toString().split("T")[0].toString())) {
+				count5++;
+			}
+		}
+		getRecentDatesCount.add(count1);
+		getRecentDatesCount.add(count2);
+		getRecentDatesCount.add(count3);
+		getRecentDatesCount.add(count4);
+		getRecentDatesCount.add(count5);
+		map.put("dates", getRecentDates);
+		map.put("count", getRecentDatesCount);
+
+		return map;
+	}
+
+	private static ArrayList<String> getRecentDates() {
+		GregorianCalendar cal = new GregorianCalendar();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		int day = cal.get(GregorianCalendar.DAY_OF_MONTH);
+
+		ArrayList<String> dates = new ArrayList<String>();
+		for (int i = day; i > (day - 5); i--) {
+			cal.set(GregorianCalendar.DAY_OF_MONTH, i);
+
+			Date date = cal.getTime();
+			dates.add(sdf.format(date));
+		}
+
+		return dates;
+
+	}
+
+	@Override
+	public Map<Object, Object> datewisePassFail(String date) throws Exception {
+		List<Reports> reportList = reportRepo.findAll();
+		int passCount = 0;
+		int failCount = 0;
+
+		for (Reports reports : reportList) {
+			if (reports.getReportedOn().toString().split("T")[0].equals(date)
+					&& reports.getStatus().equals(AssessmentConstants.PASS)) {
+				passCount++;
+			}
+			if (reports.getReportedOn().toString().split("T")[0].equals(date)
+					&& reports.getStatus().equals(AssessmentConstants.FAIL)) {
+				failCount++;
+			}
+		}
+
+		Map<Object, Object> map = new HashMap<>();
+		map.put("pass", passCount);
+		map.put("fail", failCount);
+
+		return map;
 	}
 
 }

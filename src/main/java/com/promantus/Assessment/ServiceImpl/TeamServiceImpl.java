@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
+import com.promantus.Assessment.SmtpMailSender;
 import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -28,6 +29,9 @@ public class TeamServiceImpl implements TeamService {
 
 	@Autowired
 	CommonService commonService;
+	
+	@Autowired
+	SmtpMailSender smtpMailSender;
 
 	@Override
 	public Boolean checkTeamName(TeamDto teamDto) throws Exception {
@@ -56,6 +60,8 @@ public class TeamServiceImpl implements TeamService {
 			team.setisActive(true);
 
 			teamRepository.save(team);
+
+//			smtpMailSender.sendMail("robinrajesh@promantus.com", "Sample Mail", team.getTeam().toString());
 		}
 		resultDto.setMessage("Team added successfully");
 		return resultDto;
@@ -63,7 +69,7 @@ public class TeamServiceImpl implements TeamService {
 
 	@Override
 	public List<TeamDto> getAllTeams() {
-		List<Team> TeamsList = teamRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
+		List<Team> TeamsList = teamRepository.findAllByIsActive(true, AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<TeamDto> TeamDtoList = new ArrayList<TeamDto>();
 		for (Team Team : TeamsList) {
@@ -150,15 +156,15 @@ public class TeamServiceImpl implements TeamService {
 	public Map<String, Object> getAllTeamsPage(Pageable paging) throws Exception {
 		Page<Team> teamPage = teamRepository.findAll(paging);
 		List<TeamDto> resultDto = new ArrayList<>();
-		List<Team> TeamsList  = teamPage.getContent();
+		List<Team> TeamsList = teamPage.getContent();
 		for (Team Team : TeamsList) {
 			resultDto.add(this.getTeamDto(Team));
 		}
 		Map<String, Object> response = new HashMap<>();
-	      response.put("teams", TeamsList);
-	      response.put("currentPage", teamPage.getNumber());
-	      response.put("totalItems", teamPage.getTotalElements());
-	      response.put("totalPages", teamPage.getTotalPages());
+		response.put("teams", TeamsList);
+		response.put("currentPage", teamPage.getNumber());
+		response.put("totalItems", teamPage.getTotalElements());
+		response.put("totalPages", teamPage.getTotalPages());
 		return response;
 	}
 
