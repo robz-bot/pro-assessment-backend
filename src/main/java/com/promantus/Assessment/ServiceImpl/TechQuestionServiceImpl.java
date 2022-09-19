@@ -227,7 +227,7 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 
 	@Override
-	@Cacheable(value = "cacheTechQnList")
+//	@Cacheable(value = "cacheTechQnList")
 	public Map<String, Object> getAllTechQuestionsPage(Pageable paging) throws Exception {
 		long startTime = System.nanoTime();
 

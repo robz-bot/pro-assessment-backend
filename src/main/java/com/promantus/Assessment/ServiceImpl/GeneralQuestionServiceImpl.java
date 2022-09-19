@@ -184,7 +184,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	}
 
 	@Override
-	@Cacheable(value = "cacheGenQnList")
+//	@Cacheable(value = "cacheGenQnList")
 	public Map<String, Object> getAllGeneralQuestionsPage(Pageable paging) throws Exception {
 		paging.getSort();
 		Page<GeneralQuestion> genQnPage = generalQuestionRepository.findAllByIsActive(true,paging);

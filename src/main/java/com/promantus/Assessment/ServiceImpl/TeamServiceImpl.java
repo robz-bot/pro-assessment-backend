@@ -152,7 +152,7 @@ public class TeamServiceImpl implements TeamService {
 	}
 
 	@Override
-	@Cacheable(value = "cacheTeamList")
+//	@Cacheable(value = "cacheTeamList")
 	public Map<String, Object> getAllTeamsPage(Pageable paging) throws Exception {
 		Page<Team> teamPage = teamRepository.findAll(paging);
 		List<TeamDto> resultDto = new ArrayList<>();
