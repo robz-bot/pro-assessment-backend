@@ -64,7 +64,8 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	@Override
 	public List<GeneralQuestionDto> getAllGeneralQuestions() throws Exception {
-		List<GeneralQuestion> GeneralQuestionsList = generalQuestionRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
+		List<GeneralQuestion> GeneralQuestionsList = generalQuestionRepository.findAllByIsActive(true,
+				AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<GeneralQuestionDto> GeneralQuestionDtoList = new ArrayList<GeneralQuestionDto>();
 		for (GeneralQuestion GeneralQuestion : GeneralQuestionsList) {
@@ -122,12 +123,12 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	@Override
 	public GeneralQuestionDto deleteGeneralQuestionById(String id) throws Exception {
 		GeneralQuestionDto resultDto = new GeneralQuestionDto();
-		GeneralQuestion generalQuestion = generalQuestionRepository.findByIdAndIsActive(Long.parseLong(id),true);
+		GeneralQuestion generalQuestion = generalQuestionRepository.findByIdAndIsActive(Long.parseLong(id), true);
 		if (generalQuestion == null) {
 			resultDto.setMessage("data does not exist");
 			return resultDto;
 		}
-		
+
 		generalQuestion.setisActive(false);
 		generalQuestionRepository.save(generalQuestion);
 		resultDto.setMessage("Record Deleted successfully");
@@ -149,13 +150,13 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		List<GeneralQuestion> generalQuestion = new ArrayList<>();
 
 		if (type.equals(AssessmentConstants.TYPE1)) {
-			generalQuestion = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword,true);
+			generalQuestion = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true);
 		}
 		if (type.equals(AssessmentConstants.TYPE2)) {
-			List<GeneralQuestion> option1List = generalQuestionRepository.findByOption1AndIsActiveRegex(keyword,true);
-			List<GeneralQuestion> option2List = generalQuestionRepository.findByOption2AndIsActiveRegex(keyword,true);
-			List<GeneralQuestion> option3List = generalQuestionRepository.findByOption3AndIsActiveRegex(keyword,true);
-			List<GeneralQuestion> option4List = generalQuestionRepository.findByOption4AndIsActiveRegex(keyword,true);
+			List<GeneralQuestion> option1List = generalQuestionRepository.findByOption1AndIsActiveRegex(keyword, true);
+			List<GeneralQuestion> option2List = generalQuestionRepository.findByOption2AndIsActiveRegex(keyword, true);
+			List<GeneralQuestion> option3List = generalQuestionRepository.findByOption3AndIsActiveRegex(keyword, true);
+			List<GeneralQuestion> option4List = generalQuestionRepository.findByOption4AndIsActiveRegex(keyword, true);
 
 			for (GeneralQuestion generalQuestion2 : option1List) {
 				generalQuestion.add(generalQuestion2);
@@ -174,7 +175,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			}
 		}
 		if (type.equals(AssessmentConstants.TYPE3)) {
-			generalQuestion = generalQuestionRepository.findByAnswerAndIsActiveRegex(keyword,true);
+			generalQuestion = generalQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true);
 		}
 		for (GeneralQuestion generalQuestion2 : generalQuestion) {
 			resultDto.add(getGeneralQuestionDto(generalQuestion2));
@@ -184,29 +185,67 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	}
 
 	@Override
+	public Map<String, Object> searchGenQnPage(Pageable paging, String type, String keyword) throws Exception {
+		List<GeneralQuestionDto> resultDto = new ArrayList<>();
+		List<GeneralQuestion> generalQuestion = new ArrayList<>();
+		
+		Page<GeneralQuestion> genQnPage = null;
+
+		if (type.equals(AssessmentConstants.TYPE1)) {
+			genQnPage = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true,
+					paging);
+			generalQuestion = genQnPage.getContent();
+		}
+		if (type.equals(AssessmentConstants.TYPE2)) {
+
+			genQnPage = generalQuestionRepository.getAllOptionsIsActiveRegex(keyword, true,
+					paging);
+
+			generalQuestion = genQnPage.getContent();
+		}
+		if (type.equals(AssessmentConstants.TYPE3)) {
+			genQnPage = generalQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true,
+					paging);
+			generalQuestion = genQnPage.getContent();
+		}
+		for (GeneralQuestion generalQuestion2 : generalQuestion) {
+			resultDto.add(getGeneralQuestionDto(generalQuestion2));
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("generalQns", generalQuestion);
+		response.put("currentPage", genQnPage.getNumber());
+		response.put("totalItems", genQnPage.getTotalElements());
+		response.put("totalPages", genQnPage.getTotalPages());
+		response.put("totalRecords", genQnPage.getTotalPages());
+		return response;
+	}
+
+	@Override
 //	@Cacheable(value = "cacheGenQnList")
 	public Map<String, Object> getAllGeneralQuestionsPage(Pageable paging) throws Exception {
 		paging.getSort();
-		Page<GeneralQuestion> genQnPage = generalQuestionRepository.findAllByIsActive(true,paging);
-		List<GeneralQuestionDto> resultDto = new ArrayList<>(); 
+		Page<GeneralQuestion> genQnPage = generalQuestionRepository.findAllByIsActive(true, paging);
+		List<GeneralQuestionDto> resultDto = new ArrayList<>();
 		List<GeneralQuestion> GeneralQuestionsList = genQnPage.getContent();
 		for (GeneralQuestion GeneralQuestion : GeneralQuestionsList) {
 			resultDto.add(this.getGeneralQuestionDto(GeneralQuestion));
 		}
-		
+
 		Map<String, Object> response = new HashMap<>();
-	      response.put("generalQns", GeneralQuestionsList);
-	      response.put("currentPage", genQnPage.getNumber());
-	      response.put("totalItems", genQnPage.getTotalElements());
-	      response.put("totalPages", genQnPage.getTotalPages());
-	      response.put("totalRecords", genQnPage.getTotalPages());
+		response.put("generalQns", GeneralQuestionsList);
+		response.put("currentPage", genQnPage.getNumber());
+		response.put("totalItems", genQnPage.getTotalElements());
+		response.put("totalPages", genQnPage.getTotalPages());
+		response.put("totalRecords", genQnPage.getTotalPages());
 		return response;
 	}
 
 	@Override
 	public List<GeneralQuestionDto> activateAllGenQns() throws Exception {
-		
-		List<GeneralQuestion> GeneralQuestionsList = generalQuestionRepository.findAllByIsActive(false,AssessmentUtil.orderByUpdatedOnDesc());
+
+		List<GeneralQuestion> GeneralQuestionsList = generalQuestionRepository.findAllByIsActive(false,
+				AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<GeneralQuestionDto> GeneralQuestionDtoList = new ArrayList<GeneralQuestionDto>();
 		for (GeneralQuestion GeneralQuestion : GeneralQuestionsList) {

@@ -391,6 +391,9 @@ public class ReportsServiceImpl implements ReportsService {
 		List<ReportsDto> resultDto = new ArrayList<>();
 		List<Reports> ReportsList = reportPage.getContent();
 		for (Reports Reports : ReportsList) {
+			User user = userRepository.findById(Reports.getUserId());
+			Reports.setFirstName(user.getFirstName());
+			Reports.setLastName(user.getLastName());
 			resultDto.add(this.getReportsDto(Reports));
 		}
 

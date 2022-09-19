@@ -64,5 +64,26 @@ public interface GeneralQuestionRepository extends MongoRepository<GeneralQuesti
 
 	List<GeneralQuestion> findAllByIsActive(boolean b, Sort orderByUpdatedOnDesc);
 
+	@Query("{'question': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<GeneralQuestion> findByQuestionAndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'option1': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<GeneralQuestion> findByOption1AndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'option2': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<GeneralQuestion> findByOption2AndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'option3': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<GeneralQuestion> findByOption3AndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'option4': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<GeneralQuestion> findByOption4AndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'answer': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<GeneralQuestion> findByAnswerAndIsActiveRegex(String keyword, boolean b, Pageable paging);
+	
+	@Query("{$or:[{'option1': {$regex: ?0,$options: \"i\"}},{'option2': {$regex: ?0,$options: \"i\"}},{'option3': {$regex: ?0,$options: \"i\"}},{'option4': {$regex: ?0,$options: \"i\"}}],  'isActive':true }")
+	Page<GeneralQuestion> getAllOptionsIsActiveRegex(String keyword, boolean b, Pageable paging);
+
 
 }

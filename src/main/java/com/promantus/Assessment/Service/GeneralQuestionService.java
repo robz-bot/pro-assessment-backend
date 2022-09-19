@@ -25,6 +25,8 @@ public interface GeneralQuestionService {
 	Map<String, Object> getAllGeneralQuestionsPage(Pageable paging) throws Exception;
 
 	List<GeneralQuestionDto> activateAllGenQns() throws Exception;
+
+	Map<String, Object> searchGenQnPage(Pageable paging, String type, String keyword)throws Exception;
 	
 
 }

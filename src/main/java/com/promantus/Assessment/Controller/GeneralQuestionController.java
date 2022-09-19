@@ -220,6 +220,22 @@ public class GeneralQuestionController extends CommonController {
 		return generalQuestionDto;
 	}
 
+	@GetMapping("/searchGenQnPage/{type}/{keyword}")
+	public Map<String, Object> searchGenQnPage(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size, @PathVariable String keyword, @PathVariable String type,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		Pageable paging = PageRequest.of(page, size, Sort.by("updatedon").descending());
+
+		try {
+			return generalQuestionService.searchGenQnPage(paging, type, keyword);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
+	}
+
 	@GetMapping("activateAllGenQns")
 	public List<GeneralQuestionDto> activateAllGenQns(@RequestHeader(name = "lang", required = false) String lang) {
 
