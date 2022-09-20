@@ -32,5 +32,7 @@ public interface ReportsService {
 
 	Map<String, Object> getAllReportsPage(Pageable paging) throws IOException;
 
+	Map<String, Object> searchReportPage(Pageable paging, String type, String keyword)throws Exception;
+
 
 }

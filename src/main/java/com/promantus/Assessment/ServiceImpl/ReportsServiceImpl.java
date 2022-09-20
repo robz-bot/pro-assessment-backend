@@ -405,4 +405,10 @@ public class ReportsServiceImpl implements ReportsService {
 		return response;
 	}
 
+	@Override
+	public Map<String, Object> searchReportPage(Pageable paging, String type, String keyword) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

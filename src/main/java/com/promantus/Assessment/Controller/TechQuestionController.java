@@ -241,6 +241,22 @@ public class TechQuestionController extends CommonController {
 		return techQuestionDto;
 	}
 	
+	@GetMapping("/searchtechQnsPage/{type}/{keyword}")
+	public Map<String, Object> searchtechQnsPage(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size, @PathVariable String keyword, @PathVariable String type,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		Pageable paging = PageRequest.of(page, size, Sort.by("updatedOn").descending());
+
+		try {
+			return techQuestionService.searchtechQnsPage(paging, type, keyword);
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
+	}
+	
 	@GetMapping("activateAllTechQns")
 	public List<TechQuestionDto> activateAllTechQns (
 			@RequestHeader(name = "lang", required = false) String lang) {

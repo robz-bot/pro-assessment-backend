@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.TechQuestion;
 
 public interface TechQuestionRepository extends MongoRepository<TechQuestion, String> {
@@ -46,6 +47,21 @@ public interface TechQuestionRepository extends MongoRepository<TechQuestion, St
 
 	TechQuestion findByIdAndIsActive(Long id, boolean b);
 
-	Page<TechQuestion> findAllByIsActive(boolean b,Pageable paging);
+	Page<TechQuestion> findAllByIsActive(boolean b, Pageable paging);
+
+	@Query("{'question': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<TechQuestion> findByQuestionAndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'answer': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<TechQuestion> findByAnswerAndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{$or:[{'option1': {$regex: ?0,$options: \"i\"}},{'option2': {$regex: ?0,$options: \"i\"}},{'option3': {$regex: ?0,$options: \"i\"}},{'option4': {$regex: ?0,$options: \"i\"}}],  'isActive':true }")
+	Page<TechQuestion> getAllOptionsIsActiveRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'teamId': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
+	Page<TechQuestion> getAllTeamRegex(String keyword, boolean b, Pageable paging);
+
+	@Query("{'teamId': ?0, 'isActive':true }")
+	Page<TechQuestion> findAllByTeamIdAndIsActive(int keyword, boolean b, Pageable paging);
 
 }

@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
+import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
+import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -274,6 +276,45 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		}
 
 		return GeneralQuestionDtoList;
+	}
+
+	@Override
+	public Map<String, Object> searchtechQnsPage(Pageable paging, String type, String keyword) throws Exception {
+		List<TechQuestion> techQuestion = new ArrayList<>();
+		
+		Page<TechQuestion> techQnPage = null;
+
+		if (type.equals(AssessmentConstants.TYPE1)) {
+			techQnPage = techQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true,
+					paging);
+			techQuestion = techQnPage.getContent();
+		}
+		if (type.equals(AssessmentConstants.TYPE2)) {
+
+			techQnPage = techQuestionRepository.getAllOptionsIsActiveRegex(keyword, true,
+					paging);
+
+			techQuestion = techQnPage.getContent();
+		}
+		if (type.equals(AssessmentConstants.TYPE3)) {
+			techQnPage = techQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true,
+					paging);
+			techQuestion = techQnPage.getContent();
+		}
+		if (type.equals(AssessmentConstants.TYPE4)) {
+			techQnPage = techQuestionRepository.findAllByTeamIdAndIsActive(Integer.parseInt(keyword), true,
+					paging);
+
+			techQuestion = techQnPage.getContent();
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("techQns", techQuestion);
+		response.put("currentPage", techQnPage.getNumber());
+		response.put("totalItems", techQnPage.getTotalElements());
+		response.put("totalPages", techQnPage.getTotalPages());
+		response.put("totalRecords", techQnPage.getTotalPages());
+		return response;
 	}
 
 }
