@@ -12,4 +12,6 @@ public interface DashboardService {
 
 	Map<Object, Object> datewisePassFail(String date)throws Exception;
 
+	Map<Object, Object> teamExamReadiness()throws Exception;
+
 }

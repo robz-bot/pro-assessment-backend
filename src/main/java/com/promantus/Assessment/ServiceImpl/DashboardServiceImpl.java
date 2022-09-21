@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.Dto.WidgetDto;
+import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Reports;
+import com.promantus.Assessment.Entity.Team;
+import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Repository.ReportsRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -194,6 +197,43 @@ public class DashboardServiceImpl implements DashboardService {
 		map.put("fail", failCount);
 
 		return map;
+	}
+
+	@Override
+	public Map<Object, Object> teamExamReadiness() throws Exception {
+		List<Team> teamList = teamRepo.findAll();
+		List<GeneralQuestion> genQns = genRepo.findAllByIsActive(true);
+
+		int genCount = genQns.size();
+		Map<Object, Object> teamMap = new HashMap<>();
+		List<String> liveList = new ArrayList<>();
+		List<String> errList = new ArrayList<>();
+		for (Team team : teamList) {
+			List<TechQuestion> techList = techRepo.findAllByTeamIdAndIsActive(team.getId(), true);
+			int count = techList.size();
+			teamMap.put(team.getTeam(), count);
+			if (count < 25) {
+				int temp = 25 - count;
+
+				errList.add("Oops! To begin the assessment, " + temp
+						+ " more technical questions are required for the team - " + team.getTeam());
+			} else if (genCount >= 5 && count >= 25) {
+				liveList.add("Assessment is Live for the team - " + team.getTeam());
+			}
+
+			// if(count)
+		}
+		teamMap.put("liveList", liveList);
+		teamMap.put("errList", errList);
+		teamMap.put("genQnsCount", genQns.size());
+
+		if (genCount < 6) {
+			int temp = 25 - genCount;
+			teamMap.put("genQnInfo",
+					"Oops! To begin the assessment, " + temp + " more technical questions are required.");
+		}
+
+		return teamMap;
 	}
 
 }

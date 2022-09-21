@@ -77,5 +77,19 @@ public class DashboardController extends CommonController {
 
 		return new HashMap<Object, Object>();
 	}
+	
+	@GetMapping("/teamExamReadiness")
+	public Map<Object, Object> teamExamReadiness(@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return dashboardService.teamExamReadiness();
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<Object, Object>();
+	}
 
 }
