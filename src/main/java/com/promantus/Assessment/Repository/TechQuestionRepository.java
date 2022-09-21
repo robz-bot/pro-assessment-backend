@@ -64,4 +64,6 @@ public interface TechQuestionRepository extends MongoRepository<TechQuestion, St
 	@Query("{'teamId': ?0, 'isActive':true }")
 	Page<TechQuestion> findAllByTeamIdAndIsActive(int keyword, boolean b, Pageable paging);
 
+	List<TechQuestion> findAllByIsActive(boolean b);
+
 }

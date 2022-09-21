@@ -45,7 +45,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			return resultDto;
 		}
 
-		if (generalQuestionRepository.findAll().size() > 0) {
+//		if (generalQuestionRepository.findAll().size() > 0) {
 			GeneralQuestion generalQuestion = new GeneralQuestion();
 			generalQuestion.setId(commonService.nextSequenceNumber());
 			generalQuestion.setQuestion(generalQuestionDto.getQuestion());
@@ -57,7 +57,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			generalQuestion.setUpdatedon(LocalDateTime.now());
 			generalQuestion.setisActive(true);
 			generalQuestionRepository.save(generalQuestion);
-		}
+//		}
 		resultDto.setMessage("General Question added successfully");
 		return resultDto;
 	}

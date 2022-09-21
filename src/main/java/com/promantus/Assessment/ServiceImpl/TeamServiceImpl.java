@@ -16,8 +16,12 @@ import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.SmtpMailSender;
 import com.promantus.Assessment.Dto.TeamDto;
+import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Team;
+import com.promantus.Assessment.Entity.TechQuestion;
+import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
+import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.TeamService;
 
@@ -32,6 +36,12 @@ public class TeamServiceImpl implements TeamService {
 	
 	@Autowired
 	SmtpMailSender smtpMailSender;
+	
+	@Autowired 
+	GeneralQuestionRepository genQnRepo;
+	
+	@Autowired
+	TechQuestionRepository techQnRepo;
 
 	@Override
 	public Boolean checkTeamName(TeamDto teamDto) throws Exception {
@@ -157,14 +167,26 @@ public class TeamServiceImpl implements TeamService {
 		Page<Team> teamPage = teamRepository.findAll(paging);
 		List<TeamDto> resultDto = new ArrayList<>();
 		List<Team> TeamsList = teamPage.getContent();
-		for (Team Team : TeamsList) {
-			resultDto.add(this.getTeamDto(Team));
-		}
+		
+		List<GeneralQuestion> allGenQns = genQnRepo.findAllByIsActive(true);
+		List<TechQuestion> allTechQns = techQnRepo.findAllByIsActive(true);
+		
+//		for (Team Team : TeamsList) {
+//			for (TechQuestion techQuestion : allTechQns) {
+//				if(techQuestion.getTeamId() == )
+//			}
+//		}
+		
+		
+		
 		Map<String, Object> response = new HashMap<>();
 		response.put("teams", TeamsList);
 		response.put("currentPage", teamPage.getNumber());
 		response.put("totalItems", teamPage.getTotalElements());
 		response.put("totalPages", teamPage.getTotalPages());
+		response.put("genQnsCount", allGenQns.size());
+		response.put("techQnsCount", allTechQns.size());
+		
 		return response;
 	}
 

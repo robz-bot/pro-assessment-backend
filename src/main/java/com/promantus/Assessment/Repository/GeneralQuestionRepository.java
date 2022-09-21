@@ -85,5 +85,8 @@ public interface GeneralQuestionRepository extends MongoRepository<GeneralQuesti
 	@Query("{$or:[{'option1': {$regex: ?0,$options: \"i\"}},{'option2': {$regex: ?0,$options: \"i\"}},{'option3': {$regex: ?0,$options: \"i\"}},{'option4': {$regex: ?0,$options: \"i\"}}],  'isActive':true }")
 	Page<GeneralQuestion> getAllOptionsIsActiveRegex(String keyword, boolean b, Pageable paging);
 
+	List<GeneralQuestion> findAllByIsActive(boolean b);
+
+
 
 }

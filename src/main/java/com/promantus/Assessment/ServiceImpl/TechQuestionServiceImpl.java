@@ -67,7 +67,8 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 	@Override
 	public List<TechQuestionDto> getAllTechQuestions() throws Exception {
-		List<TechQuestion> TechQuestionsList = techQuestionRepository.findAllByIsActive(true,AssessmentUtil.orderByUpdatedOnDesc());
+		List<TechQuestion> TechQuestionsList = techQuestionRepository.findAllByIsActive(true,
+				AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<TechQuestionDto> TechQuestionDtoList = new ArrayList<TechQuestionDto>();
 		for (TechQuestion TechQuestion : TechQuestionsList) {
@@ -84,7 +85,9 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 		techQuestionDto.setId(techQuestion.getId());
 		techQuestionDto.setTeamId(techQuestion.getTeamId());
-		techQuestionDto.setTeam(team.getTeam());
+		if (team.getTeam() != null) {
+			techQuestionDto.setTeam(team.getTeam());
+		}
 		techQuestionDto.setQuestion(techQuestion.getQuestion());
 		techQuestionDto.setOption1(techQuestion.getOption1());
 		techQuestionDto.setOption2(techQuestion.getOption2());
@@ -129,7 +132,7 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	@Override
 	public TechQuestionDto deleteTechQuestionById(String id) throws Exception {
 		TechQuestionDto resultDto = new TechQuestionDto();
-		TechQuestion techQuestion = techQuestionRepository.findByIdAndIsActive(Long.parseLong(id),true);
+		TechQuestion techQuestion = techQuestionRepository.findByIdAndIsActive(Long.parseLong(id), true);
 		if (techQuestion == null) {
 
 			resultDto.setMessage("data does not exist");
@@ -227,7 +230,6 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		return resultDto;
 	}
 
-
 	@Override
 //	@Cacheable(value = "cacheTechQnList")
 	public Map<String, Object> getAllTechQuestionsPage(Pageable paging) throws Exception {
@@ -235,8 +237,8 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 		System.out.println("Inside tech Qn Page List");
 		simulateSlowService();
-		Page<TechQuestion> techQnPage = techQuestionRepository.findAllByIsActive(true,paging);
-		
+		Page<TechQuestion> techQnPage = techQuestionRepository.findAllByIsActive(true, paging);
+
 		List<TechQuestion> TechQuestionsList = techQnPage.getContent();
 		List<TechQuestionDto> resultDto = new ArrayList<>();
 		for (TechQuestion techQuestion : TechQuestionsList) {
@@ -250,8 +252,8 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		response.put("totalPages", techQnPage.getTotalPages());
 
 		long endTime = System.nanoTime();
-		System.out.println("Start Time: " + (startTime/1000)%60);
-		System.out.println("End Time: " + (endTime/1000)%60);
+		System.out.println("Start Time: " + (startTime / 1000) % 60);
+		System.out.println("End Time: " + (endTime / 1000) % 60);
 		return response;
 	}
 
@@ -266,7 +268,8 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 	@Override
 	public List<TechQuestionDto> activateAllTechQns() throws Exception {
-		List<TechQuestion> TechQuestionList = techQuestionRepository.findAllByIsActive(false,AssessmentUtil.orderByUpdatedOnDesc());
+		List<TechQuestion> TechQuestionList = techQuestionRepository.findAllByIsActive(false,
+				AssessmentUtil.orderByUpdatedOnDesc());
 
 		List<TechQuestionDto> GeneralQuestionDtoList = new ArrayList<TechQuestionDto>();
 		for (TechQuestion TechQuestion : TechQuestionList) {
@@ -281,29 +284,25 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	@Override
 	public Map<String, Object> searchtechQnsPage(Pageable paging, String type, String keyword) throws Exception {
 		List<TechQuestion> techQuestion = new ArrayList<>();
-		
+
 		Page<TechQuestion> techQnPage = null;
 
 		if (type.equals(AssessmentConstants.TYPE1)) {
-			techQnPage = techQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true,
-					paging);
+			techQnPage = techQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true, paging);
 			techQuestion = techQnPage.getContent();
 		}
 		if (type.equals(AssessmentConstants.TYPE2)) {
 
-			techQnPage = techQuestionRepository.getAllOptionsIsActiveRegex(keyword, true,
-					paging);
+			techQnPage = techQuestionRepository.getAllOptionsIsActiveRegex(keyword, true, paging);
 
 			techQuestion = techQnPage.getContent();
 		}
 		if (type.equals(AssessmentConstants.TYPE3)) {
-			techQnPage = techQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true,
-					paging);
+			techQnPage = techQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true, paging);
 			techQuestion = techQnPage.getContent();
 		}
 		if (type.equals(AssessmentConstants.TYPE4)) {
-			techQnPage = techQuestionRepository.findAllByTeamIdAndIsActive(Integer.parseInt(keyword), true,
-					paging);
+			techQnPage = techQuestionRepository.findAllByTeamIdAndIsActive(Integer.parseInt(keyword), true, paging);
 
 			techQuestion = techQnPage.getContent();
 		}
