@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.promantus.Assessment.AssessmentConstants;
@@ -33,7 +34,8 @@ public class UserController extends CommonController {
 	private UserService userService;
 
 	@PostMapping("/addUser")
-	public UserDto addUser(@RequestBody UserDto userDto, @RequestHeader(name = "lang", required = false) String lang) {
+	public UserDto addUser(@RequestBody UserDto userDto,
+			@RequestParam(defaultValue = "false") boolean fromAlreadyAppeared , @RequestHeader(name = "lang", required = false) String lang) {
 
 		UserDto resultDto = new UserDto();
 		try {
@@ -74,7 +76,7 @@ public class UserController extends CommonController {
 				return resultDto;
 			}
 
-			resultDto = userService.addUser(userDto, lang);
+			resultDto = userService.addUser(userDto, fromAlreadyAppeared,lang);
 
 		} catch (final Exception e) {
 

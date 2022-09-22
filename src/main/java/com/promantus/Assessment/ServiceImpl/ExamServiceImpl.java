@@ -38,34 +38,33 @@ public class ExamServiceImpl implements ExamService {
 		List<ExamDto> resultDto = new ArrayList<ExamDto>();
 
 		List<GeneralQuestion> genQns = new ArrayList<>();
-		genQns = genQnRepo.findAll();
+		genQns = genQnRepo.findAllByIsActive(true);
 		List<GeneralQuestion> genQns1 = genQnRepo.findAllQuestionDistinctBy();
 
-		List<TechQuestion> techQns = techQnRepo.findAll();
+		List<TechQuestion> techQns = techQnRepo.findAllByIsActive(true);
 		List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
-		System.out.println(techQns1.size());
 		
 
 		if (genQns.size() > 0 && techQns.size() > 0) {
 			// Randomize the Qns
-			Collections.shuffle(genQns1);
-			Collections.shuffle(techQns1);
+			Collections.shuffle(genQns);
+			Collections.shuffle(techQns);
 
 			Integer runningNumber = 0;
 			// Pick 5 Qns from genQn and 25 from techQn
-			for (int i = 0; i < genQns1.size(); i++) {
+			for (int i = 0; i < genQns.size(); i++) {
 				// run from index 0 to 4
 				if (i <= 4) {
 					runningNumber++;
-					resultDto.add(this.getGeneralQuestionDto(runningNumber, genQns1.get(i)));
+					resultDto.add(this.getGeneralQuestionDto(runningNumber, genQns.get(i)));
 				}
 			}
 
-			for (int i = 0; i < techQns1.size(); i++) {
+			for (int i = 0; i < techQns.size(); i++) {
 				// run from index 0 to 24
 				if (i <= 24) {
 					runningNumber++;
-					resultDto.add(this.getTechQuestionDto(runningNumber, techQns1.get(i)));
+					resultDto.add(this.getTechQuestionDto(runningNumber, techQns.get(i)));
 				}
 			}
 

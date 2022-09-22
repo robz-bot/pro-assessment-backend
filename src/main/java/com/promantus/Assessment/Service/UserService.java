@@ -19,7 +19,7 @@ public interface UserService {
 
 	Boolean checkUserName(String userName) throws Exception;
 
-	UserDto addUser(UserDto userDto, String lang) throws Exception;
+	UserDto addUser(UserDto userDto, boolean fromAlreadyAppeared , String lang) throws Exception;
 
 	UserDto getUserByEmail(String email)throws Exception;
 

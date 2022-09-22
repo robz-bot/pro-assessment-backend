@@ -55,9 +55,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto addUser(final UserDto userDto, String lang) throws Exception {
+	public UserDto addUser(final UserDto userDto, boolean fromAlreadyAppeared, String lang) throws Exception {
 
 		UserDto resultDto = new UserDto();
+
+		User userByEmpCode = userRepository.findByEmpCode(userDto.getEmpCode());
+
+		if (fromAlreadyAppeared) {
+			if (userByEmpCode != null) {
+				resultDto.setStatus(1);
+				resultDto.setMessage("Employee Code already exists");
+				return resultDto;
+			}
+		}
 
 		List<TechQuestion> listA = new ArrayList<TechQuestion>();
 		listA = techQuestionRepository.findByTeamId(userDto.getTeamId());
