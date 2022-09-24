@@ -1,6 +1,9 @@
 package com.promantus.Assessment.Service;
 
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
 
 import com.promantus.Assessment.Dto.UserDto;
 
@@ -19,9 +22,13 @@ public interface UserService {
 
 	Boolean checkUserName(String userName) throws Exception;
 
-	UserDto addUser(UserDto userDto, boolean fromAlreadyAppeared , String lang) throws Exception;
+	UserDto addUser(UserDto userDto, String fromAlreadyAppeared , String lang) throws Exception;
 
 	UserDto getUserByEmail(String email)throws Exception;
+
+	Map<String, Object> getAllUsersPage(Pageable paging)throws Exception;
+
+	Map<String, Object> searchUserPage(Pageable paging, String type, String keyword)throws Exception;
 
 
 

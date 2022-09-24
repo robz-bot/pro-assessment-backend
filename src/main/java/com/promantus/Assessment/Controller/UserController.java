@@ -1,11 +1,16 @@
 package com.promantus.Assessment.Controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
+import com.promantus.Assessment.Dto.SearchDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Service.UserService;
 
@@ -33,9 +39,9 @@ public class UserController extends CommonController {
 	@Autowired
 	private UserService userService;
 
-	@PostMapping("/addUser")
-	public UserDto addUser(@RequestBody UserDto userDto,
-			@RequestParam(defaultValue = "false") boolean fromAlreadyAppeared , @RequestHeader(name = "lang", required = false) String lang) {
+	@PostMapping("/addUser/{isFromAreadyAppread}")
+	public UserDto addUser(@RequestBody UserDto userDto, @PathVariable String isFromAreadyAppread,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
 		UserDto resultDto = new UserDto();
 		try {
@@ -76,7 +82,7 @@ public class UserController extends CommonController {
 				return resultDto;
 			}
 
-			resultDto = userService.addUser(userDto, fromAlreadyAppeared,lang);
+			resultDto = userService.addUser(userDto, isFromAreadyAppread, lang);
 
 		} catch (final Exception e) {
 
@@ -101,6 +107,38 @@ public class UserController extends CommonController {
 		}
 
 		return new ArrayList<UserDto>();
+	}
+	
+	@GetMapping("/getAllUsersPage")
+	public Map<String, Object> getAllUsersPage(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size, @RequestHeader(name = "lang", required = false) String lang) {
+
+		Pageable paging = PageRequest.of(page, size, Sort.by("registeredOn").descending());
+		try {
+
+			return userService.getAllUsersPage(paging);
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
+	}
+	
+	@PostMapping("/searchUserPage")
+	public Map<String, Object> searchUserPage(@RequestBody SearchDto searchValues,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		Pageable paging = PageRequest.of(page, size, Sort.by("registeredOn").descending());
+
+		try {
+			return userService.searchUserPage(paging, searchValues.getType(), searchValues.getKeyword());
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
 	}
 
 	@GetMapping("/getUserById/{userId}")

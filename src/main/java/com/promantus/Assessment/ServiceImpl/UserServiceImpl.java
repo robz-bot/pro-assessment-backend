@@ -3,12 +3,19 @@ package com.promantus.Assessment.ServiceImpl;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
+import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Reports;
@@ -55,14 +62,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserDto addUser(final UserDto userDto, boolean fromAlreadyAppeared, String lang) throws Exception {
+	public UserDto addUser(final UserDto userDto, String fromAlreadyAppeared, String lang) throws Exception {
 
 		UserDto resultDto = new UserDto();
 
-		User userByEmpCode = userRepository.findByEmpCode(userDto.getEmpCode());
+		List<User> userByEmpCode = userRepository.findAllByEmpCode(userDto.getEmpCode());
 
-		if (fromAlreadyAppeared) {
-			if (userByEmpCode != null) {
+		if (fromAlreadyAppeared.equals("false")) {
+			if (userByEmpCode.size() > 0) {
 				resultDto.setStatus(1);
 				resultDto.setMessage("Employee Code already exists");
 				return resultDto;
@@ -174,8 +181,10 @@ public class UserServiceImpl implements UserService {
 		userDto.setisActive(user.getisActive());
 		userDto.setUpdatedBy(user.getUpdatedBy());
 		userDto.setUpdatedOn(user.getUpdatedOn());
-		Team team = teamRepository.findById(user.getTeamId());
-		userDto.setTeam(team.getTeam());
+		if (user.getTeamId() != null) {
+			Team team = teamRepository.findById(user.getTeamId());
+			userDto.setTeam(team.getTeam());
+		}
 		userDto.setUserName(user.getFirstName() + " " + user.getLastName());
 		return userDto;
 
@@ -244,6 +253,80 @@ public class UserServiceImpl implements UserService {
 		}
 
 		return user != null ? this.getUserDto(user) : userDto;
+	}
+
+	@Override
+	public Map<String, Object> getAllUsersPage(Pageable paging) throws Exception {
+		paging.getSort();
+		Page<User> userPage = userRepository.findAllByIsActive(true, paging);
+		List<UserDto> resultDto = new ArrayList<>();
+		List<User> userList = userPage.getContent();
+		for (User User : userList) {
+			resultDto.add(this.getUserDto(User));
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("userList", resultDto);
+		response.put("currentPage", userPage.getNumber());
+		response.put("totalItems", userPage.getTotalElements());
+		response.put("totalPages", userPage.getTotalPages());
+		response.put("totalRecords", userPage.getTotalPages());
+		return response;
+	}
+
+	@Override
+	public Map<String, Object> searchUserPage(Pageable paging, String type, String keyword) throws Exception {
+		List<UserDto> resultDto = new ArrayList<>();
+		List<User> userList = new ArrayList<>();
+
+		Page<User> userPage = null;
+		keyword = AssessmentDefaultMethods.replaceSplCharKeyword(keyword);
+
+		// username
+		if (type.equals(AssessmentConstants.TYPE5)) {
+//			keyword = keyword.replace("+", "\\+").replace("$", "\\$").replace("^", "\\^").replace("{", "\\{");
+			userPage = userRepository.findByFirstNameLastNameRegex(keyword, true, paging);
+			userList = userPage.getContent();
+		}
+		// empcode
+		if (type.equals(AssessmentConstants.TYPE10)) {
+
+			userPage = userRepository.getAllEmpCodeRegex(keyword, true, paging);
+
+			userList = userPage.getContent();
+		}
+		// email
+		if (type.equals(AssessmentConstants.TYPE11)) {
+			userPage = userRepository.getAllEmailRegex(keyword, true, paging);
+			userList = userPage.getContent();
+		}
+		// manager
+		if (type.equals(AssessmentConstants.TYPE12)) {
+			userPage = userRepository.getAllManagerRegex(keyword, true, paging);
+			userList = userPage.getContent();
+		}
+		// team
+		if (type.equals(AssessmentConstants.TYPE4)) {
+			userPage = userRepository.findAllByTeamId(Long.parseLong(keyword), paging);
+			userList = userPage.getContent();
+		}
+		// attempts
+		if (type.equals(AssessmentConstants.TYPE9)) {
+			userPage = userRepository.findAllByAttempts(Integer.parseInt(keyword), true, paging);
+			userList = userPage.getContent();
+		}
+
+		for (User user : userList) {
+			resultDto.add(getUserDto(user));
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("userList", resultDto);
+		response.put("currentPage", userPage.getNumber());
+		response.put("totalItems", userPage.getTotalElements());
+		response.put("totalPages", userPage.getTotalPages());
+		response.put("totalRecords", userPage.getTotalPages());
+		return response;
 	}
 
 }

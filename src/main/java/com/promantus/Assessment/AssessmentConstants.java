@@ -37,6 +37,9 @@ public final class AssessmentConstants {
 	public static final String TYPE7 = "percentage";
 	public static final String TYPE8 = "date";
 	public static final String TYPE9 = "attempts";
+	public static final String TYPE10 = "empcode";
+	public static final String TYPE11 = "email";
+	public static final String TYPE12 = "manager";
 
 //	Percentage Range
 	public static final String RANGE0 = "0-25";

@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
@@ -46,17 +47,17 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		}
 
 //		if (generalQuestionRepository.findAll().size() > 0) {
-			GeneralQuestion generalQuestion = new GeneralQuestion();
-			generalQuestion.setId(commonService.nextSequenceNumber());
-			generalQuestion.setQuestion(generalQuestionDto.getQuestion());
-			generalQuestion.setOption1(generalQuestionDto.getOption1());
-			generalQuestion.setOption2(generalQuestionDto.getOption2());
-			generalQuestion.setOption3(generalQuestionDto.getOption3());
-			generalQuestion.setOption4(generalQuestionDto.getOption4());
-			generalQuestion.setAnswer(generalQuestionDto.getAnswer());
-			generalQuestion.setUpdatedon(LocalDateTime.now());
-			generalQuestion.setisActive(true);
-			generalQuestionRepository.save(generalQuestion);
+		GeneralQuestion generalQuestion = new GeneralQuestion();
+		generalQuestion.setId(commonService.nextSequenceNumber());
+		generalQuestion.setQuestion(generalQuestionDto.getQuestion());
+		generalQuestion.setOption1(generalQuestionDto.getOption1());
+		generalQuestion.setOption2(generalQuestionDto.getOption2());
+		generalQuestion.setOption3(generalQuestionDto.getOption3());
+		generalQuestion.setOption4(generalQuestionDto.getOption4());
+		generalQuestion.setAnswer(generalQuestionDto.getAnswer());
+		generalQuestion.setUpdatedon(LocalDateTime.now());
+		generalQuestion.setisActive(true);
+		generalQuestionRepository.save(generalQuestion);
 //		}
 		resultDto.setMessage("General Question added successfully");
 		return resultDto;
@@ -150,6 +151,8 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		List<GeneralQuestion> generalQuestion = new ArrayList<>();
 
 		if (type.equals(AssessmentConstants.TYPE1)) {
+//			keyword = "'.*\\\\"+ keyword + "*'";
+			keyword = keyword.replace("+", "\\+");
 			generalQuestion = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true);
 		}
 		if (type.equals(AssessmentConstants.TYPE2)) {
@@ -188,24 +191,23 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	public Map<String, Object> searchGenQnPage(Pageable paging, String type, String keyword) throws Exception {
 		List<GeneralQuestionDto> resultDto = new ArrayList<>();
 		List<GeneralQuestion> generalQuestion = new ArrayList<>();
-		
+
 		Page<GeneralQuestion> genQnPage = null;
+		keyword = AssessmentDefaultMethods.replaceSplCharKeyword(keyword);
 
 		if (type.equals(AssessmentConstants.TYPE1)) {
-			genQnPage = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true,
-					paging);
+//			keyword = keyword.replace("+", "\\+").replace("$", "\\$").replace("^", "\\^").replace("{", "\\{");
+			genQnPage = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true, paging);
 			generalQuestion = genQnPage.getContent();
 		}
 		if (type.equals(AssessmentConstants.TYPE2)) {
 
-			genQnPage = generalQuestionRepository.getAllOptionsIsActiveRegex(keyword, true,
-					paging);
+			genQnPage = generalQuestionRepository.getAllOptionsIsActiveRegex(keyword, true, paging);
 
 			generalQuestion = genQnPage.getContent();
 		}
 		if (type.equals(AssessmentConstants.TYPE3)) {
-			genQnPage = generalQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true,
-					paging);
+			genQnPage = generalQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true, paging);
 			generalQuestion = genQnPage.getContent();
 		}
 		for (GeneralQuestion generalQuestion2 : generalQuestion) {
@@ -213,7 +215,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		}
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("generalQns", generalQuestion);
+		response.put("generalQns", resultDto);
 		response.put("currentPage", genQnPage.getNumber());
 		response.put("totalItems", genQnPage.getTotalElements());
 		response.put("totalPages", genQnPage.getTotalPages());

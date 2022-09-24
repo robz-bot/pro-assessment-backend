@@ -41,7 +41,7 @@ public class ExamServiceImpl implements ExamService {
 		genQns = genQnRepo.findAllByIsActive(true);
 		List<GeneralQuestion> genQns1 = genQnRepo.findAllQuestionDistinctBy();
 
-		List<TechQuestion> techQns = techQnRepo.findAllByIsActive(true);
+		List<TechQuestion> techQns = techQnRepo.findAllByTeamIdAndIsActive(teamId,true);
 		List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
 		
 

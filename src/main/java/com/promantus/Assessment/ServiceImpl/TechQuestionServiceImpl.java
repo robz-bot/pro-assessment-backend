@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
@@ -286,6 +287,7 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		List<TechQuestion> techQuestion = new ArrayList<>();
 
 		Page<TechQuestion> techQnPage = null;
+		keyword = AssessmentDefaultMethods.replaceSplCharKeyword(keyword);
 
 		if (type.equals(AssessmentConstants.TYPE1)) {
 			techQnPage = techQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true, paging);
@@ -306,9 +308,16 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 			techQuestion = techQnPage.getContent();
 		}
+		
+		List<TechQuestionDto> TechQuestionDtoList = new ArrayList<TechQuestionDto>();
+		
+		for (TechQuestion techQuestion2 : techQuestion) {
+			TechQuestionDtoList.add(this.getTechQuestionDto(techQuestion2));
+		}
+		
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("techQns", techQuestion);
+		response.put("techQns", TechQuestionDtoList);
 		response.put("currentPage", techQnPage.getNumber());
 		response.put("totalItems", techQnPage.getTotalElements());
 		response.put("totalPages", techQnPage.getTotalPages());

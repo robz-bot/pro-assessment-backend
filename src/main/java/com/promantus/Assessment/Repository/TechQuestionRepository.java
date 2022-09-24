@@ -68,4 +68,6 @@ public interface TechQuestionRepository extends MongoRepository<TechQuestion, St
 
 	List<TechQuestion> findAllByTeamIdAndIsActive(Long id, boolean b);
 
+	List<TechQuestion> findAllByTeamIdAndIsActive(String teamId, boolean b);
+
 }

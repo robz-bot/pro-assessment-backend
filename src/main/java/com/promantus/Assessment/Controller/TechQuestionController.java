@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
+import com.promantus.Assessment.Dto.SearchDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Service.TechQuestionService;
 
@@ -241,15 +242,15 @@ public class TechQuestionController extends CommonController {
 		return techQuestionDto;
 	}
 	
-	@GetMapping("/searchtechQnsPage/{type}/{keyword}")
-	public Map<String, Object> searchtechQnsPage(@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "3") int size, @PathVariable String keyword, @PathVariable String type,
+	@PostMapping("/searchtechQnsPage")
+	public Map<String, Object> searchtechQnsPage(@RequestBody SearchDto searchValues, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "3") int size,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
 		Pageable paging = PageRequest.of(page, size, Sort.by("updatedOn").descending());
 
 		try {
-			return techQuestionService.searchtechQnsPage(paging, type, keyword);
+			return techQuestionService.searchtechQnsPage(paging, searchValues.getType(), searchValues.getKeyword());
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}

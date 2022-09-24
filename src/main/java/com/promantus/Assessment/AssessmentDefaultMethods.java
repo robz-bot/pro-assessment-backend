@@ -1,5 +1,8 @@
 package com.promantus.Assessment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.ss.usermodel.Sheet;
 
 public final class AssessmentDefaultMethods {
@@ -20,5 +23,31 @@ public final class AssessmentDefaultMethods {
 		}
 	}
 
+	//Replace spl chars 
+	// eg., + replace with \\+ 
+	// to search the keywords with regex 
+	public static final String replaceSplCharKeyword(String keyword) {
+		List<String> temp = new ArrayList<>();
+		temp.add("(");
+		temp.add(")");
+		temp.add("+");
+		temp.add("$");
+		temp.add("^");
+		temp.add("{");
+		temp.add("}");
+		temp.add("?");
+		temp.add(">");
+		temp.add("<");
+		temp.add(".");
+		temp.add("[");
+		temp.add("]");
+		for (String temp1 : temp) {
+			if (keyword.contains(temp1)) {
+				keyword = keyword.replace(temp1, "\\" + temp1);
+			}
+		}
+
+		return keyword;
+	}
 
 }
