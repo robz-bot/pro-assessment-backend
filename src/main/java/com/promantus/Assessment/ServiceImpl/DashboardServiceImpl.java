@@ -7,13 +7,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.Dto.ActiveInactiveDto;
 import com.promantus.Assessment.Dto.WidgetDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Reports;
@@ -234,6 +237,68 @@ public class DashboardServiceImpl implements DashboardService {
 		}
 
 		return teamMap;
+	}
+
+	@Override
+	public Map<Object, Object> questionsActiveInactive() throws Exception {
+
+		List<Team> teamList = teamRepo.findAll();
+		List<TechQuestion> techList = techRepo.findAll();
+		List<GeneralQuestion> genList = genRepo.findAll();
+
+		int isActiveCount = 0;
+		int isNotActiveCount = 0;
+
+		List<ActiveInactiveDto> list = new ArrayList<>();
+		Map<Object, Object> response = new HashMap<Object, Object>();
+
+		for (Team team : teamList) {
+			ActiveInactiveDto dto = new ActiveInactiveDto();
+			isActiveCount = 0;
+			isNotActiveCount = 0;
+			dto.setTeam(team.getTeam() + "");
+			for (TechQuestion techQuestion : techList) {
+				if (team.getId().equals(techQuestion.getTeamId()) && techQuestion.getisActive() == true) {
+					isActiveCount++;
+				} else if (team.getId().equals(techQuestion.getTeamId()) && techQuestion.getisActive() == false) {
+					isNotActiveCount++;
+				}
+				dto.setIsActiveCount(isActiveCount + "");
+				dto.setIsInActiveCount(isNotActiveCount + "");
+				list.add(dto);
+			}
+		}
+
+		isActiveCount = 0;
+		isNotActiveCount = 0;
+		for (GeneralQuestion genQuestion : genList) {
+			if (genQuestion.getisActive() == true) {
+				isActiveCount++;
+			} else if (genQuestion.getisActive() == false) {
+				isNotActiveCount++;
+			}
+		}
+
+		response.put("genListActive", isActiveCount);
+		response.put("genListInActive", isNotActiveCount);
+
+		isActiveCount = 0;
+		isNotActiveCount = 0;
+		for (TechQuestion techQuestion : techList) {
+			if (techQuestion.getisActive() == true) {
+				isActiveCount++;
+			} else if (techQuestion.getisActive() == false) {
+				isNotActiveCount++;
+			}
+		}
+		Set<ActiveInactiveDto> set = new LinkedHashSet<>();
+		set.addAll(list);
+
+		response.put("techList", set);
+		response.put("techListActive", isActiveCount);
+		response.put("techListInActive", isNotActiveCount);
+
+		return response;
 	}
 
 }

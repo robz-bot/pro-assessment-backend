@@ -17,8 +17,13 @@ import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
+import com.promantus.Assessment.Entity.Team;
+import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
+import com.promantus.Assessment.Repository.TeamRepository;
+import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.GeneralQuestionService;
 
@@ -33,6 +38,12 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	@Autowired
 	MongoOperations mongoOperation;
+
+	@Autowired
+	TechQuestionRepository techRepo;
+
+	@Autowired
+	TeamRepository teamRepo;
 
 	@Override
 	public GeneralQuestionDto addGeneralQuestion(final GeneralQuestionDto generalQuestionDto, String lang)
@@ -126,12 +137,11 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		GeneralQuestionDto resultDto = new GeneralQuestionDto();
 		GeneralQuestion generalQuestion = generalQuestionRepository.findByIdAndIsActive(Long.parseLong(id), true);
 		if (generalQuestion == null) {
-			resultDto.setMessage("data does not exist");
+			resultDto.setMessage("Data does not exist");
 			return resultDto;
 		}
 
-		generalQuestion.setisActive(false);
-		generalQuestionRepository.save(generalQuestion);
+		generalQuestionRepository.delete(generalQuestion);
 		resultDto.setMessage("Record Deleted successfully");
 		return resultDto;
 	}
@@ -257,6 +267,107 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		}
 
 		return GeneralQuestionDtoList;
+	}
+
+	@Override
+	public GeneralQuestionDto inactiveGeneralQuestionById(String id) throws Exception {
+		GeneralQuestionDto resultDto = new GeneralQuestionDto();
+		GeneralQuestion generalQuestion = generalQuestionRepository.findByIdAndIsActive(Long.parseLong(id), true);
+		if (generalQuestion == null) {
+			resultDto.setMessage("Data does not exist");
+			return resultDto;
+		}
+
+		generalQuestion.setisActive(false);
+		generalQuestionRepository.save(generalQuestion);
+		resultDto.setMessage("This question is moved inactive state");
+		return resultDto;
+	}
+
+	private TechQuestionDto getTechQuestionDto(TechQuestion techQuestion) {
+		TechQuestionDto techQuestionDto = new TechQuestionDto();
+
+		Team team = teamRepo.findById(techQuestion.getTeamId());
+
+		techQuestionDto.setId(techQuestion.getId());
+		techQuestionDto.setTeamId(techQuestion.getTeamId());
+		if (team.getTeam() != null) {
+			techQuestionDto.setTeam(team.getTeam());
+		}
+		techQuestionDto.setQuestion(techQuestion.getQuestion());
+		techQuestionDto.setOption1(techQuestion.getOption1());
+		techQuestionDto.setOption2(techQuestion.getOption2());
+		techQuestionDto.setOption3(techQuestion.getOption3());
+		techQuestionDto.setOption4(techQuestion.getOption4());
+		techQuestionDto.setAnswer(techQuestion.getAnswer());
+		techQuestionDto.setisActive(true);
+		techQuestionDto.setUpdatedOn(techQuestion.getUpdatedOn());
+		return techQuestionDto;
+
+	}
+
+	@Override
+	public Map<String, Object> getInactiveQns(String type, String keyword) throws Exception {
+
+		Map<String, Object> response = new HashMap<>();
+
+		// tech qn
+		if (type.equals(AssessmentConstants.TYPE13)) {
+			List<TechQuestion> techList = techRepo.findAllByTeamIdAndIsActive(Long.parseLong(keyword), false);
+			List<TechQuestionDto> resultDto = new ArrayList<>();
+			for (TechQuestion techQuestion : techList) {
+				resultDto.add(this.getTechQuestionDto(techQuestion));
+			}
+			response.put("inactiveQns", resultDto);
+		}
+
+		// gen qn
+		if (type.equals(AssessmentConstants.TYPE14)) {
+			List<GeneralQuestion> genList = generalQuestionRepository.findAllByIsActive(false);
+			List<GeneralQuestionDto> resultDto = new ArrayList<>();
+			for (GeneralQuestion generalQuestion : genList) {
+				resultDto.add(this.getGeneralQuestionDto(generalQuestion));
+			}
+			response.put("inactiveQns", resultDto);
+		}
+
+		return response;
+	}
+
+	@Override
+	public Map<String, Object> activeQuestionById(String type, String id) throws Exception {
+		Map<String, Object> response = new HashMap<>();
+
+		if (type.equals(AssessmentConstants.TYPE14)) {
+			GeneralQuestion generalQuestion = generalQuestionRepository.findByIdAndIsActive(Long.parseLong(id), false);
+			if (generalQuestion == null) {
+				response.put("status", 1);
+				response.put("message", "Data does not exist");
+				return response;
+			}
+
+			generalQuestion.setisActive(true);
+			generalQuestion.setUpdatedon(LocalDateTime.now());
+			generalQuestionRepository.save(generalQuestion);
+			response.put("status", 0);
+			response.put("message", "This question is moved active state");
+			return response;
+		} else if (type.equals(AssessmentConstants.TYPE13)) {
+			TechQuestion techQuestion = techRepo.findByIdAndIsActive(Long.parseLong(id), false);
+			if (techQuestion == null) {
+				response.put("status", 1);
+				response.put("message", "Data does not exist");
+				return response;
+			}
+
+			techQuestion.setisActive(true);
+			techQuestion.setUpdatedOn(LocalDateTime.now());
+			techRepo.save(techQuestion);
+			response.put("status", 0);
+			response.put("message", "This question is moved active state");
+			return response;
+		}
+		return new HashMap<>();
 	}
 
 }

@@ -206,6 +206,26 @@ public class GeneralQuestionController extends CommonController {
 			return resultDto;
 		}
 	}
+	
+	@GetMapping("/inactiveGeneralQuestionById/{id}")
+	public GeneralQuestionDto inactiveGeneralQuestionById(@PathVariable String id,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		GeneralQuestionDto resultDto = new GeneralQuestionDto();
+		try {
+
+			return generalQuestionService.inactiveGeneralQuestionById(id);
+
+		} catch (final Exception e) {
+
+			resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
+			resultDto.setMessage(e.getMessage());
+
+			logger.error(AssessmentUtil.getErrorMessage(e));
+
+			return resultDto;
+		}
+	}
 
 	@GetMapping("/search/{type}/{keyword}")
 	public List<GeneralQuestionDto> search(@PathVariable String keyword, @PathVariable String type,
@@ -249,6 +269,40 @@ public class GeneralQuestionController extends CommonController {
 		}
 
 		return new ArrayList<GeneralQuestionDto>();
+	}
+	
+	@GetMapping("getInactiveQns/{type}/{keyword}")
+	public Map<String, Object> getInactiveQns(@PathVariable String keyword, @PathVariable String type,@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return generalQuestionService.getInactiveQns(type, keyword);
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
+	}
+	
+	@GetMapping("/activeQuestionById/{type}/{id}")
+	public Map<String, Object> activeQuestionById(@PathVariable String type, @PathVariable String id,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		GeneralQuestionDto resultDto = new GeneralQuestionDto();
+		try {
+
+			return generalQuestionService.activeQuestionById(type,id);
+
+		} catch (final Exception e) {
+
+			resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
+			resultDto.setMessage(e.getMessage());
+
+			logger.error(AssessmentUtil.getErrorMessage(e));
+
+			return new HashMap<>();
+		}
 	}
 
 }

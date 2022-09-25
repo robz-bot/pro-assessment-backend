@@ -40,6 +40,8 @@ public final class AssessmentConstants {
 	public static final String TYPE10 = "empcode";
 	public static final String TYPE11 = "email";
 	public static final String TYPE12 = "manager";
+	public static final String TYPE13 = "techQuestions";
+	public static final String TYPE14 = "genQuestions";
 
 //	Percentage Range
 	public static final String RANGE0 = "0-25";

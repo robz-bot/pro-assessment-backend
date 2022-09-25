@@ -14,4 +14,6 @@ public interface DashboardService {
 
 	Map<Object, Object> teamExamReadiness()throws Exception;
 
+	Map<Object, Object> questionsActiveInactive()throws Exception;
+
 }

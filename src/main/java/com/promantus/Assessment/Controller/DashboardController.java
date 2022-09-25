@@ -91,5 +91,19 @@ public class DashboardController extends CommonController {
 
 		return new HashMap<Object, Object>();
 	}
+	
+	@GetMapping("/questionsActiveInactive")
+	public Map<Object, Object> questionsActiveInactive(@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return dashboardService.questionsActiveInactive();
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<Object, Object>();
+	}
 
 }
