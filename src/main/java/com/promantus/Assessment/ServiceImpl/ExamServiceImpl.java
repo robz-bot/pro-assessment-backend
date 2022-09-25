@@ -39,10 +39,10 @@ public class ExamServiceImpl implements ExamService {
 
 		List<GeneralQuestion> genQns = new ArrayList<>();
 		genQns = genQnRepo.findAllByIsActive(true);
-		List<GeneralQuestion> genQns1 = genQnRepo.findAllQuestionDistinctBy();
+		//List<GeneralQuestion> genQns1 = genQnRepo.findAllQuestionDistinctBy();
 
-		List<TechQuestion> techQns = techQnRepo.findAllByTeamIdAndIsActive(teamId,true);
-		List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
+		List<TechQuestion> techQns = techQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId),true);
+		//List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
 		
 
 		if (genQns.size() > 0 && techQns.size() > 0) {

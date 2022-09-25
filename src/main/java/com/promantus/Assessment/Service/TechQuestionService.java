@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
+import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 
 
@@ -26,9 +27,11 @@ public interface TechQuestionService {
 
 	Map<String, Object> getAllTechQuestionsPage(Pageable paging) throws Exception;
 
-	List<TechQuestionDto> activateAllTechQns()throws Exception;
+	List<TechQuestionDto> activateAllTechQns() throws Exception;
 
 	Map<String, Object> searchtechQnsPage(Pageable paging, String type, String keyword)throws Exception;
+
+	TechQuestionDto inactiveTechQuestionById(String id) throws Exception;
 	
 
 }

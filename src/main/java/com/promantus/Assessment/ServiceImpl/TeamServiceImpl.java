@@ -33,13 +33,13 @@ public class TeamServiceImpl implements TeamService {
 
 	@Autowired
 	CommonService commonService;
-	
+
 	@Autowired
 	SmtpMailSender smtpMailSender;
-	
-	@Autowired 
+
+	@Autowired
 	GeneralQuestionRepository genQnRepo;
-	
+
 	@Autowired
 	TechQuestionRepository techQnRepo;
 
@@ -64,14 +64,30 @@ public class TeamServiceImpl implements TeamService {
 		}
 		if (teamRepository.findById(teamDto.getId()) == null) {
 			Team team = new Team();
-			team.setId(commonService.nextSequenceNumber());
+			Long num = commonService.nextSequenceNumber();
+			team.setId(num);
+			String teamCode = AssessmentConstants.TEAM_CODE;
 			team.setTeam(teamDto.getTeam());
+//			team.setTeam(teamCode + num + " - " + teamDto.getTeam());
 			team.setCreatedOn(LocalDateTime.now());
 			team.setisActive(true);
 
 			teamRepository.save(team);
 
-//			smtpMailSender.sendMail("robinrajesh@promantus.com", "Sample Mail", team.getTeam().toString());
+			//Mail Thread
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						smtpMailSender.sendMail(team);
+					} catch (Exception e) {
+
+						System.out.println("Email for Interview Scheduled is not Sent.");
+						System.err.println(e);
+					}
+				}
+			}).start();
+
 		}
 		resultDto.setMessage("Team added successfully");
 		return resultDto;
@@ -167,18 +183,16 @@ public class TeamServiceImpl implements TeamService {
 		Page<Team> teamPage = teamRepository.findAll(paging);
 		List<TeamDto> resultDto = new ArrayList<>();
 		List<Team> TeamsList = teamPage.getContent();
-		
+
 		List<GeneralQuestion> allGenQns = genQnRepo.findAllByIsActive(true);
 		List<TechQuestion> allTechQns = techQnRepo.findAllByIsActive(true);
-		
+
 //		for (Team Team : TeamsList) {
 //			for (TechQuestion techQuestion : allTechQns) {
 //				if(techQuestion.getTeamId() == )
 //			}
 //		}
-		
-		
-		
+
 		Map<String, Object> response = new HashMap<>();
 		response.put("teams", TeamsList);
 		response.put("currentPage", teamPage.getNumber());
@@ -186,7 +200,7 @@ public class TeamServiceImpl implements TeamService {
 		response.put("totalPages", teamPage.getTotalPages());
 		response.put("genQnsCount", allGenQns.size());
 		response.put("techQnsCount", allTechQns.size());
-		
+
 		return response;
 	}
 

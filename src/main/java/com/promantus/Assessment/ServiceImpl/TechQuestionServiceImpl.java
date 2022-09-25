@@ -308,13 +308,12 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 			techQuestion = techQnPage.getContent();
 		}
-		
+
 		List<TechQuestionDto> TechQuestionDtoList = new ArrayList<TechQuestionDto>();
-		
+
 		for (TechQuestion techQuestion2 : techQuestion) {
 			TechQuestionDtoList.add(this.getTechQuestionDto(techQuestion2));
 		}
-		
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("techQns", TechQuestionDtoList);
@@ -323,6 +322,21 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		response.put("totalPages", techQnPage.getTotalPages());
 		response.put("totalRecords", techQnPage.getTotalPages());
 		return response;
+	}
+
+	@Override
+	public TechQuestionDto inactiveTechQuestionById(String id) throws Exception {
+		TechQuestionDto resultDto = new TechQuestionDto();
+		TechQuestion techQuestion = techQuestionRepository.findByIdAndIsActive(Long.parseLong(id), true);
+		if (techQuestion == null) {
+			resultDto.setMessage("Data does not exist");
+			return resultDto;
+		}
+
+		techQuestion.setisActive(false);
+		techQuestionRepository.save(techQuestion);
+		resultDto.setMessage("This question is moved inactive state");
+		return resultDto;
 	}
 
 }

@@ -82,10 +82,10 @@ public class ReportsServiceImpl implements ReportsService {
 		reportsRepository.save(reports);
 		resultDto.setMessage("Reports added successfully");
 
-		Twilio.init(AssessmentConstants.ACCOUNT_SID, AssessmentConstants.AUTH_TOKEN);
+//		Twilio.init(AssessmentConstants.ACCOUNT_SID, AssessmentConstants.AUTH_TOKEN);
 
-		Message.creator(new PhoneNumber(repUser.getPhnNumber()), new PhoneNumber("+18156271503"),
-				"Pro Assessment Results - " + reports.getTotalMarks() + "/30. " + reports.getStatus()).create();
+//		Message.creator(new PhoneNumber(repUser.getPhnNumber()), new PhoneNumber("+18156271503"),
+//				"Pro Assessment Results - " + reports.getTotalMarks() + "/30. " + reports.getStatus()).create();
 
 		return resultDto;
 	}

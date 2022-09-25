@@ -23,6 +23,8 @@ public final class AssessmentConstants {
 	/** RETURN_STATUS_ERROR - 1. */
 	public static final int RETURN_STATUS_ERROR = 1;
 
+	public static final String TEAM_CODE = "TMCD";
+	
 //	Exam Status
 	public static final String PASS = "Pass";
 	public static final String FAIL = "Fail";
