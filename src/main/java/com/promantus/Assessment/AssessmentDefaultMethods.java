@@ -2,6 +2,7 @@ package com.promantus.Assessment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.poi.ss.usermodel.Sheet;
 
@@ -23,14 +24,14 @@ public final class AssessmentDefaultMethods {
 		}
 	}
 
-	//Replace spl chars 
-	// eg., + replace with \\+ 
-	// to search the keywords with regex 
+	// Replace spl chars
+	// eg., + replace with \\+
+	// to search the keywords with regex
 	public static final String replaceSplCharKeyword(String keyword) {
 		List<String> temp = new ArrayList<>();
 		temp.add("(");
 		temp.add(")");
-		temp.add("+");
+//		temp.add("+");
 		temp.add("$");
 		temp.add("^");
 		temp.add("{");
@@ -41,6 +42,9 @@ public final class AssessmentDefaultMethods {
 		temp.add(".");
 		temp.add("[");
 		temp.add("]");
+		temp.add("\\");
+		temp.add("/");
+		temp.add("|");
 		for (String temp1 : temp) {
 			if (keyword.contains(temp1)) {
 				keyword = keyword.replace(temp1, "\\" + temp1);
@@ -48,6 +52,17 @@ public final class AssessmentDefaultMethods {
 		}
 
 		return keyword;
+	}
+
+	public static final String randomNumber() {
+		Random random = new Random();
+		String alphaNumberic = "abcdefghijklmonpqrstuvwxyz1234567890";
+
+		String result = "";
+		for (int i = 0; i < 8; i++) {
+			result += alphaNumberic.charAt(random.nextInt(alphaNumberic.length()));
+		}
+		return result;
 	}
 
 }

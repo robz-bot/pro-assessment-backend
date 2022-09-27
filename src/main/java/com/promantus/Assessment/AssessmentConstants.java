@@ -10,7 +10,11 @@ public final class AssessmentConstants {
 	public static final String ACCOUNT_SID = "AC384cce51387f8cdd0ea857a011432e3b";
 	public static final String AUTH_TOKEN = "cf5985ba4ce466cffb8d6c318a234eba";
 	public static final String TWILIO_NUMBER = "+18156271503";
-
+	
+	
+	public static final String APPROVE = "approve";
+	public static final String DECLINE = "decline";
+	
 	/** INACTIVE - 0. */
 	public static final int INACTIVE = 0;
 

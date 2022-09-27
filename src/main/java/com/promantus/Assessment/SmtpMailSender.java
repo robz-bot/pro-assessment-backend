@@ -1,6 +1,9 @@
 package com.promantus.Assessment;
 
+import java.io.IOException;
+
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Dto.UserDto;
+import com.promantus.Assessment.Entity.AdminRequest;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.User;
 
@@ -38,7 +42,7 @@ public class SmtpMailSender {
 	@Autowired
 	private JavaMailSender javaMailSender;
 
-	public void sendMail(Team team) throws MessagingException {
+	public void sendMail(Team team) throws AddressException, MessagingException, IOException  {
 
 		String content = env.getProperty("team.content");
 		content = content.replace("[team]", team.getTeam());
@@ -88,4 +92,34 @@ public class SmtpMailSender {
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
+
+	public void sendApproveOrDeclineMail(AdminRequest adminReq, String team) throws MessagingException {
+		String content = env.getProperty("admin.request.content");
+		content = content.replace("[Email]", adminReq.getEmail());
+		content = content.replace("[Reason]", adminReq.getReason());
+		content = content.replace("[RaisedOn]", adminReq.getReqRaisedOn().toString().split("T")[0]);
+		content = content.replace("[AppOrDeclinedOn]", adminReq.getReqApproveOrDeclineOn().toString().split("T")[0]);
+		content = content.replace("[Team]", team);
+
+		String subject = env.getProperty("admin.request.subject");
+		if (adminReq.isApprove()) {
+			content = content.replace("[status]", "Approved");
+			content = content.replace("[Password]", adminReq.getPassword());
+		} else {
+			content = content.replace("[Password]", "NA");
+			content = content.replace("[status]", "Declined");
+		}
+
+		MimeMessage message = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper;
+		helper = new MimeMessageHelper(message, true);// true indicates multipart message
+
+		helper.setFrom(from); // <--- THIS IS IMPORTANT
+		helper.setSubject(subject);
+		helper.setTo(adminReq.getEmail());
+//		helper.setBcc(bccEmailIds.split(","));
+		helper.setText(content, true);// true indicates body is html
+		javaMailSender.send(message);
+	}
+
 }
