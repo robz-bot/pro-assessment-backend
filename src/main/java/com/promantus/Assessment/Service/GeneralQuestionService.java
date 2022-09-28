@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.Entity.GeneralQuestion;
 
 public interface GeneralQuestionService {
 
@@ -32,5 +33,7 @@ public interface GeneralQuestionService {
 	Map<String, Object> getInactiveQns(String type, String keyword) throws Exception;
 
 	Map<String, Object> activeQuestionById(String type, String id) throws Exception;
+
+	Map<String, Object> saveBulkGeneralQuestions(List<GeneralQuestion> generalQuestion)throws Exception;
 
 }

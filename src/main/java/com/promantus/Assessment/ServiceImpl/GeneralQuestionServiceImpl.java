@@ -2,9 +2,12 @@ package com.promantus.Assessment.ServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -368,6 +371,90 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			return response;
 		}
 		return new HashMap<>();
+	}
+
+	private static <T> Set<T> findDuplicates(List<T> list) {
+		return list.stream().distinct().filter(i -> Collections.frequency(list, i) > 1).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Map<String, Object> saveBulkGeneralQuestions(List<GeneralQuestion> generalQuestion) throws Exception {
+
+		Map<String, Object> response = new HashMap<>();
+
+		// Duplicate Check
+		int index = 0;
+		for (GeneralQuestion generalQuestion2 : generalQuestion) {
+			index++;
+			if (generalQuestion2.getQuestion() == null || generalQuestion2.getOption1() == null
+					|| generalQuestion2.getOption2() == null || generalQuestion2.getOption3() == null
+					|| generalQuestion2.getOption4() == null || generalQuestion2.getAnswer() == null) {
+				response.put("status", 1);
+				response.put("message", "One of the cell value has empty value");
+				return response;
+
+			}
+
+			if (generalQuestion2.getOption1().equals(generalQuestion2.getOption2())
+					|| generalQuestion2.getOption1().equals(generalQuestion2.getOption3())
+					|| generalQuestion2.getOption1().equals(generalQuestion2.getOption4())
+					|| generalQuestion2.getOption2().equals(generalQuestion2.getOption1())
+					|| generalQuestion2.getOption2().equals(generalQuestion2.getOption3())
+					|| generalQuestion2.getOption2().equals(generalQuestion2.getOption4())
+					|| generalQuestion2.getOption3().equals(generalQuestion2.getOption1())
+					|| generalQuestion2.getOption3().equals(generalQuestion2.getOption2())
+					|| generalQuestion2.getOption3().equals(generalQuestion2.getOption4())
+					|| generalQuestion2.getOption4().equals(generalQuestion2.getOption1())
+					|| generalQuestion2.getOption4().equals(generalQuestion2.getOption2())
+					|| generalQuestion2.getOption4().equals(generalQuestion2.getOption3())) {
+				response.put("status", 1);
+				response.put("message",
+						"One of the options has duplication in Question - " + generalQuestion2.getQuestion());
+				return response;
+			}
+
+		}
+
+		// List of All Questions
+		List<String> allQns = new ArrayList<>();
+
+		for (GeneralQuestion generalQuestion2 : generalQuestion) {
+			allQns.add(generalQuestion2.getQuestion());
+		}
+
+		// Find Duplication Questions
+		Set<String> duplicates = findDuplicates(allQns);
+		if (duplicates.size() > 0) {
+			response.put("status", 1);
+			response.put("message", "The following questions has duplication");
+			response.put("duplicateQns", duplicates);
+			return response;
+		}
+
+		// Is everything is fine save all Questions
+		for (GeneralQuestion generalQuestion2 : generalQuestion) {
+			if (generalQuestionRepository.existsByQuestion(generalQuestion2.getQuestion())) {
+				response.put("status", 1);
+				response.put("message", "This Question already exists - " + generalQuestion2.getQuestion());
+				return response;
+			}
+
+			GeneralQuestion saveQn = new GeneralQuestion();
+			saveQn.setId(commonService.nextSequenceNumber());
+			saveQn.setQuestion(generalQuestion2.getQuestion());
+			saveQn.setOption1(generalQuestion2.getOption1());
+			saveQn.setOption2(generalQuestion2.getOption2());
+			saveQn.setOption3(generalQuestion2.getOption3());
+			saveQn.setOption4(generalQuestion2.getOption4());
+			saveQn.setAnswer(generalQuestion2.getAnswer());
+			saveQn.setUpdatedon(LocalDateTime.now());
+			saveQn.setisActive(true);
+			generalQuestionRepository.save(saveQn);
+		}
+//		generalQuestionRepository.saveAll(generalQuestion);
+		response.put("status", 0);
+		response.put("message", "Questions added successfully");
+		return response;
 	}
 
 }

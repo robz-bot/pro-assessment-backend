@@ -118,6 +118,7 @@ public class ReportsServiceImpl implements ReportsService {
 		reportsDto.setUpdatedOn(reports.getUpdatedOn());
 		reportsDto.setUpdatedBy(reports.getUpdatedBy());
 		if (reports.getUserId() != null) {
+			System.err.println(reports.getUserId());
 			int attempts = userRepository.findById(reports.getUserId()).getAttempts();
 
 			reportsDto.setAttempts(attempts);

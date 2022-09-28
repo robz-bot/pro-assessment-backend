@@ -27,6 +27,7 @@ import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.SearchDto;
+import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Service.GeneralQuestionService;
 
 @CrossOrigin("*")
@@ -89,6 +90,22 @@ public class GeneralQuestionController extends CommonController {
 		}
 
 		return resultDto;
+	}
+	
+	@PostMapping("/saveBulkGeneralQuestions")
+	public Map<String, Object> saveBulkGeneralQuestions(
+			@RequestBody List<GeneralQuestion> generalQuestion,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return generalQuestionService.saveBulkGeneralQuestions(generalQuestion);
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
 	}
 
 	@GetMapping("/getAllGeneralQuestions")
