@@ -28,6 +28,8 @@ import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.SearchDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
+import com.promantus.Assessment.Entity.GeneralQuestion;
+import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Service.TechQuestionService;
 
 @CrossOrigin("*")
@@ -94,6 +96,21 @@ public class TechQuestionController extends CommonController {
 		return resultDto;
 	}
 
+	@PostMapping("/saveBulkTechQuestions")
+	public Map<String, Object> saveBulkTechQuestions(@RequestBody List<TechQuestion> technicalQuestion,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return techQuestionService.saveBulkTechQuestions(technicalQuestion);
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
+	}
+
 	@GetMapping("/getAllTechQuestions")
 	public List<TechQuestionDto> getAllTechQuestions(@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -107,10 +124,9 @@ public class TechQuestionController extends CommonController {
 
 		return new ArrayList<TechQuestionDto>();
 	}
-	
+
 	@GetMapping("/getAllTechQuestionsPage")
-	public Map<String, Object> getAllTechQuestionsPage(
-			@RequestParam(defaultValue = "0") int page,
+	public Map<String, Object> getAllTechQuestionsPage(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "3") int size, @RequestHeader(name = "lang", required = false) String lang) {
 
 		Pageable paging = PageRequest.of(page, size, Sort.by("updatedOn").descending());
@@ -122,7 +138,7 @@ public class TechQuestionController extends CommonController {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}
 
-		return new HashMap<String,Object>();
+		return new HashMap<String, Object>();
 	}
 
 	@GetMapping("/getTechQuestionById/{id}")
@@ -242,10 +258,10 @@ public class TechQuestionController extends CommonController {
 
 		return techQuestionDto;
 	}
-	
+
 	@PostMapping("/searchtechQnsPage")
-	public Map<String, Object> searchtechQnsPage(@RequestBody SearchDto searchValues, @RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "3") int size,
+	public Map<String, Object> searchtechQnsPage(@RequestBody SearchDto searchValues,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
 		Pageable paging = PageRequest.of(page, size, Sort.by("updatedOn").descending());
@@ -258,10 +274,9 @@ public class TechQuestionController extends CommonController {
 
 		return new HashMap<String, Object>();
 	}
-	
+
 	@GetMapping("activateAllTechQns")
-	public List<TechQuestionDto> activateAllTechQns (
-			@RequestHeader(name = "lang", required = false) String lang) {
+	public List<TechQuestionDto> activateAllTechQns(@RequestHeader(name = "lang", required = false) String lang) {
 
 		try {
 
@@ -273,7 +288,7 @@ public class TechQuestionController extends CommonController {
 
 		return new ArrayList<TechQuestionDto>();
 	}
-	
+
 	@GetMapping("/inactiveTechQuestionById/{id}")
 	public TechQuestionDto inactiveTechQuestionById(@PathVariable String id,
 			@RequestHeader(name = "lang", required = false) String lang) {

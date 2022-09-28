@@ -395,6 +395,16 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 			}
 
+			if (!(generalQuestion2.getAnswer().equals(generalQuestion2.getOption1())
+					|| generalQuestion2.getAnswer().equals(generalQuestion2.getOption2())
+					|| generalQuestion2.getAnswer().equals(generalQuestion2.getOption3())
+					|| generalQuestion2.getAnswer().equals(generalQuestion2.getOption4()))) {
+				response.put("status", 1);
+				response.put("message",
+						"Answer not matches with given options for the Question - " + generalQuestion2.getQuestion());
+				return response;
+			}
+
 			if (generalQuestion2.getOption1().equals(generalQuestion2.getOption2())
 					|| generalQuestion2.getOption1().equals(generalQuestion2.getOption3())
 					|| generalQuestion2.getOption1().equals(generalQuestion2.getOption4())
@@ -451,7 +461,6 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			saveQn.setisActive(true);
 			generalQuestionRepository.save(saveQn);
 		}
-//		generalQuestionRepository.saveAll(generalQuestion);
 		response.put("status", 0);
 		response.put("message", "Questions added successfully");
 		return response;

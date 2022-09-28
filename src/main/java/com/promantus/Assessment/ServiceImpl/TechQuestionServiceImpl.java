@@ -2,9 +2,12 @@ package com.promantus.Assessment.ServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -337,6 +340,100 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		techQuestionRepository.save(techQuestion);
 		resultDto.setMessage("This question is moved inactive state");
 		return resultDto;
+	}
+
+	private static <T> Set<T> findDuplicates(List<T> list) {
+		return list.stream().distinct().filter(i -> Collections.frequency(list, i) > 1).collect(Collectors.toSet());
+	}
+
+	@Override
+	public Map<String, Object> saveBulkTechQuestions(List<TechQuestion> technicalQuestion) throws Exception {
+
+		Map<String, Object> response = new HashMap<>();
+
+		// Duplicate Check
+		int index = 0;
+		for (TechQuestion technicalQuestion2 : technicalQuestion) {
+			index++;
+			if (technicalQuestion2.getQuestion() == null || technicalQuestion2.getOption1() == null
+					|| technicalQuestion2.getOption2() == null || technicalQuestion2.getOption3() == null
+					|| technicalQuestion2.getOption4() == null || technicalQuestion2.getAnswer() == null) {
+				response.put("status", 1);
+				response.put("message", "One of the cell value has empty value");
+				return response;
+
+			}
+
+			if (!(technicalQuestion2.getAnswer().equals(technicalQuestion2.getOption1())
+					|| technicalQuestion2.getAnswer().equals(technicalQuestion2.getOption2())
+					|| technicalQuestion2.getAnswer().equals(technicalQuestion2.getOption3())
+					|| technicalQuestion2.getAnswer().equals(technicalQuestion2.getOption4()))) {
+				response.put("status", 1);
+				response.put("message",
+						"Answer not matches with given options for the Question - " + technicalQuestion2.getQuestion());
+				return response;
+			}
+
+			if (technicalQuestion2.getOption1().equals(technicalQuestion2.getOption2())
+					|| technicalQuestion2.getOption1().equals(technicalQuestion2.getOption3())
+					|| technicalQuestion2.getOption1().equals(technicalQuestion2.getOption4())
+					|| technicalQuestion2.getOption2().equals(technicalQuestion2.getOption1())
+					|| technicalQuestion2.getOption2().equals(technicalQuestion2.getOption3())
+					|| technicalQuestion2.getOption2().equals(technicalQuestion2.getOption4())
+					|| technicalQuestion2.getOption3().equals(technicalQuestion2.getOption1())
+					|| technicalQuestion2.getOption3().equals(technicalQuestion2.getOption2())
+					|| technicalQuestion2.getOption3().equals(technicalQuestion2.getOption4())
+					|| technicalQuestion2.getOption4().equals(technicalQuestion2.getOption1())
+					|| technicalQuestion2.getOption4().equals(technicalQuestion2.getOption2())
+					|| technicalQuestion2.getOption4().equals(technicalQuestion2.getOption3())) {
+				response.put("status", 1);
+				response.put("message",
+						"One of the options has duplication in Question - " + technicalQuestion2.getQuestion());
+				return response;
+			}
+
+		}
+
+		// List of All Questions
+		List<String> allQns = new ArrayList<>();
+
+		for (TechQuestion technicalQuestion2 : technicalQuestion) {
+			allQns.add(technicalQuestion2.getQuestion());
+		}
+
+		// Find Duplication Questions
+		Set<String> duplicates = findDuplicates(allQns);
+		if (duplicates.size() > 0) {
+			response.put("status", 1);
+			response.put("message", "The following questions has duplication");
+			response.put("duplicateQns", duplicates);
+			return response;
+		}
+
+		// Is everything is fine save all Questions
+		for (TechQuestion technicalQuestion2 : technicalQuestion) {
+			if (techQuestionRepository.existsByQuestion(technicalQuestion2.getQuestion())) {
+				response.put("status", 1);
+				response.put("message", "This Question already exists - " + technicalQuestion2.getQuestion());
+				return response;
+			}
+
+			TechQuestion saveQn = new TechQuestion();
+			saveQn.setId(commonService.nextSequenceNumber());
+			saveQn.setQuestion(technicalQuestion2.getQuestion());
+			saveQn.setOption1(technicalQuestion2.getOption1());
+			saveQn.setOption2(technicalQuestion2.getOption2());
+			saveQn.setOption3(technicalQuestion2.getOption3());
+			saveQn.setOption4(technicalQuestion2.getOption4());
+			saveQn.setAnswer(technicalQuestion2.getAnswer());
+			saveQn.setTeamId(technicalQuestion2.getTeamId());
+			saveQn.setUpdatedOn(LocalDateTime.now());
+			saveQn.setisActive(true);
+			techQuestionRepository.save(saveQn);
+		}
+		response.put("status", 0);
+		response.put("message", "Questions added successfully");
+		return response;
 	}
 
 }

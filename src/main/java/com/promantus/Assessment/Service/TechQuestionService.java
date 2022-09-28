@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
+import com.promantus.Assessment.Entity.TechQuestion;
 
 
 public interface TechQuestionService {
@@ -32,6 +33,8 @@ public interface TechQuestionService {
 	Map<String, Object> searchtechQnsPage(Pageable paging, String type, String keyword)throws Exception;
 
 	TechQuestionDto inactiveTechQuestionById(String id) throws Exception;
+
+	Map<String, Object> saveBulkTechQuestions(List<TechQuestion> technicalQuestion) throws Exception;
 	
 
 }
