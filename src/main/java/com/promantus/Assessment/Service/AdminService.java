@@ -10,4 +10,8 @@ public interface AdminService {
 
 	Map<Object, Object> adminApproveOrDecline(AdminRequestDto adminRequestDto, String req) throws Exception;
 
+	Map<Object, Object> getAllAdminRequest() throws Exception;
+
+	Map<Object, Object> getAdminReqDet(AdminRequestDto adminRequestDto)throws Exception;
+
 }

@@ -1,7 +1,9 @@
 package com.promantus.Assessment.ServiceImpl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,7 @@ public class AdminServiceImpl implements AdminService {
 		AdminRequest reqDate = adminReqRepo.findByReqRaisedOn(adminRequestDto.getReqRaisedOn());
 		AdminRequest req = adminReqRepo.findByEmail(adminRequestDto.getEmail());
 
-		if (reqDate != null && reqDate.getReqRaisedOn().toString().split("T")[0].equals(todayDate)) {
+		if (req != null && req.getReqRaisedOn().toString().split("T")[0].equals(todayDate)) {
 			response.put("status", 1);
 			response.put("message", "Request already raised today!");
 		}
@@ -79,11 +81,14 @@ public class AdminServiceImpl implements AdminService {
 		AdminRequest adminRequest = adminReqRepo.findById(adminRequestDto.getId());
 		if (req.equals(AssessmentConstants.APPROVE)) {
 			adminRequest.setApprove(true);
+
 			response.put("message", "Request Approved");
+			response.put("icon", "success");
 		}
 		if (req.equals(AssessmentConstants.DECLINE)) {
 			adminRequest.setApprove(false);
 			response.put("message", "Request Declined");
+			response.put("icon", "error");
 		}
 
 		adminRequest.setReqApproveOrDeclineOn(LocalDateTime.now());
@@ -100,11 +105,61 @@ public class AdminServiceImpl implements AdminService {
 					smtpMailSender.sendApproveOrDeclineMail(adminReq, team.getTeam());
 				} catch (Exception e) {
 
-					System.out.println("Admin Approvve/Decline mail is not Sent.");
+					System.out.println("Admin Approve/Decline mail is not Sent.");
 					System.err.println(e);
 				}
 			}
 		}).start();
+
+		return response;
+	}
+
+	public Map<Object, Object> getAllAdminRequest() throws Exception {
+		Map<Object, Object> response = new HashMap<Object, Object>();
+
+		response.put("status", 0);
+		List<AdminRequest> adminRequestList = adminReqRepo.findAll();
+
+		List<AdminRequestDto> adminRequestDtoList = new ArrayList<AdminRequestDto>();
+		for (AdminRequest item : adminRequestList) {
+			adminRequestDtoList.add(this.getAdminRequest(item));
+		}
+
+		response.put("adminRequestList", adminRequestDtoList);
+		response.put("count", adminRequestDtoList.size());
+
+		return response;
+	}
+
+	private AdminRequestDto getAdminRequest(AdminRequest req) {
+		AdminRequestDto adminRequestDto = new AdminRequestDto();
+
+		adminRequestDto.setId(req.getId());
+		adminRequestDto.setTeamId(req.getTeamId());
+		adminRequestDto.setPassword(req.getPassword());
+		adminRequestDto.setReason(req.getReason());
+		adminRequestDto.setReqRaisedOn(req.getReqRaisedOn());
+		adminRequestDto.setReqApproveOrDeclineOn(req.getReqApproveOrDeclineOn());
+		adminRequestDto.setEmail(req.getEmail());
+		adminRequestDto.setTeam(teamRepo.findById(req.getTeamId()).getTeam());
+		return adminRequestDto;
+
+	}
+
+	@Override
+	public Map<Object, Object> getAdminReqDet(AdminRequestDto adminRequestDto) throws Exception {
+
+		Map<Object, Object> response = new HashMap<Object, Object>();
+
+		AdminRequest adminReq = adminReqRepo.findByEmail(adminRequestDto.getEmail());
+
+		if (adminReq != null && adminReq.isApprove()) {
+			response.put("status", "0");
+			response.put("message", "LoggedIn Success!");
+		}else {
+			response.put("status", "1");
+			response.put("message", "Make sure you have raised request for Admin! Or Check your credentials");
+		}
 
 		return response;
 	}

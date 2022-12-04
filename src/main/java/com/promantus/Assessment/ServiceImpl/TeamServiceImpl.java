@@ -33,9 +33,9 @@ public class TeamServiceImpl implements TeamService {
 
 	@Autowired
 	CommonService commonService;
-
-	@Autowired
-	SmtpMailSender smtpMailSender;
+//
+//	@Autowired
+//	SmtpMailSender smtpMailSender;
 
 	@Autowired
 	GeneralQuestionRepository genQnRepo;
@@ -74,19 +74,19 @@ public class TeamServiceImpl implements TeamService {
 
 			teamRepository.save(team);
 
-			//Mail Thread
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						smtpMailSender.sendMail(team);
-					} catch (Exception e) {
-
-						System.out.println("Email for Interview Scheduled is not Sent.");
-						System.err.println(e);
-					}
-				}
-			}).start();
+			// Mail Thread
+//			new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					try {
+////						smtpMailSender.sendMail(team);
+//					} catch (Exception e) {
+//
+//						System.out.println("Email for Interview Scheduled is not Sent.");
+//						System.err.println(e);
+//					}
+//				}
+//			}).start();
 
 		}
 		resultDto.setMessage("Team added successfully");

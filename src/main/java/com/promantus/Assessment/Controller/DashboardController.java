@@ -36,6 +36,11 @@ public class DashboardController extends CommonController {
 	@Autowired
 	DashboardService dashboardService;
 
+	@GetMapping("/")
+	public String hello() {
+		return "Application Started";
+	}
+
 	@GetMapping("/widgetData")
 	public List<WidgetDto> widgetData(@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -63,9 +68,10 @@ public class DashboardController extends CommonController {
 
 		return new HashMap<Object, Object>();
 	}
-	
+
 	@GetMapping("/datewisePassFail/{date}")
-	public Map<Object, Object> datewisePassFail(@PathVariable String date, @RequestHeader(name = "lang", required = false) String lang) {
+	public Map<Object, Object> datewisePassFail(@PathVariable String date,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
 		try {
 
@@ -77,7 +83,7 @@ public class DashboardController extends CommonController {
 
 		return new HashMap<Object, Object>();
 	}
-	
+
 	@GetMapping("/teamExamReadiness")
 	public Map<Object, Object> teamExamReadiness(@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -91,7 +97,7 @@ public class DashboardController extends CommonController {
 
 		return new HashMap<Object, Object>();
 	}
-	
+
 	@GetMapping("/questionsActiveInactive")
 	public Map<Object, Object> questionsActiveInactive(@RequestHeader(name = "lang", required = false) String lang) {
 

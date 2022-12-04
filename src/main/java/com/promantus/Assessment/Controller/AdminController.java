@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +57,36 @@ public class AdminController {
 		try {
 
 			return adminService.adminApproveOrDecline(adminRequestDto,req);
+
+		} catch (final Exception e) {
+			System.err.println("Err from adminApproveOrDecline");
+			System.err.println(AssessmentConstants.RETURN_STATUS_ERROR);
+			System.err.println(e.getMessage());
+		}
+
+		return new HashMap<Object, Object>();
+	}
+	
+	@PostMapping("/getAdminReqDet")
+	public Map<Object,Object> getAdminReqDet(@RequestBody AdminRequestDto adminRequestDto){
+		try {
+
+			return adminService.getAdminReqDet(adminRequestDto);
+
+		} catch (final Exception e) {
+			System.err.println("Err from adminApproveOrDecline");
+			System.err.println(AssessmentConstants.RETURN_STATUS_ERROR);
+			System.err.println(e.getMessage());
+		}
+
+		return new HashMap<Object, Object>();
+	}
+	
+	@GetMapping("/getAllAdminRequest")
+	public Map<Object,Object> getAllAdminRequest(){
+		try {
+
+			return adminService.getAllAdminRequest();
 
 		} catch (final Exception e) {
 			System.err.println("Err from adminApproveOrDecline");

@@ -30,8 +30,8 @@ public class SmtpMailSender {
 	@Value("${spring.mail.username}")
 	private String from;
 
-	@Value("${ui.server.adminurl}")
-	private String adminurl;
+//	@Value("${ui.server.adminurl}")
+//	private String adminurl;
 
 	@Value("${bcc.email.ids}")
 	private String bccEmailIds;
@@ -47,7 +47,7 @@ public class SmtpMailSender {
 		String content = env.getProperty("team.content");
 		content = content.replace("[team]", team.getTeam());
 		content = content.replace("[CreatedOn]", team.getCreatedOn().toString().split("T")[0]);
-		content = content.replace("[url]", adminurl);
+//		content = content.replace("[url]", adminurl);
 
 		String subject = env.getProperty("team.subject");
 		subject = subject.replace("[team]", team.getTeam());
