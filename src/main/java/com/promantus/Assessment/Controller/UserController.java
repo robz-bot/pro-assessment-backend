@@ -155,13 +155,13 @@ public class UserController extends CommonController {
 		return userDto;
 	}
 
-	@GetMapping("/getUserByEmail/{email}")
-	public UserDto getUserByEmail(@PathVariable String email,
+	@PostMapping("/getUserByEmail")
+	public UserDto getUserByEmail(@RequestBody UserDto user,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
 		UserDto userDto = new UserDto();
 		try {
-			userDto = userService.getUserByEmail(email);
+			userDto = userService.getUserByEmail(user.getEmail());
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));
 		}

@@ -24,7 +24,9 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
+import com.promantus.Assessment.SmtpMailSender;
 import com.promantus.Assessment.Dto.ReportsDto;
+import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.Reports;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.User;
@@ -53,6 +55,9 @@ public class ReportsServiceImpl implements ReportsService {
 
 	@Autowired
 	TeamRepository teamRepository;
+	
+	@Autowired
+	SmtpMailSender smtpMailSender;
 
 	@Autowired
 	ResourceLoader resourceLoader;
@@ -86,6 +91,23 @@ public class ReportsServiceImpl implements ReportsService {
 
 //		Message.creator(new PhoneNumber(repUser.getPhnNumber()), new PhoneNumber("+18156271503"),
 //				"Pro Assessment Results - " + reports.getTotalMarks() + "/30. " + reports.getStatus()).create();
+		
+		User user = userRepository.findById(reportsDto.getUserId());
+		Team team = teamRepository.findById(Long.parseLong(reportsDto.getTeamId()));
+		
+		// Mail Thread
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					smtpMailSender.sendUserResMail(reportsDto,user,team);
+				} catch (Exception e) {
+
+					System.out.println("Email for User Result is not Sent.");
+					System.err.println(e);
+				}
+			}
+		}).start();
 
 		return resultDto;
 	}

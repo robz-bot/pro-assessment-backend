@@ -1,6 +1,8 @@
 package com.promantus.Assessment;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
@@ -16,6 +18,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.AdminRequest;
@@ -35,6 +38,9 @@ public class SmtpMailSender {
 
 	@Value("${bcc.email.ids}")
 	private String bccEmailIds;
+	
+	@Value("${cc.email.ids}")
+	private String ccEmailIds;
 
 	@Autowired
 	private Environment env;
@@ -60,7 +66,7 @@ public class SmtpMailSender {
 
 		helper.setSubject(subject);
 		helper.setTo("robinrajesh@promantus.com");
-		helper.setBcc(bccEmailIds.split(","));
+		helper.setCc(ccEmailIds);
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
@@ -88,7 +94,48 @@ public class SmtpMailSender {
 
 		helper.setSubject(subject);
 		helper.setTo(user.getEmail());
-		helper.setBcc(bccEmailIds.split(","));
+		helper.setCc(ccEmailIds);
+		helper.setText(content, true);// true indicates body is html
+		javaMailSender.send(message);
+	}
+	
+	public void sendUserResMail(ReportsDto reportsDto, User user, Team team) throws MessagingException {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+		LocalDateTime now = LocalDateTime.now();
+
+		String content = env.getProperty("user.result.content");
+		content = content.replace("[username]", user.getFirstName() + " " + user.getLastName());
+		content = content.replace("[EmpCode]", user.getEmpCode());
+		content = content.replace("[Email]", user.getEmail());
+		content = content.replace("[TotalMark]", reportsDto.getTotalMarks());
+		
+		content = content.replace("[NoOfQnsAns]", reportsDto.getNoOfQuestionsAnswered());
+		content = content.replace("[NoOfQnsUnAns]", reportsDto.getNoOfQuestionsNotAnswered());
+		content = content.replace("[Percentage]", reportsDto.getPercentage());
+		content = content.replace("[Status]", reportsDto.getStatus());
+		content = content.replace("[Attempts]", user.getAttempts()+"");
+		content = content.replace("[TotalNoOfQns]", reportsDto.getTotalNoOfQuestions());
+		content = content.replace("[CompletedOn]", now.format(dtf));
+		
+		String subject = env.getProperty("user.result.subject");
+		if(team==null) {
+			content = content.replace("[Team]", "NA");
+			subject = subject.replace("[team]", "NA");
+		}else {
+			content = content.replace("[Team]", team.getTeam());
+			subject = subject.replace("[team]", team.getTeam());
+		}
+		
+
+		MimeMessage message = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper;
+		helper = new MimeMessageHelper(message, true);// true indicates multipart message
+
+		helper.setFrom(from); // <--- THIS IS IMPORTANT
+
+		helper.setSubject(subject);
+		helper.setTo(user.getEmail());
+		helper.setCc(ccEmailIds);
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
@@ -117,7 +164,7 @@ public class SmtpMailSender {
 		helper.setFrom(from); // <--- THIS IS IMPORTANT
 		helper.setSubject(subject);
 		helper.setTo(adminReq.getEmail());
-//		helper.setBcc(bccEmailIds.split(","));
+		helper.setCc(ccEmailIds);
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
