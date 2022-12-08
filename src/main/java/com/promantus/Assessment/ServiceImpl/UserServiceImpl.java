@@ -320,6 +320,7 @@ public class UserServiceImpl implements UserService {
 		}
 		// email
 		if (type.equals(AssessmentConstants.TYPE11)) {
+			keyword  = keyword.split("@")[0];
 			userPage = userRepository.getAllEmailRegex(keyword, true, paging);
 			userList = userPage.getContent();
 		}

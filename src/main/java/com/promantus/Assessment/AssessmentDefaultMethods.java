@@ -45,6 +45,7 @@ public final class AssessmentDefaultMethods {
 		temp.add("\\");
 		temp.add("/");
 		temp.add("|");
+//		temp.add(".");
 		for (String temp1 : temp) {
 			if (keyword.contains(temp1)) {
 				keyword = keyword.replace(temp1, "\\" + temp1);

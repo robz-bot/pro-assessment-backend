@@ -147,7 +147,7 @@ public class ReportsServiceImpl implements ReportsService {
 		}
 
 		if (reports.getTeamId() != null) {
-			Team team = teamRepository.findById(reports.getTeamId()).orElse(null);
+			Team team = teamRepository.findById(Long.parseLong(reports.getTeamId()));
 			if (team != null) {
 				reportsDto.setTeamName(team.getTeam());
 			}
@@ -261,6 +261,10 @@ public class ReportsServiceImpl implements ReportsService {
 					}
 				}
 			}
+		}
+		
+		if(type.equals(AssessmentConstants.TYPE4)) {
+			report = reportsRepository.findByTeamId(keyword);
 		}
 
 		if (type.equals(AssessmentConstants.TYPE6)) {

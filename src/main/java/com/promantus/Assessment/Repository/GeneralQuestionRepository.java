@@ -87,7 +87,7 @@ public interface GeneralQuestionRepository extends MongoRepository<GeneralQuesti
 	Page<GeneralQuestion> findByOption4AndIsActiveRegex(String keyword, boolean b, Pageable paging);
 
 //	@Query("{'answer': {$regex: ?0,$options: \"i\"}, 'isActive':true }")
-	@Query("{'answer': {$regex: '.*\\\\?0.*',$options: \"i\"}, 'isActive':true,  }")
+	@Query("{'answer': {$regex: ?0,$options: \"i\"}, 'isActive':true,  }")
 	Page<GeneralQuestion> findByAnswerAndIsActiveRegex(String keyword, boolean b, Pageable paging);
 	
 	@Query("{$or:[{'option1': {$regex: ?0,$options: \"i\"}},{'option2': {$regex: ?0,$options: \"i\"}},{'option3': {$regex: ?0,$options: \"i\"}},{'option4': {$regex: ?0,$options: \"i\"}}],  'isActive':true }")

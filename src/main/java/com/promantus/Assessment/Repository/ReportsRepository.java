@@ -29,4 +29,6 @@ public interface ReportsRepository extends MongoRepository<Reports, String> {
 	@Query("{'status': {$regex: ?0,$options: \"i\"} }})")
 	List<Reports> findByStatusRegex(String keyword);
 
+	List<Reports> findByTeamId(String keyword);
+
 }

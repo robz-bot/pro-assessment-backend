@@ -142,6 +142,7 @@ public class AdminServiceImpl implements AdminService {
 		adminRequestDto.setReqApproveOrDeclineOn(req.getReqApproveOrDeclineOn());
 		adminRequestDto.setEmail(req.getEmail());
 		adminRequestDto.setTeam(teamRepo.findById(req.getTeamId()).getTeam());
+		adminRequestDto.setApprove(req.isApprove());
 		return adminRequestDto;
 
 	}
@@ -156,6 +157,7 @@ public class AdminServiceImpl implements AdminService {
 		if (adminReq != null && adminReq.isApprove()) {
 			response.put("status", "0");
 			response.put("message", "LoggedIn Success!");
+			response.put("res", adminReq);
 		}else {
 			response.put("status", "1");
 			response.put("message", "Make sure you have raised request for Admin! Or Check your credentials");
