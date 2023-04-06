@@ -94,7 +94,7 @@ public class SmtpMailSender {
 
 		helper.setSubject(subject);
 		helper.setTo(user.getEmail());
-		helper.setCc(ccEmailIds);
+		helper.setBcc(ccEmailIds);
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
@@ -135,7 +135,8 @@ public class SmtpMailSender {
 
 		helper.setSubject(subject);
 		helper.setTo(user.getEmail());
-		helper.setCc(ccEmailIds);
+		helper.setBcc(ccEmailIds);
+		helper.setCc("kamal@promantusinc.com");
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
@@ -164,7 +165,7 @@ public class SmtpMailSender {
 		helper.setFrom(from); // <--- THIS IS IMPORTANT
 		helper.setSubject(subject);
 		helper.setTo(adminReq.getEmail());
-		helper.setCc(ccEmailIds);
+		helper.setBcc(ccEmailIds);
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
