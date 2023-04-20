@@ -18,6 +18,7 @@ public class GeneralQuestion {
 	private String answer;
 	private String updatedBy;
 	private LocalDateTime updatedon;
+	private String date;
 	private boolean isActive;
 
 	public Long getId() {
@@ -99,5 +100,23 @@ public class GeneralQuestion {
 	public void setisActive(boolean isActive) {
 		this.isActive = isActive;
 	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	
 	
 }

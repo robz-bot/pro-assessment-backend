@@ -94,6 +94,9 @@ public interface GeneralQuestionRepository extends MongoRepository<GeneralQuesti
 	Page<GeneralQuestion> getAllOptionsIsActiveRegex(String keyword, boolean b, Pageable paging);
 
 	List<GeneralQuestion> findAllByIsActive(boolean b);
+	
+	@Query("{'date': {$regex: ?0,$options: \"i\"}, 'isActive':true,  }")
+	Page<GeneralQuestion> findByDateAndIsActiveRegex(String keyword, boolean b, Pageable paging);
 
 
 

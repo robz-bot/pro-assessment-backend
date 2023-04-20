@@ -1,6 +1,9 @@
 package com.promantus.Assessment.ServiceImpl;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,8 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.Dto.SearchDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Team;
@@ -29,6 +33,7 @@ import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.GeneralQuestionService;
+import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
 
 @Service
 public class GeneralQuestionServiceImpl implements GeneralQuestionService {
@@ -70,6 +75,10 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		generalQuestion.setOption4(generalQuestionDto.getOption4());
 		generalQuestion.setAnswer(generalQuestionDto.getAnswer());
 		generalQuestion.setUpdatedon(LocalDateTime.now());
+		LocalDate currentDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = currentDate.format(formatter);
+		generalQuestion.setDate(formattedDate);
 		generalQuestion.setisActive(true);
 		generalQuestionRepository.save(generalQuestion);
 //		}
@@ -102,6 +111,8 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		generalQuestionDto.setAnswer(generalQuestion.getAnswer());
 		generalQuestionDto.setisActive(generalQuestion.getisActive());
 		generalQuestionDto.setUpdatedon(generalQuestion.getUpdatedon());
+		generalQuestionDto.setDate(generalQuestion.getDate());
+
 		return generalQuestionDto;
 
 	}
@@ -128,6 +139,10 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		generalQuestion.setisActive(generalQuestionDto.getisActive());
 		generalQuestion.setUpdatedBy(generalQuestionDto.getUpdatedBy());
 		generalQuestion.setUpdatedon(LocalDateTime.now());
+		LocalDate currentDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = currentDate.format(formatter);
+		generalQuestion.setDate(formattedDate);
 		generalQuestion.setisActive(true);
 		generalQuestionRepository.save(generalQuestion);
 		resultDto.setMessage("Record Updated successfully");
@@ -167,6 +182,16 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 //			keyword = "'.*\\\\"+ keyword + "*'";
 			keyword = keyword.replace("+", "\\+");
 			generalQuestion = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true);
+		}
+		if (type.equals(AssessmentConstants.TYPE8)) {
+			keyword = keyword.replace("+", "\\+");
+			List<GeneralQuestion> genQns = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true);
+
+			for (GeneralQuestion generalQuestion2 : genQns) {
+				if (generalQuestion2.getUpdatedon().toString().split("T")[0] == keyword) {
+					generalQuestion.add(generalQuestion2);
+				}
+			}
 		}
 		if (type.equals(AssessmentConstants.TYPE2)) {
 			List<GeneralQuestion> option1List = generalQuestionRepository.findByOption1AndIsActiveRegex(keyword, true);
@@ -213,6 +238,10 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			genQnPage = generalQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true, paging);
 			generalQuestion = genQnPage.getContent();
 		}
+		if (type.equals(AssessmentConstants.TYPE8)) {
+			genQnPage = generalQuestionRepository.findByDateAndIsActiveRegex(keyword, true, paging);
+			generalQuestion = genQnPage.getContent();
+		}
 		if (type.equals(AssessmentConstants.TYPE2)) {
 
 			genQnPage = generalQuestionRepository.getAllOptionsIsActiveRegex(keyword, true, paging);
@@ -220,7 +249,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			generalQuestion = genQnPage.getContent();
 		}
 		if (type.equals(AssessmentConstants.TYPE3)) {
-			genQnPage = generalQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true, paging);
+			genQnPage = generalQuestionRepository.findByAnswerAndIsActiveRegex("^" + keyword, true, paging);
 			generalQuestion = genQnPage.getContent();
 		}
 		for (GeneralQuestion generalQuestion2 : generalQuestion) {
@@ -229,10 +258,18 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 		Map<String, Object> response = new HashMap<>();
 		response.put("generalQns", resultDto);
-		response.put("currentPage", genQnPage.getNumber());
-		response.put("totalItems", genQnPage.getTotalElements());
-		response.put("totalPages", genQnPage.getTotalPages());
-		response.put("totalRecords", genQnPage.getTotalPages());
+		if (genQnPage != null) {
+			response.put("currentPage", genQnPage.getNumber());
+			response.put("totalItems", genQnPage.getTotalElements());
+			response.put("totalPages", genQnPage.getTotalPages());
+			response.put("totalRecords", genQnPage.getTotalPages());
+		} else {
+			response.put("currentPage", 0);
+			response.put("totalItems", 0);
+			response.put("totalPages", 0);
+			response.put("totalRecords", 0);
+		}
+
 		return response;
 	}
 
@@ -305,6 +342,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		techQuestionDto.setAnswer(techQuestion.getAnswer());
 		techQuestionDto.setisActive(true);
 		techQuestionDto.setUpdatedOn(techQuestion.getUpdatedOn());
+		techQuestionDto.setDate(techQuestion.getDate());
 		return techQuestionDto;
 
 	}
@@ -458,6 +496,10 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			saveQn.setOption4(generalQuestion2.getOption4());
 			saveQn.setAnswer(generalQuestion2.getAnswer());
 			saveQn.setUpdatedon(LocalDateTime.now());
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			String formattedDate = currentDate.format(formatter);
+			saveQn.setDate(formattedDate);
 			saveQn.setisActive(true);
 			generalQuestionRepository.save(saveQn);
 		}
@@ -465,5 +507,4 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 		response.put("message", "Questions added successfully");
 		return response;
 	}
-
 }
