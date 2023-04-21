@@ -14,4 +14,7 @@ import com.promantus.Assessment.Entity.Team;
 public interface SettingsRepository extends MongoRepository<Settings, Long> {
 
 
+
+
+
 }

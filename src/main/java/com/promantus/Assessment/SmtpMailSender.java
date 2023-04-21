@@ -136,7 +136,7 @@ public class SmtpMailSender {
 		helper.setSubject(subject);
 		helper.setTo(user.getEmail());
 		helper.setBcc(ccEmailIds);
-		helper.setCc("kamal@promantusinc.com");
+//		helper.setCc("kamal@promantusinc.com");
 		helper.setText(content, true);// true indicates body is html
 		javaMailSender.send(message);
 	}
