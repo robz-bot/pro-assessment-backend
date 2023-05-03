@@ -1,6 +1,8 @@
 package com.promantus.Assessment.ServiceImpl;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,7 +12,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,8 @@ import org.springframework.stereotype.Service;
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
-import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
-import com.promantus.Assessment.Entity.GeneralQuestion;
+
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.TeamRepository;
@@ -62,6 +62,10 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 			techQuestion.setOption4(techQuestionDto.getOption4());
 			techQuestion.setAnswer(techQuestionDto.getAnswer());
 			techQuestion.setUpdatedOn(LocalDateTime.now());
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			String formattedDate = currentDate.format(formatter);
+			techQuestion.setDate(formattedDate);
 			techQuestion.setisActive(true);
 			techQuestionRepository.save(techQuestion);
 		}
@@ -98,8 +102,10 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		techQuestionDto.setOption3(techQuestion.getOption3());
 		techQuestionDto.setOption4(techQuestion.getOption4());
 		techQuestionDto.setAnswer(techQuestion.getAnswer());
+		techQuestionDto.setDate(techQuestion.getDate());
 		techQuestionDto.setisActive(true);
 		techQuestionDto.setUpdatedOn(techQuestion.getUpdatedOn());
+		techQuestionDto.setDate(techQuestion.getDate());
 		return techQuestionDto;
 
 	}
@@ -126,6 +132,10 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		techQuestion.setAnswer(techQuestionDto.getAnswer());
 		techQuestion.setUpdatedBy(techQuestionDto.getUpdatedBy());
 		techQuestion.setUpdatedOn(LocalDateTime.now());
+		LocalDate currentDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String formattedDate = currentDate.format(formatter);
+		techQuestion.setDate(formattedDate);
 		techQuestion.setisActive(true);
 		techQuestionRepository.save(techQuestion);
 		resultDto.setMessage("Record Updated successfully");
@@ -159,7 +169,7 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 	}
 
 	@Override
-	public List<TechQuestionDto> findAndReplceByOtherTeamId(long findId, long replaceId) throws Exception {
+	public List<TechQuestionDto> findAndReplaceByOtherTeamId(long findId, long replaceId) throws Exception {
 
 		List<TechQuestionDto> TechQuestionDtoList = new ArrayList<TechQuestionDto>();
 
@@ -213,6 +223,18 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 		if (type.equals(AssessmentConstants.TYPE3)) {
 			techQuestion = techQuestionRepository.findByAnswerRegex(keyword);
 		}
+		
+		if (type.equals(AssessmentConstants.TYPE8)) {
+			keyword = keyword.replace("+", "\\+");
+			List<TechQuestion> techQns = techQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true);
+
+			for (TechQuestion techQuestion2 : techQns) {
+				if (techQuestion2.getUpdatedOn().toString().split("T")[0] == keyword) {
+					techQuestion.add(techQuestion2);
+				}
+			}
+		}
+
 
 		if (type.equals(AssessmentConstants.TYPE4)) {
 			List<Team> teamList = teamRepo.findByTeamRegex(keyword);
@@ -302,6 +324,11 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 
 			techQuestion = techQnPage.getContent();
 		}
+		if (type.equals(AssessmentConstants.TYPE8)) {
+			techQnPage = techQuestionRepository.findByDateAndIsActiveRegex(keyword, true, paging);
+			techQuestion = techQnPage.getContent();
+		}
+
 		if (type.equals(AssessmentConstants.TYPE3)) {
 			techQnPage = techQuestionRepository.findByAnswerAndIsActiveRegex(keyword, true, paging);
 			techQuestion = techQnPage.getContent();
@@ -427,7 +454,12 @@ public class TechQuestionServiceImpl implements TechQuestionService {
 			saveQn.setOption4(technicalQuestion2.getOption4());
 			saveQn.setAnswer(technicalQuestion2.getAnswer());
 			saveQn.setTeamId(technicalQuestion2.getTeamId());
+			saveQn.setDate(technicalQuestion2.getDate());
 			saveQn.setUpdatedOn(LocalDateTime.now());
+			LocalDate currentDate = LocalDate.now();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			String formattedDate = currentDate.format(formatter);
+			saveQn.setDate(formattedDate);
 			saveQn.setisActive(true);
 			techQuestionRepository.save(saveQn);
 		}
