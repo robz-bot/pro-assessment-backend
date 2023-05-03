@@ -13,6 +13,7 @@ import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Entity.User;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
+import com.promantus.Assessment.Repository.SettingsRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Repository.UserRepository;
@@ -33,17 +34,22 @@ public class ExamServiceImpl implements ExamService {
 	@Autowired
 	TeamRepository teamRepo;
 
+	@Autowired
+	SettingsRepository settingsRepo;
+
 	@Override
 	public List<ExamDto> getExamQns(String teamId, String userId) throws Exception {
 		List<ExamDto> resultDto = new ArrayList<ExamDto>();
 
 		List<GeneralQuestion> genQns = new ArrayList<>();
 		genQns = genQnRepo.findAllByIsActive(true);
-		//List<GeneralQuestion> genQns1 = genQnRepo.findAllQuestionDistinctBy();
+		// List<GeneralQuestion> genQns1 = genQnRepo.findAllQuestionDistinctBy();
 
-		List<TechQuestion> techQns = techQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId),true);
-		//List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
-		
+		List<TechQuestion> techQns = techQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId), true);
+		// List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
+
+		int genQnsLen = settingsRepo.findAll().get(0).getGenQns();
+		int techQnsLen = settingsRepo.findAll().get(0).getTechQns();
 
 		if (genQns.size() > 0 && techQns.size() > 0) {
 			// Randomize the Qns
@@ -54,7 +60,8 @@ public class ExamServiceImpl implements ExamService {
 			// Pick 5 Qns from genQn and 25 from techQn
 			for (int i = 0; i < genQns.size(); i++) {
 				// run from index 0 to 4
-				if (i <= 4) {
+//				if (i <= 4) {
+				if (i < genQnsLen) {
 					runningNumber++;
 					resultDto.add(this.getGeneralQuestionDto(runningNumber, genQns.get(i)));
 				}
@@ -62,7 +69,8 @@ public class ExamServiceImpl implements ExamService {
 
 			for (int i = 0; i < techQns.size(); i++) {
 				// run from index 0 to 24
-				if (i <= 24) {
+//				if (i <= 24) {
+				if (i < techQnsLen) {
 					runningNumber++;
 					resultDto.add(this.getTechQuestionDto(runningNumber, techQns.get(i)));
 				}

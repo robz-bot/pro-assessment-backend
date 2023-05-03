@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.promantus.Assessment.Dto.SettingsDto;
 import com.promantus.Assessment.Entity.Settings;
+import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Repository.SettingsRepository;
+import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.SettingsService;
 
@@ -25,6 +27,12 @@ public class SettingsServiceImpl implements SettingsService {
 
 	@Autowired
 	SettingsRepository settingsRepository;
+	
+	@Autowired
+	GeneralQuestionRepository generalQuestionRepository;
+	
+	@Autowired
+	TechQuestionRepository techQuestionRepository;
 
 	@Override
 	public SettingsDto addSettings(SettingsDto settingsDto, String lang) throws Exception {
@@ -78,6 +86,19 @@ public class SettingsServiceImpl implements SettingsService {
 			resultDto.setMessage("Settings does not exist");
 			return resultDto;
 		}
+		
+		int genQnsCount = generalQuestionRepository.findAll().size();
+		int techQnsCount = techQuestionRepository.findAll().size();
+		
+		if(settingsDto.getGenQns() > genQnsCount) {
+			resultDto.setMessage("General Questions should not exceed "+ genQnsCount);
+			return resultDto;
+		}
+		
+		if(settingsDto.getTechQns() > techQnsCount) {
+			resultDto.setMessage("Technical Questions should not exceed "+ techQnsCount);
+			return resultDto;
+		}
 
 		settings.setId(settingsDto.getId());
 		settings.setGenQns(settingsDto.getGenQns());
@@ -86,7 +107,7 @@ public class SettingsServiceImpl implements SettingsService {
 		settings.setFailPercentage(settingsDto.getFailPercentage());
 
 		settingsRepository.save(settings);
-		resultDto.setMessage("Record Updated successfully");
+		resultDto.setMessage("Record Updated Successfully");
 		return resultDto;
 
 	}
