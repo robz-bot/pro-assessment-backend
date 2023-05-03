@@ -230,12 +230,12 @@ public class TechQuestionController extends CommonController {
 		}
 	}
 
-	@GetMapping("/findAndReplceByOtherTeamId/{findId}/{replaceId}")
+	@GetMapping("/findAndReplaceByOtherTeamId/{findId}/{replaceId}")
 	public List<TechQuestionDto> findAndReplceByOtherTeamId(@PathVariable String findId,
 			@PathVariable String replaceId) {
 		try {
 
-			return techQuestionService.findAndReplceByOtherTeamId(Long.parseLong(findId), Long.parseLong(replaceId));
+			return techQuestionService.findAndReplaceByOtherTeamId(Long.parseLong(findId), Long.parseLong(replaceId));
 
 		} catch (final Exception e) {
 			logger.error(AssessmentUtil.getErrorMessage(e));

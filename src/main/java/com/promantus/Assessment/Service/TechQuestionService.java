@@ -22,7 +22,7 @@ public interface TechQuestionService {
 
 	TechQuestionDto deleteTechQuestionById(String id) throws Exception;
 
-	List<TechQuestionDto> findAndReplceByOtherTeamId(long findId, long replaceId) throws Exception;
+	List<TechQuestionDto> findAndReplaceByOtherTeamId(long findId, long replaceId) throws Exception;
 
 	List<TechQuestionDto> searchtechQns(String type, String keyword) throws Exception;
 
@@ -35,6 +35,8 @@ public interface TechQuestionService {
 	TechQuestionDto inactiveTechQuestionById(String id) throws Exception;
 
 	Map<String, Object> saveBulkTechQuestions(List<TechQuestion> technicalQuestion) throws Exception;
+
+	
 	
 
 }

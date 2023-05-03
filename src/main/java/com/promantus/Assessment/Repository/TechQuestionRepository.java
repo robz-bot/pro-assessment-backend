@@ -68,6 +68,11 @@ public interface TechQuestionRepository extends MongoRepository<TechQuestion, St
 
 	List<TechQuestion> findAllByTeamIdAndIsActive(Long id, boolean b);
 
+	List<TechQuestion> findByQuestionAndIsActiveRegex(String keyword, boolean b);
+
+	@Query("{'date': {$regex: ?0,$options: \"i\"}, 'isActive':true,  }")
+	Page<TechQuestion> findByDateAndIsActiveRegex(String keyword, boolean b, Pageable paging);
+
 //	List<TechQuestion> findAllByTeamIdAndIsActive(String teamId, boolean b);
 
 }
