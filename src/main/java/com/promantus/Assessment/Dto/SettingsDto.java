@@ -16,6 +16,7 @@ public class SettingsDto implements Serializable {
 	private Long id;
 	private int genQns;
 	private int techQns;
+	private int progQns;
 	private int passPercentage;
 	private int failPercentage;
 	private String isActive;
@@ -73,6 +74,12 @@ public class SettingsDto implements Serializable {
 	}
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
+	}
+	public int getProgQns() {
+		return progQns;
+	}
+	public void setProgQns(int progQns) {
+		this.progQns = progQns;
 	}
 	
   	

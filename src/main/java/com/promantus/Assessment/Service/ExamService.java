@@ -9,4 +9,6 @@ public interface ExamService {
 
 	List<ExamDto> getExamQns(String teamId, String userId)throws Exception;
 
+	List<ExamDto> getProgramQns(String teamId, String userId) throws Exception;
+
 }

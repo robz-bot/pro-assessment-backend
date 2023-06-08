@@ -41,5 +41,20 @@ public class ExamController extends CommonController {
 
 		return new ArrayList<ExamDto>();
 	}
+	
+	@GetMapping("/getProgramQns/{teamId}/{userId}")
+	public List<ExamDto> getProgramQns(@PathVariable String teamId, @PathVariable String userId,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return examService.getProgramQns(teamId, userId);
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new ArrayList<ExamDto>();
+	}
 
 }
