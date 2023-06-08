@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.Dto.ExamDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
+import com.promantus.Assessment.Entity.ProgramQuestion;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Entity.User;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
+import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.SettingsRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
@@ -27,6 +29,9 @@ public class ExamServiceImpl implements ExamService {
 
 	@Autowired
 	TechQuestionRepository techQnRepo;
+	
+	@Autowired
+	ProgramQuestionRepository progQnRepo;
 
 	@Autowired
 	UserRepository userRepo;
@@ -48,9 +53,10 @@ public class ExamServiceImpl implements ExamService {
 		List<TechQuestion> techQns = techQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId), true);
 		// List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
 
+		
 		int genQnsLen = settingsRepo.findAll().get(0).getGenQns();
 		int techQnsLen = settingsRepo.findAll().get(0).getTechQns();
-
+	
 		if (genQns.size() > 0 && techQns.size() > 0) {
 			// Randomize the Qns
 			Collections.shuffle(genQns);
@@ -75,7 +81,7 @@ public class ExamServiceImpl implements ExamService {
 					resultDto.add(this.getTechQuestionDto(runningNumber, techQns.get(i)));
 				}
 			}
-
+			
 			User getUser = userRepo.findById(Long.parseLong(userId));
 			Team getTeam = teamRepo.findById(Long.parseLong(teamId));
 			if (getUser != null) {
@@ -128,5 +134,59 @@ public class ExamServiceImpl implements ExamService {
 		return resultDto;
 
 	}
+	
+	@Override
+	public List<ExamDto> getProgramQns(String teamId, String userId) throws Exception {
+		
+		List<ExamDto> resultDto = new ArrayList<ExamDto>();
+
+		List<ProgramQuestion> progQns = progQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId), true);
+		progQns = progQnRepo.findAllByIsActive(true);
+		
+		int progQnsLen = settingsRepo.findAll().get(0).getProgQns();
+		
+		if (progQns.size() > 0) {
+			// Randomize the Qns
+			Collections.shuffle(progQns);
+
+			Integer runningNumber = 0;
+					
+			for (int i = 0; i < progQns.size(); i++) {
+				if (i < progQnsLen) {
+					runningNumber++;
+					resultDto.add(this.getProgramQuestionDto(runningNumber, progQns.get(i)));
+				}
+			}
+
+			User getUser = userRepo.findById(Long.parseLong(userId));
+			Team getTeam = teamRepo.findById(Long.parseLong(teamId));
+			if (getUser != null) {
+				ExamDto resDto = resultDto.get(0);
+				resDto.setUserId(getUser.getId());
+				resDto.setEmail(getUser.getEmail());
+				resDto.setEmpCode(getUser.getEmpCode());
+				resDto.setFirstName(getUser.getFirstName());
+				resDto.setLastName(getUser.getLastName());
+				resDto.setManager(getUser.getManager());
+				resDto.setTeam(getTeam.getTeam());
+				resDto.setTeamId(teamId);
+
+			}
+
+		}
+		return resultDto;
+	}
+	
+	private ExamDto getProgramQuestionDto(Integer currentNumber, ProgramQuestion programQuestion) {
+		ExamDto resultDto = new ExamDto();
+
+		resultDto.setId(currentNumber);
+		resultDto.setTeamId(programQuestion.getTeamId());
+		resultDto.setQuestion(programQuestion.getQuestion());
+		resultDto.setQuestionLevel(programQuestion.getQuestionLevel());
+		return resultDto;
+
+	}
+
 
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
-//import com.promantus.Assessment.SmtpMailSender;
+import com.promantus.Assessment.SmtpMailSender;
 import com.promantus.Assessment.Dto.AdminRequestDto;
 import com.promantus.Assessment.Entity.AdminRequest;
 import com.promantus.Assessment.Entity.Team;
@@ -29,8 +29,8 @@ public class AdminServiceImpl implements AdminService {
 	@Autowired
 	CommonService commonService;
 
-//	@Autowired
-//	SmtpMailSender smtpMailSender;
+	@Autowired
+	SmtpMailSender smtpMailSender;
 
 	@Autowired
 	TeamRepository teamRepo;
@@ -102,7 +102,7 @@ public class AdminServiceImpl implements AdminService {
 				try {
 					AdminRequest adminReq = adminReqRepo.findById(adminRequestDto.getId());
 					Team team = teamRepo.findById(adminReq.getTeamId());
-//					smtpMailSender.sendApproveOrDeclineMail(adminReq, team.getTeam());
+					smtpMailSender.sendApproveOrDeclineMail(adminReq, team.getTeam());
 				} catch (Exception e) {
 
 					System.out.println("Admin Approve/Decline mail is not Sent.");

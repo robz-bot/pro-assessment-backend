@@ -11,6 +11,7 @@ public class ProgramQuestionDto implements Serializable {
 	private Long id;
 	private String teamId;
 	private String question;
+	private String questionLevel;
 	private String program;
     private String createdBy;
 	private LocalDateTime createdOn;
@@ -87,16 +88,21 @@ public class ProgramQuestionDto implements Serializable {
 	public void setDate(String date) {
 		this.date = date;
 	}
+	
 	public boolean isActive() {
 		return isActive;
 	}
-
-	public void setisActive(boolean isActive) {
+	public void setActive(boolean isActive) {
 		this.isActive = isActive;
 	}
-
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public String getQuestionLevel() {
+		return questionLevel;
+	}
+	public void setQuestionLevel(String questionLevel) {
+		this.questionLevel = questionLevel;
 	}
 	
 

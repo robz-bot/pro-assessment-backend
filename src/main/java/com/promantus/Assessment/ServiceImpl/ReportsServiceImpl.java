@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
-//import com.promantus.Assessment.SmtpMailSender;
+import com.promantus.Assessment.SmtpMailSender;
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.Reports;
@@ -56,8 +56,8 @@ public class ReportsServiceImpl implements ReportsService {
 	@Autowired
 	TeamRepository teamRepository;
 	
-//	@Autowired
-//	SmtpMailSender smtpMailSender;
+	@Autowired
+	SmtpMailSender smtpMailSender;
 
 	@Autowired
 	ResourceLoader resourceLoader;
@@ -100,7 +100,7 @@ public class ReportsServiceImpl implements ReportsService {
 			@Override
 			public void run() {
 				try {
-//					smtpMailSender.sendUserResMail(reportsDto,user,team);
+					smtpMailSender.sendUserResMail(reportsDto,user,team);
 				} catch (Exception e) {
 
 					System.out.println("Email for User Result is not Sent.");

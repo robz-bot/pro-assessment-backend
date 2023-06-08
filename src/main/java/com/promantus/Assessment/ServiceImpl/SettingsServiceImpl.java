@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.promantus.Assessment.Dto.SettingsDto;
 import com.promantus.Assessment.Entity.Settings;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
+import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.SettingsRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
@@ -33,6 +34,9 @@ public class SettingsServiceImpl implements SettingsService {
 	
 	@Autowired
 	TechQuestionRepository techQuestionRepository;
+	
+	@Autowired
+	ProgramQuestionRepository progQuestionRepository;
 
 	@Override
 	public SettingsDto addSettings(SettingsDto settingsDto, String lang) throws Exception {
@@ -43,7 +47,8 @@ public class SettingsServiceImpl implements SettingsService {
 		Long num = commonService.nextSequenceNumber();
 		setting.setId(num);
 		setting.setGenQns(5);
-		setting.setGenQns(25);
+		setting.setTechQns(25);
+		setting.setProgQns(1);
 		settingsRepository.save(setting);
 
 		resultDto.setMessage("Settings added successfully");
@@ -68,6 +73,7 @@ public class SettingsServiceImpl implements SettingsService {
 		settingsDto.setId(settings.getId());
 		settingsDto.setGenQns(settings.getGenQns());
 		settingsDto.setTechQns(settings.getTechQns());
+		settingsDto.setProgQns(settings.getProgQns());
 		settingsDto.setPassPercentage(settings.getPassPercentage());
 		settingsDto.setFailPercentage(settings.getFailPercentage());
 		return settingsDto;
@@ -89,6 +95,7 @@ public class SettingsServiceImpl implements SettingsService {
 		
 		int genQnsCount = generalQuestionRepository.findAll().size();
 		int techQnsCount = techQuestionRepository.findAll().size();
+		int progQnsCount = progQuestionRepository.findAll().size();
 		
 		if(settingsDto.getGenQns() > genQnsCount) {
 			resultDto.setMessage("General Questions should not exceed "+ genQnsCount);
@@ -99,10 +106,15 @@ public class SettingsServiceImpl implements SettingsService {
 			resultDto.setMessage("Technical Questions should not exceed "+ techQnsCount);
 			return resultDto;
 		}
+		if(settingsDto.getProgQns() > progQnsCount) {
+			resultDto.setMessage("Technical Questions should not exceed "+ progQnsCount);
+			return resultDto;
+		}
 
 		settings.setId(settingsDto.getId());
 		settings.setGenQns(settingsDto.getGenQns());
 		settings.setTechQns(settingsDto.getTechQns());
+		settings.setProgQns(settingsDto.getProgQns());
 		settings.setPassPercentage(settingsDto.getPassPercentage());
 		settings.setFailPercentage(settingsDto.getFailPercentage());
 

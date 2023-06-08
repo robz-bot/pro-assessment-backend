@@ -50,15 +50,21 @@ public class ProgramQuestionController extends CommonController {
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
 
-			// ProgramQuestion
+			if (programQuestionDto.getTeamId() == null || programQuestionDto.getTeamId().isEmpty()) {
+				errorParam.append("Team Id is Missing");
+			}
 
 			if (programQuestionDto.getQuestion() == null || programQuestionDto.getQuestion().isEmpty()) {
 				errorParam.append("Question is Missing");
 			}
 		
+			if(programQuestionDto.getQuestionLevel()==null || programQuestionDto.getQuestionLevel().isEmpty()){
+				errorParam.append("Question Level is Missing");
+			}
 			if (programQuestionDto.getProgram() == null || programQuestionDto.getProgram().isEmpty()) {
 				errorParam.append("Program is Missing");
 			}
+			
 			if (errorParam.length() > 0) {
 				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
 				resultDto.setMessage(
@@ -206,7 +212,7 @@ public class ProgramQuestionController extends CommonController {
 		}
 	}
 
-	@GetMapping("/search/{type}/{keyword}")
+	@GetMapping("/searchProgram/{type}/{keyword}")
 	public List<ProgramQuestionDto> search(@PathVariable String keyword, @PathVariable String type,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -250,7 +256,22 @@ public class ProgramQuestionController extends CommonController {
 //		return new ArrayList<ProgramQuestionDto>();
 //	}
 //	
-	@GetMapping("getInactiveQns/{type}/{keyword}")
+	@PostMapping("/saveBulkProgramQuestions")
+	public Map<String, Object> saveBulkProgramQuestions(@RequestBody List<ProgramQuestion> programQuestion,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return programQuestionService.saveBulkProgramQuestions(programQuestion);
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
+	}	
+	
+	@GetMapping("getInactiveProgramQns/{type}/{keyword}")
 	public Map<String, Object> getInactiveQns(@PathVariable String keyword, @PathVariable String type,@RequestHeader(name = "lang", required = false) String lang) {
 
 		try {
@@ -264,7 +285,9 @@ public class ProgramQuestionController extends CommonController {
 		return new HashMap<String, Object>();
 	}
 	
-	@GetMapping("/activeQuestionById/{type}/{id}")
+	
+	
+	@GetMapping("/activeProgramQuestionById/{type}/{id}")
 	public Map<String, Object> activeQuestionById(@PathVariable String type, @PathVariable String id,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -282,6 +305,9 @@ public class ProgramQuestionController extends CommonController {
 
 			return new HashMap<>();
 		}
+		
 	}
 
 }
+
+

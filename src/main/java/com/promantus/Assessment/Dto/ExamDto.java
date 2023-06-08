@@ -6,6 +6,7 @@ public class ExamDto {
 
 	private Integer id;
 	private String question;
+	private String questionLevel;
 	private ArrayList<String> options = new ArrayList<String>();
 	private String answer;
 	private Long userId;
@@ -16,6 +17,7 @@ public class ExamDto {
 	private String manager;
 	private String team;
 	private String teamId;
+	private String program;
 
 	public Integer getId() {
 		return id;
@@ -112,5 +114,23 @@ public class ExamDto {
 	public void setTeamId(String teamId) {
 		this.teamId = teamId;
 	}
+
+	public String getProgram() {
+		return program;
+	}
+
+	public void setProgram(String program) {
+		this.program = program;
+	}
+
+	public String getQuestionLevel() {
+		return questionLevel;
+	}
+
+	public void setQuestionLevel(String questionLevel) {
+		this.questionLevel = questionLevel;
+	}
+	
+	
 
 }

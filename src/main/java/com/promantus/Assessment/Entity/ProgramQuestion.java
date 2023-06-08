@@ -12,6 +12,7 @@ public class ProgramQuestion {
 		private Long id;
 		private String teamId;
 		private String question;
+		private String questionLevel;
 		private String program;
 	    private String createdBy;
 		private LocalDateTime createdOn;
@@ -75,12 +76,17 @@ public class ProgramQuestion {
 		public void setDate(String date) {
 			this.date = date;
 		}
-		public boolean getisActive() {
+		public boolean isActive() {
 			return isActive;
 		}
-
-		public void setisActive(boolean isActive) {
+		public void setActive(boolean isActive) {
 			this.isActive = isActive;
 		}
-		
+		public String getQuestionLevel() {
+			return questionLevel;
+		}
+		public void setQuestionLevel(String questionLevel) {
+			this.questionLevel = questionLevel;
+		}
+				
 }

@@ -24,13 +24,11 @@ import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.ProgramQuestionDto;
 import com.promantus.Assessment.Dto.SearchDto;
-import com.promantus.Assessment.Dto.ProgramQuestionDto;
 import com.promantus.Assessment.Entity.ProgramQuestion;
 import com.promantus.Assessment.Entity.Team;
-import com.promantus.Assessment.Entity.ProgramQuestion;
+import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
-import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.ProgramQuestionService;
 import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
@@ -63,9 +61,11 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		}
 
 		ProgramQuestion programQuestion = new ProgramQuestion();
+
 		programQuestion.setId(commonService.nextSequenceNumber());
 		programQuestion.setTeamId(programQuestionDto.getTeamId());
 		programQuestion.setQuestion(programQuestionDto.getQuestion());
+		programQuestion.setQuestionLevel(programQuestionDto.getQuestionLevel());
 		programQuestion.setProgram(programQuestionDto.getProgram());
 		programQuestion.setCreatedBy(programQuestionDto.getCreatedBy());
 		programQuestion.setUpdatedBy(programQuestionDto.getUpdatedBy());
@@ -75,7 +75,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String formattedDate = currentDate.format(formatter);
 		programQuestion.setDate(formattedDate);
-		programQuestion.setisActive(true);
+		programQuestion.setActive(true);
 		programQuestionRepository.save(programQuestion);
 
 		resultDto.setMessage("ProgramQuestion added successfully");
@@ -101,8 +101,9 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		programQuestionDto.setId(programQuestion.getId());
 		programQuestionDto.setTeamId(programQuestion.getTeamId());
 		programQuestionDto.setQuestion(programQuestion.getQuestion());
+		programQuestionDto.setQuestionLevel(programQuestion.getQuestionLevel());
 		programQuestionDto.setProgram(programQuestion.getProgram());
-		programQuestionDto.setisActive(programQuestion.getisActive());
+		programQuestionDto.setActive(programQuestion.isActive());
 		programQuestionDto.setCreatedBy(programQuestion.getCreatedBy());
 		programQuestionDto.setUpdatedBy(programQuestion.getUpdatedBy());
 		programQuestionDto.setCreatedOn(programQuestion.getCreatedOn());
@@ -126,8 +127,9 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 			resultDto.setMessage("ProgramQuestion does not exist");
 			return resultDto;
 		}
-		programQuestion.setQuestion(programQuestionDto.getQuestion());
 		programQuestion.setTeamId(programQuestionDto.getTeamId());
+		programQuestion.setQuestion(programQuestionDto.getQuestion());
+		programQuestion.setQuestionLevel(programQuestionDto.getQuestionLevel());
 		programQuestion.setProgram(programQuestionDto.getProgram());
 		programQuestion.setCreatedBy(programQuestionDto.getCreatedBy());
 		programQuestion.setUpdatedBy(programQuestionDto.getUpdatedBy());
@@ -137,9 +139,9 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String formattedDate = currentDate.format(formatter);
 		programQuestion.setDate(formattedDate);
-		programQuestion.setisActive(true);
+		programQuestion.setActive(true);
 		programQuestionRepository.save(programQuestion);
-		resultDto.setMessage("Record Updated successfully");
+		resultDto.setMessage("Program Question Updated successfully");
 		return resultDto;
 
 	}
@@ -154,7 +156,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		}
 
 		programQuestionRepository.delete(programQuestion);
-		resultDto.setMessage("Record Deleted successfully");
+		resultDto.setMessage("Program Question Deleted successfully");
 		return resultDto;
 	}
 
@@ -187,7 +189,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 				}
 			}
 		}
-		
+
 		if (type.equals(AssessmentConstants.TYPE15)) {
 			programQuestion = programQuestionRepository.findByProgramAndIsActiveRegex(keyword, true);
 		}
@@ -198,7 +200,6 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		return resultDto;
 	}
 
-	
 	@Override
 	public Map<String, Object> getAllProgramQuestionsPage(Pageable paging) throws Exception {
 		paging.getSort();
@@ -226,7 +227,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 //
 //		List<ProgramQuestionDto> ProgramQuestionDtoList = new ArrayList<ProgramQuestionDto>();
 //		for (ProgramQuestion ProgramQuestion : ProgramQuestionsList) {
-//			ProgramQuestion.setisActive(true);
+//			ProgramQuestion.setActive(true);
 //			programQuestionRepository.save(ProgramQuestion);
 //			ProgramQuestionDtoList.add(this.getProgramQuestionDto(ProgramQuestion));
 //		}
@@ -243,7 +244,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 			return resultDto;
 		}
 
-		programQuestion.setisActive(false);
+		programQuestion.setActive(false);
 		programQuestionRepository.save(programQuestion);
 		resultDto.setMessage("This question is moved inactive state");
 		return resultDto;
@@ -256,7 +257,8 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		// program qn
 		if (type.equals(AssessmentConstants.TYPE13)) {
-			List<ProgramQuestion> programList = programQuestionRepository.findAllByTeamIdAndIsActive(Long.parseLong(keyword), false);
+			List<ProgramQuestion> programList = programQuestionRepository
+					.findAllByTeamIdAndIsActive(Long.parseLong(keyword), false);
 			List<ProgramQuestionDto> resultDto = new ArrayList<>();
 			for (ProgramQuestion programQuestion : programList) {
 				resultDto.add(this.getProgramQuestionDto(programQuestion));
@@ -281,7 +283,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 	public Map<String, Object> activeQuestionById(String type, String id) throws Exception {
 		Map<String, Object> response = new HashMap<>();
 
-		if (type.equals(AssessmentConstants.TYPE14)) {
+		if (type.equals(AssessmentConstants.TYPE15)) {
 			ProgramQuestion programQuestion = programQuestionRepository.findByIdAndIsActive(Long.parseLong(id), false);
 			if (programQuestion == null) {
 				response.put("status", 1);
@@ -289,7 +291,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 				return response;
 			}
 
-			programQuestion.setisActive(true);
+			programQuestion.setActive(true);
 			programQuestion.setUpdatedOn(LocalDateTime.now());
 			programQuestionRepository.save(programQuestion);
 			response.put("status", 0);
@@ -303,7 +305,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 				return response;
 			}
 
-			programQuestion.setisActive(true);
+			programQuestion.setActive(true);
 			programQuestion.setUpdatedOn(LocalDateTime.now());
 			programQuestionRepository.save(programQuestion);
 			response.put("status", 0);
@@ -313,4 +315,66 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		return new HashMap<>();
 	}
 
+	private static <T> Set<T> findDuplicates(List<T> list) {
+		return list.stream().distinct().filter(i -> Collections.frequency(list, i) > 1).collect(Collectors.toSet());
+	}
+
+	public Map<String, Object> saveBulkProgramQuestions(List<ProgramQuestion> programQuestion) throws Exception {
+
+		Map<String, Object> response = new HashMap<>();
+
+		// Duplicate Check
+		int index = 0;
+		for (ProgramQuestion programQuestion2 : programQuestion) {
+			index++;
+			if (programQuestion2.getQuestion() == null || programQuestion2.getQuestionLevel() == null) {
+				response.put("status", 1);
+				response.put("message", "One of the cell value has empty value");
+				return response;
+
+			}
+
+			// List of All Questions
+			List<String> allQns = new ArrayList<>();
+
+			for (ProgramQuestion programQuestion1 : programQuestion) {
+				allQns.add(programQuestion1.getQuestion());
+			}
+
+			// Find Duplication Questions
+			Set<String> duplicates = findDuplicates(allQns);
+			if (duplicates.size() > 0) {
+				response.put("status", 1);
+				response.put("message", "The following questions has duplication");
+				response.put("duplicateQns", duplicates);
+				return response;
+			}
+
+			// Is everything is fine save all Questions
+			for (ProgramQuestion programQuestion3 : programQuestion) {
+				if (programQuestionRepository.existsByQuestion(programQuestion3.getQuestion())) {
+					response.put("status", 1);
+					response.put("message", "This Question already exists - " + programQuestion3.getQuestion());
+					return response;
+				}
+
+				ProgramQuestion saveQn = new ProgramQuestion();
+				saveQn.setId(commonService.nextSequenceNumber());
+				saveQn.setQuestion(programQuestion3.getQuestion());
+				saveQn.setQuestionLevel(programQuestion3.getQuestionLevel());
+				saveQn.setTeamId(programQuestion3.getTeamId());
+				saveQn.setDate(programQuestion3.getDate());
+				saveQn.setUpdatedOn(LocalDateTime.now());
+				LocalDate currentDate = LocalDate.now();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				String formattedDate = currentDate.format(formatter);
+				saveQn.setDate(formattedDate);
+				saveQn.setActive(true);
+				programQuestionRepository.save(saveQn);
+			}
+		}
+		response.put("status", 0);
+		response.put("message", "Questions added successfully");
+		return response;
+	}
 }

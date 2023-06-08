@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
-//import com.promantus.Assessment.SmtpMailSender;
+import com.promantus.Assessment.SmtpMailSender;
 import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
 import com.promantus.Assessment.Entity.Team;
@@ -34,8 +34,8 @@ public class TeamServiceImpl implements TeamService {
 	@Autowired
 	CommonService commonService;
 //
-//	@Autowired
-//	SmtpMailSender smtpMailSender;
+	@Autowired
+	SmtpMailSender smtpMailSender;
 
 	@Autowired
 	GeneralQuestionRepository genQnRepo;
@@ -79,7 +79,7 @@ public class TeamServiceImpl implements TeamService {
 				@Override
 				public void run() {
 					try {
-//						smtpMailSender.sendMail(team);
+						smtpMailSender.sendMail(team);
 					} catch (Exception e) {
 
 						System.out.println("Email for Interview Scheduled is not Sent.");

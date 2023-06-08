@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
-//import com.promantus.Assessment.SmtpMailSender;
+import com.promantus.Assessment.SmtpMailSender;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
@@ -46,8 +46,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	CommonService commonService;
 
-//	@Autowired
-//	SmtpMailSender smtpMailSender;
+	@Autowired
+	SmtpMailSender smtpMailSender;
 
 	@Autowired
 	ReportsRepository reportsRepository;
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 					@Override
 					public void run() {
 						try {
-//							smtpMailSender.sendUserMail(getUser);
+							smtpMailSender.sendUserMail(getUser);
 						} catch (Exception e) {
 
 							System.out.println("Email for Interview Scheduled is not Sent.");
