@@ -14,19 +14,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
-import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.ProgramQuestionDto;
-import com.promantus.Assessment.Dto.SearchDto;
 import com.promantus.Assessment.Entity.ProgramQuestion;
-import com.promantus.Assessment.Entity.Team;
-import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Service.CommonService;
@@ -54,8 +49,8 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		ProgramQuestionDto resultDto = new ProgramQuestionDto();
 
-		if (programQuestionRepository.existsByQuestion(programQuestionDto.getQuestion())) {
-			resultDto.setMessage("This Question already exists");
+		if (programQuestionRepository.existsByProgram(programQuestionDto.getProgram())) {
+			resultDto.setMessage("This Program already exists");
 			resultDto.setStatus(1);
 			return resultDto;
 		}
@@ -64,8 +59,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		programQuestion.setId(commonService.nextSequenceNumber());
 		programQuestion.setTeamId(programQuestionDto.getTeamId());
-		programQuestion.setQuestion(programQuestionDto.getQuestion());
-		programQuestion.setQuestionLevel(programQuestionDto.getQuestionLevel());
+		programQuestion.setProgramLevel(programQuestionDto.getProgramLevel());
 		programQuestion.setProgram(programQuestionDto.getProgram());
 		programQuestion.setCreatedBy(programQuestionDto.getCreatedBy());
 		programQuestion.setUpdatedBy(programQuestionDto.getUpdatedBy());
@@ -78,7 +72,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		programQuestion.setActive(true);
 		programQuestionRepository.save(programQuestion);
 
-		resultDto.setMessage("ProgramQuestion added successfully");
+		resultDto.setMessage("Program Question added successfully");
 		return resultDto;
 	}
 
@@ -100,9 +94,8 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		programQuestionDto.setId(programQuestion.getId());
 		programQuestionDto.setTeamId(programQuestion.getTeamId());
-		programQuestionDto.setQuestion(programQuestion.getQuestion());
-		programQuestionDto.setQuestionLevel(programQuestion.getQuestionLevel());
 		programQuestionDto.setProgram(programQuestion.getProgram());
+		programQuestionDto.setProgramLevel(programQuestion.getProgramLevel());
 		programQuestionDto.setActive(programQuestion.isActive());
 		programQuestionDto.setCreatedBy(programQuestion.getCreatedBy());
 		programQuestionDto.setUpdatedBy(programQuestion.getUpdatedBy());
@@ -128,8 +121,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 			return resultDto;
 		}
 		programQuestion.setTeamId(programQuestionDto.getTeamId());
-		programQuestion.setQuestion(programQuestionDto.getQuestion());
-		programQuestion.setQuestionLevel(programQuestionDto.getQuestionLevel());
+		programQuestion.setProgramLevel(programQuestionDto.getProgramLevel());
 		programQuestion.setProgram(programQuestionDto.getProgram());
 		programQuestion.setCreatedBy(programQuestionDto.getCreatedBy());
 		programQuestion.setUpdatedBy(programQuestionDto.getUpdatedBy());
@@ -177,11 +169,11 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		if (type.equals(AssessmentConstants.TYPE1)) {
 //			keyword = "'.*\\\\"+ keyword + "*'";
 			keyword = keyword.replace("+", "\\+");
-			programQuestion = programQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true);
+			programQuestion = programQuestionRepository.findByProgramAndIsActiveRegex(keyword, true);
 		}
 		if (type.equals(AssessmentConstants.TYPE8)) {
 			keyword = keyword.replace("+", "\\+");
-			List<ProgramQuestion> progQns = programQuestionRepository.findByQuestionAndIsActiveRegex(keyword, true);
+			List<ProgramQuestion> progQns = programQuestionRepository.findByProgramAndIsActiveRegex(keyword, true);
 
 			for (ProgramQuestion programQuestion2 : progQns) {
 				if (programQuestion2.getUpdatedOn().toString().split("T")[0] == keyword) {
@@ -327,7 +319,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		int index = 0;
 		for (ProgramQuestion programQuestion2 : programQuestion) {
 			index++;
-			if (programQuestion2.getQuestion() == null || programQuestion2.getQuestionLevel() == null) {
+			if (programQuestion2.getProgram() == null || programQuestion2.getProgramLevel() == null) {
 				response.put("status", 1);
 				response.put("message", "One of the cell value has empty value");
 				return response;
@@ -338,7 +330,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 			List<String> allQns = new ArrayList<>();
 
 			for (ProgramQuestion programQuestion1 : programQuestion) {
-				allQns.add(programQuestion1.getQuestion());
+				allQns.add(programQuestion1.getProgramLevel());
 			}
 
 			// Find Duplication Questions
@@ -352,16 +344,15 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 			// Is everything is fine save all Questions
 			for (ProgramQuestion programQuestion3 : programQuestion) {
-				if (programQuestionRepository.existsByQuestion(programQuestion3.getQuestion())) {
+				if (programQuestionRepository.existsByProgram(programQuestion3.getProgram())) {
 					response.put("status", 1);
-					response.put("message", "This Question already exists - " + programQuestion3.getQuestion());
+					response.put("message", "This Question already exists - " + programQuestion3.getProgram());
 					return response;
 				}
 
 				ProgramQuestion saveQn = new ProgramQuestion();
 				saveQn.setId(commonService.nextSequenceNumber());
-				saveQn.setQuestion(programQuestion3.getQuestion());
-				saveQn.setQuestionLevel(programQuestion3.getQuestionLevel());
+				saveQn.setProgramLevel(programQuestion3.getProgramLevel());
 				saveQn.setTeamId(programQuestion3.getTeamId());
 				saveQn.setDate(programQuestion3.getDate());
 				saveQn.setUpdatedOn(LocalDateTime.now());

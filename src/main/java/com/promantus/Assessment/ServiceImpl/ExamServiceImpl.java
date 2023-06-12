@@ -182,8 +182,8 @@ public class ExamServiceImpl implements ExamService {
 
 		resultDto.setId(currentNumber);
 		resultDto.setTeamId(programQuestion.getTeamId());
-		resultDto.setQuestion(programQuestion.getQuestion());
-		resultDto.setQuestionLevel(programQuestion.getQuestionLevel());
+		resultDto.setProgram(programQuestion.getProgram());
+		resultDto.setProgramLevel(programQuestion.getProgramLevel());
 		return resultDto;
 
 	}

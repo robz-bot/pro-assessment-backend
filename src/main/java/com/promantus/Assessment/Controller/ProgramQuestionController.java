@@ -51,28 +51,23 @@ public class ProgramQuestionController extends CommonController {
 			StringBuilder errorParam = new StringBuilder();
 
 			if (programQuestionDto.getTeamId() == null || programQuestionDto.getTeamId().isEmpty()) {
-				errorParam.append("Team Id is Missing");
-			}
-
-			if (programQuestionDto.getQuestion() == null || programQuestionDto.getQuestion().isEmpty()) {
-				errorParam.append("Question is Missing");
-			}
-		
-			if(programQuestionDto.getQuestionLevel()==null || programQuestionDto.getQuestionLevel().isEmpty()){
-				errorParam.append("Question Level is Missing");
-			}
-			if (programQuestionDto.getProgram() == null || programQuestionDto.getProgram().isEmpty()) {
-				errorParam.append("Program is Missing");
-			}
-			
-			if (errorParam.length() > 0) {
-				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
-				resultDto.setMessage(
-						super.getMessage("mandatory.input.param", new String[] { errorParam.toString() }, lang));
-
-				logger.info(resultDto.getMessage());
+				resultDto.setMessage("Team Id is Missing");
+				resultDto.setStatus(1);
 				return resultDto;
 			}
+
+			if (programQuestionDto.getProgram() == null || programQuestionDto.getProgram().isEmpty()) {
+				resultDto.setMessage("Program is Missing");
+				resultDto.setStatus(1);
+				return resultDto;
+			}
+			
+			if (programQuestionDto.getProgramLevel() == null || programQuestionDto.getProgramLevel().isEmpty()) {
+				resultDto.setMessage("Program Level is Missing");
+				resultDto.setStatus(1);
+				return resultDto;
+			}
+
 
 			resultDto = programQuestionService.addProgramQuestion(programQuestionDto, lang);
 
@@ -86,7 +81,6 @@ public class ProgramQuestionController extends CommonController {
 
 		return resultDto;
 	}
-	
 
 	@GetMapping("/getAllProgramQuestions")
 	public List<ProgramQuestionDto> getAllProgramQuestions(
@@ -143,8 +137,8 @@ public class ProgramQuestionController extends CommonController {
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
 
-			if (programQuestionDto.getQuestion() == null || programQuestionDto.getQuestion().isEmpty()) {
-				errorParam.append("Question is Missing");
+			if (programQuestionDto.getProgramLevel() == null || programQuestionDto.getProgramLevel().isEmpty()) {
+				errorParam.append("Program Level is Missing");
 			}
 			if (programQuestionDto.getProgram() == null || programQuestionDto.getProgram().isEmpty()) {
 				errorParam.append("Program is Missing");
@@ -191,7 +185,7 @@ public class ProgramQuestionController extends CommonController {
 			return resultDto;
 		}
 	}
-	
+
 	@GetMapping("/inactiveProgramQuestionById/{id}")
 	public ProgramQuestionDto inactiveProgramQuestionById(@PathVariable String id,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -269,10 +263,11 @@ public class ProgramQuestionController extends CommonController {
 		}
 
 		return new HashMap<String, Object>();
-	}	
-	
+	}
+
 	@GetMapping("getInactiveProgramQns/{type}/{keyword}")
-	public Map<String, Object> getInactiveQns(@PathVariable String keyword, @PathVariable String type,@RequestHeader(name = "lang", required = false) String lang) {
+	public Map<String, Object> getInactiveQns(@PathVariable String keyword, @PathVariable String type,
+			@RequestHeader(name = "lang", required = false) String lang) {
 
 		try {
 
@@ -284,9 +279,7 @@ public class ProgramQuestionController extends CommonController {
 
 		return new HashMap<String, Object>();
 	}
-	
-	
-	
+
 	@GetMapping("/activeProgramQuestionById/{type}/{id}")
 	public Map<String, Object> activeQuestionById(@PathVariable String type, @PathVariable String id,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -294,7 +287,7 @@ public class ProgramQuestionController extends CommonController {
 		ProgramQuestionDto resultDto = new ProgramQuestionDto();
 		try {
 
-			return programQuestionService.activeQuestionById(type,id);
+			return programQuestionService.activeQuestionById(type, id);
 
 		} catch (final Exception e) {
 
@@ -305,9 +298,7 @@ public class ProgramQuestionController extends CommonController {
 
 			return new HashMap<>();
 		}
-		
+
 	}
 
 }
-
-

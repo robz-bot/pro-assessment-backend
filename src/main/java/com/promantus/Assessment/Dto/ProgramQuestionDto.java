@@ -10,9 +10,8 @@ public class ProgramQuestionDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String teamId;
-	private String question;
-	private String questionLevel;
 	private String program;
+	private String programLevel;
     private String createdBy;
 	private LocalDateTime createdOn;
 	private int status;
@@ -34,12 +33,7 @@ public class ProgramQuestionDto implements Serializable {
 	public void setTeamId(String teamId) {
 		this.teamId = teamId;
 	}
-	public String getQuestion() {
-		return question;
-	}
-	public void setQuestion(String question) {
-		this.question = question;
-	}
+	
 	public String getProgram() {
 		return program;
 	}
@@ -98,12 +92,13 @@ public class ProgramQuestionDto implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	public String getQuestionLevel() {
-		return questionLevel;
+	public String getProgramLevel() {
+		return programLevel;
 	}
-	public void setQuestionLevel(String questionLevel) {
-		this.questionLevel = questionLevel;
+	public void setProgramLevel(String programLevel) {
+		this.programLevel = programLevel;
 	}
+	
 	
 
 }
