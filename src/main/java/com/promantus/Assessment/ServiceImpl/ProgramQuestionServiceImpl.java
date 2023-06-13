@@ -19,9 +19,12 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.promantus.Assessment.AssessmentConstants;
+import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.ProgramQuestionDto;
+import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.ProgramQuestion;
+import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Service.CommonService;
@@ -94,6 +97,11 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		programQuestionDto.setId(programQuestion.getId());
 		programQuestionDto.setTeamId(programQuestion.getTeamId());
+		Team team  = teamRepo.findById(programQuestion.getTeamId()).orElse(null);
+		if(team != null) {
+			programQuestionDto.setTeam(team.getTeam());
+		}
+		
 		programQuestionDto.setProgram(programQuestion.getProgram());
 		programQuestionDto.setProgramLevel(programQuestion.getProgramLevel());
 		programQuestionDto.setActive(programQuestion.isActive());
@@ -117,7 +125,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		if (programQuestion == null) {
 
-			resultDto.setMessage("ProgramQuestion does not exist");
+			resultDto.setMessage("Program Question does not exist");
 			return resultDto;
 		}
 		programQuestion.setTeamId(programQuestionDto.getTeamId());
@@ -195,7 +203,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 	@Override
 	public Map<String, Object> getAllProgramQuestionsPage(Pageable paging) throws Exception {
 		paging.getSort();
-		Page<ProgramQuestion> progQnPage = programQuestionRepository.findAllByIsActive(true, paging);
+		Page<ProgramQuestion> progQnPage = programQuestionRepository.findAllByIsActive(false,paging);
 		List<ProgramQuestionDto> resultDto = new ArrayList<>();
 		List<ProgramQuestion> ProgramQuestionsList = progQnPage.getContent();
 		for (ProgramQuestion ProgramQuestion : ProgramQuestionsList) {
@@ -250,7 +258,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		// program qn
 		if (type.equals(AssessmentConstants.TYPE13)) {
 			List<ProgramQuestion> programList = programQuestionRepository
-					.findAllByTeamIdAndIsActive(Long.parseLong(keyword), false);
+					.findAllByTeamId(Long.parseLong(keyword));
 			List<ProgramQuestionDto> resultDto = new ArrayList<>();
 			for (ProgramQuestion programQuestion : programList) {
 				resultDto.add(this.getProgramQuestionDto(programQuestion));
@@ -259,8 +267,8 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		}
 
 		// prog qn
-		if (type.equals(AssessmentConstants.TYPE14)) {
-			List<ProgramQuestion> progList = programQuestionRepository.findAllByIsActive(false);
+		if (type.equals(AssessmentConstants.TYPE15)) {
+			List<ProgramQuestion> progList = programQuestionRepository.findAllByTeamId(Long.parseLong(keyword));
 			List<ProgramQuestionDto> resultDto = new ArrayList<>();
 			for (ProgramQuestion programQuestion : progList) {
 				resultDto.add(this.getProgramQuestionDto(programQuestion));
@@ -366,6 +374,41 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		}
 		response.put("status", 0);
 		response.put("message", "Questions added successfully");
+		return response;
+	}
+	
+	@Override
+	public Map<String, Object> searchProgramQuestionPage(Pageable paging, String type, String keyword) throws Exception {
+		List<ProgramQuestion> progQuestion = new ArrayList<>();
+
+		Page<ProgramQuestion> progQnPage = null;
+		keyword = AssessmentDefaultMethods.replaceSplCharKeyword(keyword);
+
+		if (type.equals(AssessmentConstants.TYPE16)) {
+			progQnPage = programQuestionRepository.findByProgramRegex(keyword, paging);
+			progQuestion = progQnPage.getContent();
+		}
+		if (type.equals(AssessmentConstants.TYPE17)) {
+			progQnPage = programQuestionRepository.findByProgramLevelRegex(keyword, paging);
+			progQuestion = progQnPage.getContent();
+		}
+		if (type.equals(AssessmentConstants.TYPE4)) {
+			progQnPage = programQuestionRepository.findByTeamIdRegex(keyword, paging);
+			progQuestion = progQnPage.getContent();
+		}
+
+		List<ProgramQuestionDto> ProgramQuestionDtoList = new ArrayList<ProgramQuestionDto>();
+
+		for (ProgramQuestion progQuestion2 : progQuestion) {
+			ProgramQuestionDtoList.add(this.getProgramQuestionDto(progQuestion2));
+		}
+
+		Map<String, Object> response = new HashMap<>();
+		response.put("progQns", ProgramQuestionDtoList);
+		response.put("currentPage", progQnPage.getNumber());
+		response.put("totalItems", progQnPage.getTotalElements());
+		response.put("totalPages", progQnPage.getTotalPages());
+		response.put("totalRecords", progQnPage.getTotalPages());
 		return response;
 	}
 }

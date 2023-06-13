@@ -10,6 +10,7 @@ public class ProgramQuestionDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String teamId;
+	private String team;
 	private String program;
 	private String programLevel;
     private String createdBy;
@@ -98,7 +99,13 @@ public class ProgramQuestionDto implements Serializable {
 	public void setProgramLevel(String programLevel) {
 		this.programLevel = programLevel;
 	}
-	
+	public String getTeam() {
+		return team;
+	}
+	public void setTeam(String team) {
+		this.team = team;
+	}
+    	
 	
 
 }

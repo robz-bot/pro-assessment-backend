@@ -206,35 +206,35 @@ public class ProgramQuestionController extends CommonController {
 		}
 	}
 
-	@GetMapping("/searchProgram/{type}/{keyword}")
-	public List<ProgramQuestionDto> search(@PathVariable String keyword, @PathVariable String type,
-			@RequestHeader(name = "lang", required = false) String lang) {
-
-		List<ProgramQuestionDto> programQuestionDto = new ArrayList<>();
-		try {
-			programQuestionDto = programQuestionService.search(type, keyword);
-		} catch (final Exception e) {
-			logger.error(AssessmentUtil.getErrorMessage(e));
-		}
-
-		return programQuestionDto;
-	}
-
-//	@PostMapping("/searchProgQnPage")
-//	public Map<String, Object> searchProgQnPage(@RequestBody SearchDto searchValues,
-//			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
+//	@GetMapping("/searchProgramQuestionPage/{type}/{keyword}")
+//	public List<ProgramQuestionDto> search(@PathVariable String keyword, @PathVariable String type,
 //			@RequestHeader(name = "lang", required = false) String lang) {
 //
-//		Pageable paging = PageRequest.of(page, size, Sort.by("updatedon").descending());
-//
+//		List<ProgramQuestionDto> programQuestionDto = new ArrayList<>();
 //		try {
-//			return programQuestionService.searchProgQnPage(paging, searchValues.getType(), searchValues.getKeyword());
+//			programQuestionDto = programQuestionService.search(type, keyword);
 //		} catch (final Exception e) {
 //			logger.error(AssessmentUtil.getErrorMessage(e));
 //		}
 //
-//		return new HashMap<String, Object>();
+//		return programQuestionDto;
 //	}
+
+	@PostMapping("/searchProgramQuestionPage")
+	public Map<String, Object> searchProgQnPage(@RequestBody SearchDto searchValues,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		Pageable paging = PageRequest.of(page, size, Sort.by("updatedon").descending());
+
+		try {
+			return programQuestionService.searchProgramQuestionPage(paging, searchValues.getType(), searchValues.getKeyword());
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new HashMap<String, Object>();
+	}
 //
 //	@GetMapping("activateAllProgQns")
 //	public List<ProgramQuestionDto> activateAllProgQns(@RequestHeader(name = "lang", required = false) String lang) {

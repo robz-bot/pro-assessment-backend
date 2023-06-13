@@ -23,12 +23,15 @@ import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.GeneralQuestionDto;
+import com.promantus.Assessment.Dto.ProgramQuestionDto;
 import com.promantus.Assessment.Dto.SearchDto;
 import com.promantus.Assessment.Dto.TechQuestionDto;
 import com.promantus.Assessment.Entity.GeneralQuestion;
+import com.promantus.Assessment.Entity.ProgramQuestion;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.TechQuestion;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
+import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
 import com.promantus.Assessment.Service.CommonService;
@@ -49,6 +52,9 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	@Autowired
 	TechQuestionRepository techRepo;
+
+	@Autowired
+	ProgramQuestionRepository progRepo;
 
 	@Autowired
 	TeamRepository teamRepo;
@@ -347,6 +353,28 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 	}
 
+	private ProgramQuestionDto getProgramQuestionDto(ProgramQuestion programQuestion) {
+		ProgramQuestionDto programQuestionDto = new ProgramQuestionDto();
+
+		programQuestionDto.setId(programQuestion.getId());
+		programQuestionDto.setTeamId(programQuestion.getTeamId());
+		Team team  = teamRepo.findById(programQuestion.getTeamId()).orElse(null);
+		if(team != null) {
+			programQuestionDto.setTeam(team.getTeam());
+		}
+		programQuestionDto.setProgram(programQuestion.getProgram());
+		programQuestionDto.setProgramLevel(programQuestion.getProgramLevel());
+		programQuestionDto.setActive(programQuestion.isActive());
+		programQuestionDto.setCreatedBy(programQuestion.getCreatedBy());
+		programQuestionDto.setUpdatedBy(programQuestion.getUpdatedBy());
+		programQuestionDto.setCreatedOn(programQuestion.getCreatedOn());
+		programQuestionDto.setUpdatedOn(programQuestion.getUpdatedOn());
+		programQuestionDto.setDate(programQuestion.getDate());
+
+		return programQuestionDto;
+
+	}
+
 	@Override
 	public Map<String, Object> getInactiveQns(String type, String keyword) throws Exception {
 
@@ -368,6 +396,16 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			List<GeneralQuestionDto> resultDto = new ArrayList<>();
 			for (GeneralQuestion generalQuestion : genList) {
 				resultDto.add(this.getGeneralQuestionDto(generalQuestion));
+			}
+			response.put("inactiveQns", resultDto);
+		}
+
+		// prog qn
+		if (type.equals(AssessmentConstants.TYPE15)) {
+			List<ProgramQuestion> progList = progRepo.findAllByIsActive(false);
+			List<ProgramQuestionDto> resultDto = new ArrayList<>();
+			for (ProgramQuestion programQuestion : progList) {
+				resultDto.add(this.getProgramQuestionDto(programQuestion));
 			}
 			response.put("inactiveQns", resultDto);
 		}

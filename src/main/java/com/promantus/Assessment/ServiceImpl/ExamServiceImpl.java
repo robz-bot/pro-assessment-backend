@@ -29,7 +29,7 @@ public class ExamServiceImpl implements ExamService {
 
 	@Autowired
 	TechQuestionRepository techQnRepo;
-	
+
 	@Autowired
 	ProgramQuestionRepository progQnRepo;
 
@@ -53,10 +53,9 @@ public class ExamServiceImpl implements ExamService {
 		List<TechQuestion> techQns = techQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId), true);
 		// List<TechQuestion> techQns1 = techQnRepo.findAllQuestionDistinctBy();
 
-		
 		int genQnsLen = settingsRepo.findAll().get(0).getGenQns();
 		int techQnsLen = settingsRepo.findAll().get(0).getTechQns();
-	
+
 		if (genQns.size() > 0 && techQns.size() > 0) {
 			// Randomize the Qns
 			Collections.shuffle(genQns);
@@ -81,7 +80,7 @@ public class ExamServiceImpl implements ExamService {
 					resultDto.add(this.getTechQuestionDto(runningNumber, techQns.get(i)));
 				}
 			}
-			
+
 			User getUser = userRepo.findById(Long.parseLong(userId));
 			Team getTeam = teamRepo.findById(Long.parseLong(teamId));
 			if (getUser != null) {
@@ -134,23 +133,23 @@ public class ExamServiceImpl implements ExamService {
 		return resultDto;
 
 	}
-	
+
 	@Override
 	public List<ExamDto> getProgramQns(String teamId, String userId) throws Exception {
-		
+
 		List<ExamDto> resultDto = new ArrayList<ExamDto>();
 
 		List<ProgramQuestion> progQns = progQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId), true);
-		progQns = progQnRepo.findAllByIsActive(true);
-		
+		progQns = progQnRepo.findAll();
+
 		int progQnsLen = settingsRepo.findAll().get(0).getProgQns();
-		
+
 		if (progQns.size() > 0) {
 			// Randomize the Qns
 			Collections.shuffle(progQns);
 
 			Integer runningNumber = 0;
-					
+
 			for (int i = 0; i < progQns.size(); i++) {
 				if (i < progQnsLen) {
 					runningNumber++;
@@ -176,7 +175,7 @@ public class ExamServiceImpl implements ExamService {
 		}
 		return resultDto;
 	}
-	
+
 	private ExamDto getProgramQuestionDto(Integer currentNumber, ProgramQuestion programQuestion) {
 		ExamDto resultDto = new ExamDto();
 
@@ -187,6 +186,5 @@ public class ExamServiceImpl implements ExamService {
 		return resultDto;
 
 	}
-
 
 }

@@ -33,5 +33,7 @@ public interface ProgramQuestionService {
 
 	Map<String, Object> saveBulkProgramQuestions(List<ProgramQuestion> programQuestion) throws Exception;
 
+	Map<String, Object> searchProgramQuestionPage(Pageable paging, String type, String keyword) throws Exception;
+
 
 }
