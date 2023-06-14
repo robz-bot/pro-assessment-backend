@@ -11,9 +11,8 @@ public class ProgramQuestion {
 		@Id
 		private Long id;
 		private String teamId;
-		private String question;
-		private String questionLevel;
 		private String program;
+		private String programLevel;
 	    private String createdBy;
 		private LocalDateTime createdOn;
 		private String updatedBy;
@@ -33,12 +32,6 @@ public class ProgramQuestion {
 		}
 		public void setTeamId(String teamId) {
 			this.teamId = teamId;
-		}
-		public String getQuestion() {
-			return question;
-		}
-		public void setQuestion(String question) {
-			this.question = question;
 		}
 		public String getProgram() {
 			return program;
@@ -82,11 +75,13 @@ public class ProgramQuestion {
 		public void setActive(boolean isActive) {
 			this.isActive = isActive;
 		}
-		public String getQuestionLevel() {
-			return questionLevel;
+		public String getProgramLevel() {
+			return programLevel;
 		}
-		public void setQuestionLevel(String questionLevel) {
-			this.questionLevel = questionLevel;
+		public void setProgramLevel(String programLevel) {
+			this.programLevel = programLevel;
 		}
+		
+    
 				
 }

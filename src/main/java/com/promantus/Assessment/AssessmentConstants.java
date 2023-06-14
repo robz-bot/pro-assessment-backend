@@ -49,6 +49,9 @@ public final class AssessmentConstants {
 	public static final String TYPE13 = "techQuestions";
 	public static final String TYPE14 = "genQuestions";
 	public static final String TYPE15 = "progQuestions";
+	public static final String TYPE16 = "program";
+	public static final String TYPE17 = "programLevel";
+
 
 //	Percentage Range
 	public static final String RANGE0 = "0-25";
