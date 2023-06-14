@@ -1,6 +1,5 @@
 package com.promantus.Assessment.ServiceImpl;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,7 +8,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,14 +21,12 @@ import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.Dto.ProgramQuestionDto;
-import com.promantus.Assessment.Dto.TeamDto;
 import com.promantus.Assessment.Entity.ProgramQuestion;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Service.CommonService;
 import com.promantus.Assessment.Service.ProgramQuestionService;
-import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
 
 @Service
 public class ProgramQuestionServiceImpl implements ProgramQuestionService {
@@ -98,11 +94,11 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		programQuestionDto.setId(programQuestion.getId());
 		programQuestionDto.setTeamId(programQuestion.getTeamId());
-		Team team  = teamRepo.findById(Long.parseLong(programQuestion.getTeamId()));
-		if(team != null) {
+		Team team = teamRepo.findById(Long.parseLong(programQuestion.getTeamId()));
+		if (team != null) {
 			programQuestionDto.setTeam(team.getTeam());
 		}
-			programQuestionDto.setProgram(programQuestion.getProgram());
+		programQuestionDto.setProgram(programQuestion.getProgram());
 		programQuestionDto.setProgramLevel(programQuestion.getProgramLevel());
 		programQuestionDto.setActive(programQuestion.isActive());
 		programQuestionDto.setCreatedBy(programQuestion.getCreatedBy());
@@ -203,7 +199,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 	@Override
 	public Map<String, Object> getAllProgramQuestionsPage(Pageable paging) throws Exception {
 		paging.getSort();
-		Page<ProgramQuestion> progQnPage = programQuestionRepository.findAllByIsActive(true,paging);
+		Page<ProgramQuestion> progQnPage = programQuestionRepository.findAllByIsActive(true, paging);
 		List<ProgramQuestionDto> resultDto = new ArrayList<>();
 		List<ProgramQuestion> ProgramQuestionsList = progQnPage.getContent();
 		for (ProgramQuestion ProgramQuestion : ProgramQuestionsList) {
@@ -211,7 +207,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		}
 
 		Map<String, Object> response = new HashMap<>();
-		response.put("programQns", ProgramQuestionsList);
+		response.put("programQns", resultDto);
 		response.put("currentPage", progQnPage.getNumber());
 		response.put("totalItems", progQnPage.getTotalElements());
 		response.put("totalPages", progQnPage.getTotalPages());
@@ -257,8 +253,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		// program qn
 		if (type.equals(AssessmentConstants.TYPE13)) {
-			List<ProgramQuestion> programList = programQuestionRepository
-					.findAllByTeamId(Long.parseLong(keyword));
+			List<ProgramQuestion> programList = programQuestionRepository.findAllByTeamId(Long.parseLong(keyword));
 			List<ProgramQuestionDto> resultDto = new ArrayList<>();
 			for (ProgramQuestion programQuestion : programList) {
 				resultDto.add(this.getProgramQuestionDto(programQuestion));
@@ -376,9 +371,10 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		response.put("message", "Questions added successfully");
 		return response;
 	}
-	
+
 	@Override
-	public Map<String, Object> searchProgramQuestionPage(Pageable paging, String type, String keyword) throws Exception {
+	public Map<String, Object> searchProgramQuestionPage(Pageable paging, String type, String keyword)
+			throws Exception {
 		List<ProgramQuestion> progQuestion = new ArrayList<>();
 
 		Page<ProgramQuestion> progQnPage = null;

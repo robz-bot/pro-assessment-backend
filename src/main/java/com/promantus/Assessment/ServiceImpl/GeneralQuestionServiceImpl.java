@@ -55,7 +55,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 	TechQuestionRepository techRepo;
 
 	@Autowired
-	ProgramQuestionRepository progRepo;
+	ProgramQuestionRepository programQuestionRepository;
 
 	@Autowired
 	TeamRepository teamRepo;
@@ -359,7 +359,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 		programQuestionDto.setId(programQuestion.getId());
 		programQuestionDto.setTeamId(programQuestion.getTeamId());
-		Team team  = teamRepo.findById(programQuestion.getTeamId()).orElse(null);
+		Team team  = teamRepo.findById(Long.parseLong(programQuestion.getTeamId()));
 		if(team != null) {
 			programQuestionDto.setTeam(team.getTeam());
 		}
@@ -403,7 +403,7 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 
 		// prog qn
 		if (type.equals(AssessmentConstants.TYPE15)) {
-			List<ProgramQuestion> progList = progRepo.findAllByIsActive(false);
+			List<ProgramQuestion> progList = programQuestionRepository.findAllByTeamIdAndIsActive(keyword, false);
 			List<ProgramQuestionDto> resultDto = new ArrayList<>();
 			for (ProgramQuestion programQuestion : progList) {
 				resultDto.add(this.getProgramQuestionDto(programQuestion));
@@ -443,6 +443,20 @@ public class GeneralQuestionServiceImpl implements GeneralQuestionService {
 			techQuestion.setisActive(true);
 			techQuestion.setUpdatedOn(LocalDateTime.now());
 			techRepo.save(techQuestion);
+			response.put("status", 0);
+			response.put("message", "This question is moved active state");
+			return response;
+		}else if (type.equals(AssessmentConstants.TYPE15)) {
+			ProgramQuestion programQuestion = programQuestionRepository.findByIdAndIsActive(Long.parseLong(id), false);
+			if (programQuestion == null) {
+				response.put("status", 1);
+				response.put("message", "Data does not exist");
+				return response;
+			}
+
+			programQuestion.setActive(true);
+			programQuestion.setUpdatedOn(LocalDateTime.now());
+			programQuestionRepository.save(programQuestion);
 			response.put("status", 0);
 			response.put("message", "This question is moved active state");
 			return response;
