@@ -92,7 +92,7 @@ public class ExamServiceImpl implements ExamService {
 				resDto.setLastName(getUser.getLastName());
 				resDto.setManager(getUser.getManager());
 				resDto.setTeam(getTeam.getTeam());
-				resDto.setTeamId(teamId);
+				resDto.setTeamId(getTeam.getId());
 
 			}
 
@@ -168,7 +168,7 @@ public class ExamServiceImpl implements ExamService {
 				resDto.setLastName(getUser.getLastName());
 				resDto.setManager(getUser.getManager());
 				resDto.setTeam(getTeam.getTeam());
-				resDto.setTeamId(teamId);
+				resDto.setTeamId(getTeam.getId());
 
 			}
 
@@ -180,7 +180,7 @@ public class ExamServiceImpl implements ExamService {
 		ExamDto resultDto = new ExamDto();
 
 		resultDto.setId(currentNumber);
-		resultDto.setTeamId(programQuestion.getTeamId());
+		resultDto.setTeamId(Long.parseLong(programQuestion.getTeamId()));
 		resultDto.setProgram(programQuestion.getProgram());
 		resultDto.setProgramLevel(programQuestion.getProgramLevel());
 		return resultDto;

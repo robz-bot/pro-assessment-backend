@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -97,12 +98,11 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 
 		programQuestionDto.setId(programQuestion.getId());
 		programQuestionDto.setTeamId(programQuestion.getTeamId());
-		Team team  = teamRepo.findById(programQuestion.getTeamId()).orElse(null);
+		Team team  = teamRepo.findById(Long.parseLong(programQuestion.getTeamId()));
 		if(team != null) {
 			programQuestionDto.setTeam(team.getTeam());
 		}
-		
-		programQuestionDto.setProgram(programQuestion.getProgram());
+			programQuestionDto.setProgram(programQuestion.getProgram());
 		programQuestionDto.setProgramLevel(programQuestion.getProgramLevel());
 		programQuestionDto.setActive(programQuestion.isActive());
 		programQuestionDto.setCreatedBy(programQuestion.getCreatedBy());
@@ -203,7 +203,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 	@Override
 	public Map<String, Object> getAllProgramQuestionsPage(Pageable paging) throws Exception {
 		paging.getSort();
-		Page<ProgramQuestion> progQnPage = programQuestionRepository.findAllByIsActive(false,paging);
+		Page<ProgramQuestion> progQnPage = programQuestionRepository.findAllByIsActive(true,paging);
 		List<ProgramQuestionDto> resultDto = new ArrayList<>();
 		List<ProgramQuestion> ProgramQuestionsList = progQnPage.getContent();
 		for (ProgramQuestion ProgramQuestion : ProgramQuestionsList) {
@@ -219,21 +219,21 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 		return response;
 	}
 
-//	@Override
-//	public List<ProgramQuestionDto> activateAllProgQns() throws Exception {
-//
-//		List<ProgramQuestion> ProgramQuestionsList = programQuestionRepository.findAllByIsActive(false,
-//				AssessmentUtil.orderByUpdatedOnDesc());
-//
-//		List<ProgramQuestionDto> ProgramQuestionDtoList = new ArrayList<ProgramQuestionDto>();
-//		for (ProgramQuestion ProgramQuestion : ProgramQuestionsList) {
-//			ProgramQuestion.setActive(true);
-//			programQuestionRepository.save(ProgramQuestion);
-//			ProgramQuestionDtoList.add(this.getProgramQuestionDto(ProgramQuestion));
-//		}
-//
-//		return ProgramQuestionDtoList;
-//	}
+	@Override
+	public List<ProgramQuestionDto> activateAllProgQns() throws Exception {
+
+		List<ProgramQuestion> ProgramQuestionsList = programQuestionRepository.findAllByIsActive(false,
+				AssessmentUtil.orderByUpdatedOnDesc());
+
+		List<ProgramQuestionDto> ProgramQuestionDtoList = new ArrayList<ProgramQuestionDto>();
+		for (ProgramQuestion ProgramQuestion : ProgramQuestionsList) {
+			ProgramQuestion.setActive(true);
+			programQuestionRepository.save(ProgramQuestion);
+			ProgramQuestionDtoList.add(this.getProgramQuestionDto(ProgramQuestion));
+		}
+
+		return ProgramQuestionDtoList;
+	}
 
 	@Override
 	public ProgramQuestionDto inactiveProgramQuestionById(String id) throws Exception {
@@ -280,7 +280,7 @@ public class ProgramQuestionServiceImpl implements ProgramQuestionService {
 	}
 
 	@Override
-	public Map<String, Object> activeQuestionById(String type, String id) throws Exception {
+	public Map<String, Object> activeProgramQuestionById(String type, String id) throws Exception {
 		Map<String, Object> response = new HashMap<>();
 
 		if (type.equals(AssessmentConstants.TYPE15)) {

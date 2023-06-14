@@ -50,7 +50,7 @@ public class ProgramQuestionController extends CommonController {
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
 
-			if (programQuestionDto.getTeamId() == null || programQuestionDto.getTeamId().isEmpty()) {
+			if (programQuestionDto.getTeamId() == null) {
 				resultDto.setMessage("Team Id is Missing");
 				resultDto.setStatus(1);
 				return resultDto;
@@ -235,21 +235,21 @@ public class ProgramQuestionController extends CommonController {
 
 		return new HashMap<String, Object>();
 	}
-//
-//	@GetMapping("activateAllProgQns")
-//	public List<ProgramQuestionDto> activateAllProgQns(@RequestHeader(name = "lang", required = false) String lang) {
-//
-//		try {
-//
-//			return programQuestionService.activateAllProgQns();
-//
-//		} catch (final Exception e) {
-//			logger.error(AssessmentUtil.getErrorMessage(e));
-//		}
-//
-//		return new ArrayList<ProgramQuestionDto>();
-//	}
-//	
+
+	@GetMapping("activateAllProgQns")
+	public List<ProgramQuestionDto> activateAllProgQns(@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return programQuestionService.activateAllProgQns();
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new ArrayList<ProgramQuestionDto>();
+	}
+	
 	@PostMapping("/saveBulkProgramQuestions")
 	public Map<String, Object> saveBulkProgramQuestions(@RequestBody List<ProgramQuestion> programQuestion,
 			@RequestHeader(name = "lang", required = false) String lang) {
@@ -287,7 +287,7 @@ public class ProgramQuestionController extends CommonController {
 		ProgramQuestionDto resultDto = new ProgramQuestionDto();
 		try {
 
-			return programQuestionService.activeQuestionById(type, id);
+			return programQuestionService.activeProgramQuestionById(type, id);
 
 		} catch (final Exception e) {
 

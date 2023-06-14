@@ -29,11 +29,15 @@ public interface ProgramQuestionService {
 
 	Map<String, Object> getInactiveQns(String type, String keyword) throws Exception;
 
-	Map<String, Object> activeQuestionById(String type, String id) throws Exception;
+	Map<String, Object> activeProgramQuestionById(String type, String id) throws Exception;
 
 	Map<String, Object> saveBulkProgramQuestions(List<ProgramQuestion> programQuestion) throws Exception;
 
 	Map<String, Object> searchProgramQuestionPage(Pageable paging, String type, String keyword) throws Exception;
+
+	List<ProgramQuestionDto> activateAllProgQns() throws Exception;
+
+	
 
 
 }
