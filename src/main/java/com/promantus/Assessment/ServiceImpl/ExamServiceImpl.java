@@ -142,7 +142,11 @@ public class ExamServiceImpl implements ExamService {
 		List<ProgramQuestion> progQns = progQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId), true);
 		progQns = progQnRepo.findAll();
 
-		int progQnsLen = settingsRepo.findAll().get(0).getProgQns();
+		
+		int beginnerLen = settingsRepo.findAll().get(0).getBeginner();
+		int intermediateLen = settingsRepo.findAll().get(0).getIntermediate();
+		int advancedLen = settingsRepo.findAll().get(0).getAdvanced();
+		int progQnsLen = beginnerLen + intermediateLen + advancedLen;		
 
 		if (progQns.size() > 0) {
 			// Randomize the Qns
@@ -153,6 +157,7 @@ public class ExamServiceImpl implements ExamService {
 			for (int i = 0; i < progQns.size(); i++) {
 				if (i < progQnsLen) {
 					runningNumber++;
+					//progQns.get(i).getProgramLevel()
 					resultDto.add(this.getProgramQuestionDto(runningNumber, progQns.get(i)));
 				}
 			}

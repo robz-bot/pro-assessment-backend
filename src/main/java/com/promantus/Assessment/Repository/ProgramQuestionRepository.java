@@ -58,7 +58,9 @@ public interface ProgramQuestionRepository extends MongoRepository<ProgramQuesti
 
 	Page<ProgramQuestion> findByProgramLevelRegex(String keyword, Pageable paging);
 
-	List<ProgramQuestion> findAllByTeamIdAndIsActive(long parseLong, boolean b);
+	List<ProgramQuestion> findAllByTeamIdAndIsActive(String parseLong, boolean b);
+	
+	List<ProgramQuestion> findAllByTeamIdAndIsActive(Long parseLong, boolean b);
 
 	Page<ProgramQuestion> findByTeamIdRegex(String keyword, Pageable paging);
 

@@ -38,6 +38,7 @@ import com.google.common.net.HttpHeaders;
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.TwilioMethods;
+import com.promantus.Assessment.Dto.ProgReportsDto;
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Service.ReportsService;
 import com.twilio.Twilio;
@@ -56,7 +57,6 @@ public class ReportsController extends CommonController {
 
 	@Value("${download.path}")
 	private String downloadsPath;
-
 
 	@PostMapping("/addReports")
 	public ReportsDto addReports(@RequestBody ReportsDto reportsDto,
@@ -112,6 +112,51 @@ public class ReportsController extends CommonController {
 		return resultDto;
 	}
 
+	@PostMapping("/addProgReports")
+	public ProgReportsDto addProgReports(@RequestBody ProgReportsDto reportsDto,
+			@RequestHeader(name = "lang", required = false) String lang) {
+
+		ProgReportsDto resultDto = new ProgReportsDto();
+		try {
+
+			// Mandatory check.
+			StringBuilder errorParam = new StringBuilder();
+
+			// User Id.
+			if (reportsDto.getUserId() == null) {
+				errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
+			}
+			// Question
+			if (reportsDto.getQuestion() == null) {
+				errorParam.append("Question");
+			}
+			// Answer from User
+			if (reportsDto.getAnswer() == null) {
+				errorParam.append("Answer");
+			}
+			// Level
+			if (reportsDto.getLevel() == null) {
+				errorParam.append("Level");
+			}
+			if (errorParam.length() > 0) {
+				resultDto.setMessage(
+						super.getMessage("mandatory.input.param", new String[] { errorParam.toString() }, lang));
+
+				logger.info(resultDto.getMessage());
+				return resultDto;
+			}
+
+			resultDto = reportsService.addProgReports(reportsDto, lang);
+
+		} catch (final Exception e) {
+			resultDto.setMessage(e.getMessage());
+
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return resultDto;
+	}
+
 	@GetMapping("/getAllReports")
 	public List<ReportsDto> getAllReports(@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -124,6 +169,20 @@ public class ReportsController extends CommonController {
 		}
 
 		return new ArrayList<ReportsDto>();
+	}
+	
+	@GetMapping("/getAllProgReports")
+	public List<ProgReportsDto> getAllProgReports(@RequestHeader(name = "lang", required = false) String lang) {
+
+		try {
+
+			return reportsService.getAllProgReports();
+
+		} catch (final Exception e) {
+			logger.error(AssessmentUtil.getErrorMessage(e));
+		}
+
+		return new ArrayList<ProgReportsDto>();
 	}
 
 	@GetMapping("/getAllReportsPage")
@@ -245,7 +304,7 @@ public class ReportsController extends CommonController {
 
 		return reportsDto;
 	}
-	
+
 	@GetMapping("/searchReportPage/{type}/{keyword}")
 	public Map<String, Object> searchReportPage(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "3") int size, @PathVariable String keyword, @PathVariable String type,

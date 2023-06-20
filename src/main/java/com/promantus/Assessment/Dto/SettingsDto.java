@@ -16,26 +16,18 @@ public class SettingsDto implements Serializable {
 	private Long id;
 	private int genQns;
 	private int techQns;
-	private int progQns;
+	private int beginner;
+	private int intermediate;
+	private int advanced;
 	private int passPercentage;
 	private int failPercentage;
+	private int progPassPercentage;
+	private int progFailPercentage;
 	private String isActive;
 	private int status;
 	private String message;
 	
 	
-	public int getStatus() {
-		return status;
-	}
-	public void setStatus(int status) {
-		this.status = status;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
 	public Long getId() {
 		return id;
 	}
@@ -54,8 +46,23 @@ public class SettingsDto implements Serializable {
 	public void setTechQns(int techQns) {
 		this.techQns = techQns;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public int getBeginner() {
+		return beginner;
+	}
+	public void setBeginner(int beginner) {
+		this.beginner = beginner;
+	}
+	public int getIntermediate() {
+		return intermediate;
+	}
+	public void setIntermediate(int intermediate) {
+		this.intermediate = intermediate;
+	}
+	public int getAdvanced() {
+		return advanced;
+	}
+	public void setAdvanced(int advanced) {
+		this.advanced = advanced;
 	}
 	public int getPassPercentage() {
 		return passPercentage;
@@ -69,19 +76,40 @@ public class SettingsDto implements Serializable {
 	public void setFailPercentage(int failPercentage) {
 		this.failPercentage = failPercentage;
 	}
+	public int getProgPassPercentage() {
+		return progPassPercentage;
+	}
+	public void setProgPassPercentage(int progPassPercentage) {
+		this.progPassPercentage = progPassPercentage;
+	}
+	public int getProgFailPercentage() {
+		return progFailPercentage;
+	}
+	public void setProgFailPercentage(int progFailPercentage) {
+		this.progFailPercentage = progFailPercentage;
+	}
 	public String getIsActive() {
 		return isActive;
 	}
 	public void setIsActive(String isActive) {
 		this.isActive = isActive;
 	}
-	public int getProgQns() {
-		return progQns;
+	public int getStatus() {
+		return status;
 	}
-	public void setProgQns(int progQns) {
-		this.progQns = progQns;
+	public void setStatus(int status) {
+		this.status = status;
+	}
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 	
-  	
-
+	
+	
 }

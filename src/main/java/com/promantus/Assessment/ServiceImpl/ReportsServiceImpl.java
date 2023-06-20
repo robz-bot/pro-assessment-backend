@@ -25,11 +25,14 @@ import org.springframework.stereotype.Service;
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentDefaultMethods;
 import com.promantus.Assessment.SmtpMailSender;
+import com.promantus.Assessment.Dto.ProgReportsDto;
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Dto.UserDto;
+import com.promantus.Assessment.Entity.ProgReports;
 import com.promantus.Assessment.Entity.Reports;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.User;
+import com.promantus.Assessment.Repository.ProgReportsRepository;
 import com.promantus.Assessment.Repository.ReportsRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.UserRepository;
@@ -48,6 +51,9 @@ public class ReportsServiceImpl implements ReportsService {
 	ReportsRepository reportsRepository;
 
 	@Autowired
+	ProgReportsRepository progReportsRepository;
+
+	@Autowired
 	CommonService commonService;
 
 	@Autowired
@@ -55,7 +61,7 @@ public class ReportsServiceImpl implements ReportsService {
 
 	@Autowired
 	TeamRepository teamRepository;
-	
+
 	@Autowired
 	SmtpMailSender smtpMailSender;
 
@@ -91,16 +97,16 @@ public class ReportsServiceImpl implements ReportsService {
 
 //		Message.creator(new PhoneNumber(repUser.getPhnNumber()), new PhoneNumber("+18156271503"),
 //				"Pro Assessment Results - " + reports.getTotalMarks() + "/30. " + reports.getStatus()).create();
-		
+
 		User user = userRepository.findById(reportsDto.getUserId());
 		Team team = teamRepository.findById(Long.parseLong(reportsDto.getTeamId()));
-		
+
 		// Mail Thread
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					smtpMailSender.sendUserResMail(reportsDto,user,team);
+					smtpMailSender.sendUserResMail(reportsDto, user, team);
 				} catch (Exception e) {
 
 					System.out.println("Email for User Result is not Sent.");
@@ -262,8 +268,8 @@ public class ReportsServiceImpl implements ReportsService {
 				}
 			}
 		}
-		
-		if(type.equals(AssessmentConstants.TYPE4)) {
+
+		if (type.equals(AssessmentConstants.TYPE4)) {
 			report = reportsRepository.findByTeamId(keyword);
 		}
 
@@ -436,6 +442,79 @@ public class ReportsServiceImpl implements ReportsService {
 	public Map<String, Object> searchReportPage(Pageable paging, String type, String keyword) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ProgReportsDto addProgReports(ProgReportsDto reportsDto, String lang) throws Exception {
+		ProgReportsDto resultDto = new ProgReportsDto();
+		User repUser = userRepository.findById(reportsDto.getUserId());
+
+		ProgReports reports = new ProgReports();
+		reports.setId(commonService.nextSequenceNumber());
+
+		reports.setQuestion(reportsDto.getQuestion());
+		reports.setAnswer(reportsDto.getAnswer());
+		reports.setLevel(reportsDto.getLevel());
+
+		reports.setTeamId(reportsDto.getTeamId());
+		reports.setUserId(reportsDto.getUserId());
+		reports.setStatus(reportsDto.getStatus());
+		reports.setReportedOn(LocalDateTime.now());
+		reports.setAttempts(repUser.getProgAttempts() + 1);
+
+		repUser.setAttempts(repUser.getAttempts() + 1);
+		userRepository.save(repUser);
+		progReportsRepository.save(reports);
+		resultDto.setMessage("Program Reports added successfully");
+
+		return resultDto;
+	}
+
+	@Override
+	public List<ProgReportsDto> getAllProgReports() throws Exception {
+		List<ProgReports> ReportsList = progReportsRepository.findAll();
+
+		List<ProgReportsDto> ReportsDtoList = new ArrayList<ProgReportsDto>();
+		for (ProgReports Reports : ReportsList) {
+			ReportsDtoList.add(this.getProgReportsDto(Reports));
+		}
+
+		return ReportsDtoList;
+	}
+
+	private ProgReportsDto getProgReportsDto(ProgReports reports) {
+		ProgReportsDto reportsDto = new ProgReportsDto();
+
+		reportsDto.setId(reports.getId());
+		reportsDto.setUserId(reports.getUserId());
+		reportsDto.setPercentage(reports.getPercentage());
+		reportsDto.setStatus(reports.getStatus());
+		reportsDto.setReportedOn(reports.getReportedOn());
+		reportsDto.setUpdatedOn(reports.getUpdatedOn());
+		reportsDto.setUpdatedBy(reports.getUpdatedBy());
+		if (reports.getUserId() != null) {
+			System.err.println(reports.getUserId());
+			int attempts = userRepository.findById(reports.getUserId()).getAttempts();
+
+			reportsDto.setAttempts(attempts);
+		}
+
+		if (reports.getTeamId() != null) {
+			Team team = teamRepository.findById(Long.parseLong(reports.getTeamId()));
+			if (team != null) {
+				reportsDto.setTeamName(team.getTeam());
+			}
+		}
+
+		if (reports.getUserId() != null) {
+			User user = userRepository.findById(reports.getUserId());
+			if (user != null) {
+				reportsDto.setUserName(user.getFirstName() + " " + user.getLastName());
+			}
+		}
+
+		return reportsDto;
+
 	}
 
 }
