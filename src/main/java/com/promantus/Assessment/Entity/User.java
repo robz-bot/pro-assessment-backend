@@ -24,6 +24,7 @@ public class User {
 	private boolean isActive;
 	private String code;
 	private String phnNumber;
+	private int progAttempts;
 
 	public Long getId() {
 		return id;
@@ -143,6 +144,14 @@ public class User {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public int getProgAttempts() {
+		return progAttempts;
+	}
+
+	public void setProgAttempts(int progAttempts) {
+		this.progAttempts = progAttempts;
 	}
 	
 }

@@ -48,7 +48,14 @@ public class SettingsServiceImpl implements SettingsService {
 		setting.setId(num);
 		setting.setGenQns(5);
 		setting.setTechQns(25);
-		setting.setProgQns(1);
+		setting.setBeginner(1);
+		setting.setIntermediate(1);
+		setting.setAdvanced(1);
+		setting.setPassPercentage(50);
+		setting.setFailPercentage(49);
+		setting.setProgPassPercentage(50);
+		setting.setProgFailPercentage(49);
+		
 		settingsRepository.save(setting);
 
 		resultDto.setMessage("Settings added successfully");
@@ -73,9 +80,13 @@ public class SettingsServiceImpl implements SettingsService {
 		settingsDto.setId(settings.getId());
 		settingsDto.setGenQns(settings.getGenQns());
 		settingsDto.setTechQns(settings.getTechQns());
-		settingsDto.setProgQns(settings.getProgQns());
+		settingsDto.setBeginner(settings.getBeginner());
+		settingsDto.setIntermediate(settings.getIntermediate());
+		settingsDto.setAdvanced(settings.getAdvanced());
 		settingsDto.setPassPercentage(settings.getPassPercentage());
 		settingsDto.setFailPercentage(settings.getFailPercentage());
+		settingsDto.setProgPassPercentage(settings.getProgPassPercentage());
+		settingsDto.setProgFailPercentage(settings.getProgFailPercentage());
 		return settingsDto;
 
 	}
@@ -95,7 +106,9 @@ public class SettingsServiceImpl implements SettingsService {
 		
 		int genQnsCount = generalQuestionRepository.findAll().size();
 		int techQnsCount = techQuestionRepository.findAll().size();
-		int progQnsCount = progQuestionRepository.findAll().size();
+		int beginner = progQuestionRepository.findAll().size();
+		int intermediate = progQuestionRepository.findAll().size();
+		int advanced= progQuestionRepository.findAll().size();
 		
 		if(settingsDto.getGenQns() > genQnsCount) {
 			resultDto.setMessage("General Questions should not exceed "+ genQnsCount);
@@ -106,18 +119,31 @@ public class SettingsServiceImpl implements SettingsService {
 			resultDto.setMessage("Technical Questions should not exceed "+ techQnsCount);
 			return resultDto;
 		}
-		if(settingsDto.getProgQns() > progQnsCount) {
-			resultDto.setMessage("Technical Questions should not exceed "+ progQnsCount);
+		if(settingsDto.getBeginner() > beginner) {
+			resultDto.setMessage("Technical Questions should not exceed "+ beginner);
+			return resultDto;
+		}
+		if(settingsDto.getIntermediate() > intermediate) {
+			resultDto.setMessage("Technical Questions should not exceed "+ intermediate);
+			return resultDto;
+		}
+		
+		if(settingsDto.getAdvanced() > advanced) {
+			resultDto.setMessage("Technical Questions should not exceed "+ advanced);
 			return resultDto;
 		}
 
 		settings.setId(settingsDto.getId());
 		settings.setGenQns(settingsDto.getGenQns());
 		settings.setTechQns(settingsDto.getTechQns());
-		settings.setProgQns(settingsDto.getProgQns());
+		settings.setBeginner(settingsDto.getBeginner());
+		settings.setIntermediate(settingsDto.getIntermediate());
+		settings.setAdvanced(settingsDto.getAdvanced());
 		settings.setPassPercentage(settingsDto.getPassPercentage());
 		settings.setFailPercentage(settingsDto.getFailPercentage());
-
+		settings.setProgPassPercentage(settingsDto.getProgPassPercentage());
+		settings.setProgFailPercentage(settingsDto.getProgFailPercentage());
+		
 		settingsRepository.save(settings);
 		resultDto.setMessage("Record Updated Successfully");
 		return resultDto;
