@@ -11,7 +11,7 @@ import com.promantus.Assessment.Dto.ReportsDto;
 
 public interface ProgReportsService {
 
-	ProgReportsDto addProgReports(ProgReportsDto progReportsDto, String lang) throws Exception;
+	ProgReportsDto addProgReports(List<ProgReportsDto> progReportsDto, String lang) throws Exception;
 
 	List<ProgReportsDto> getAllProgReports() throws Exception;
 

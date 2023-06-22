@@ -58,7 +58,7 @@ public class ProgReportsController extends CommonController {
 
 	
 	@PostMapping("/addProgReports")
-	public ProgReportsDto addProgReports(@RequestBody ProgReportsDto progReportsDto,
+	public ProgReportsDto addProgReports(@RequestBody List<ProgReportsDto> progReportsDto,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
 		ProgReportsDto resultDto = new ProgReportsDto();
@@ -67,22 +67,22 @@ public class ProgReportsController extends CommonController {
 			// Mandatory check.
 			StringBuilder errorParam = new StringBuilder();
 
-			// User Id.
-			if (progReportsDto.getUserId() == null) {
-				errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
-			}
-			// Question
-			if (progReportsDto.getQuestion() == null) {
-				errorParam.append("Question");
-			}
-			// Answer from User
-			if (progReportsDto.getAnswer() == null) {
-				errorParam.append("Answer");
-			}
-			// Level
-			if (progReportsDto.getLevel() == null) {
-				errorParam.append("Level");
-			}
+//			// User Id.
+//			if (progReportsDto.getUserId() == null) {
+//				errorParam.append(errorParam.length() > 0 ? ", User Id" : "User Id");
+//			}
+//			// Question
+//			if (progReportsDto.getQuestion() == null) {
+//				errorParam.append("Question");
+//			}
+//			// Answer from User
+//			if (progReportsDto.getAnswer() == null) {
+//				errorParam.append("Answer");
+//			}
+//			// Level
+//			if (progReportsDto.getLevel() == null) {
+//				errorParam.append("Level");
+//			}
 			
 			if (errorParam.length() > 0) {
 				resultDto.setMessage(

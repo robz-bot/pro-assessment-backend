@@ -23,6 +23,9 @@ public class SettingsDto implements Serializable {
 	private int failPercentage;
 	private int progPassPercentage;
 	private int progFailPercentage;
+	private int totalBeginnerMarks;
+	private int totalIntermediateMarks;
+	private int totalAdvancedMarks;
 	private String isActive;
 	private int status;
 	private String message;
@@ -108,6 +111,24 @@ public class SettingsDto implements Serializable {
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public int getTotalBeginnerMarks() {
+		return totalBeginnerMarks;
+	}
+	public void setTotalBeginnerMarks(int totalBeginnerMarks) {
+		this.totalBeginnerMarks = totalBeginnerMarks;
+	}
+	public int getTotalIntermediateMarks() {
+		return totalIntermediateMarks;
+	}
+	public void setTotalIntermediateMarks(int totalIntermediateMarks) {
+		this.totalIntermediateMarks = totalIntermediateMarks;
+	}
+	public int getTotalAdvancedMarks() {
+		return totalAdvancedMarks;
+	}
+	public void setTotalAdvancedMarks(int totalAdvancedMarks) {
+		this.totalAdvancedMarks = totalAdvancedMarks;
 	}
 	
 	

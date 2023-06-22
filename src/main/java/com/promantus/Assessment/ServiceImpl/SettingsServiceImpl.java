@@ -55,6 +55,9 @@ public class SettingsServiceImpl implements SettingsService {
 		setting.setFailPercentage(49);
 		setting.setProgPassPercentage(50);
 		setting.setProgFailPercentage(49);
+		setting.setTotalBeginnerMarks(100);
+		setting.setTotalIntermediateMarks(100);
+		setting.setTotalAdvancedMarks(100);
 		
 		settingsRepository.save(setting);
 
@@ -87,6 +90,9 @@ public class SettingsServiceImpl implements SettingsService {
 		settingsDto.setFailPercentage(settings.getFailPercentage());
 		settingsDto.setProgPassPercentage(settings.getProgPassPercentage());
 		settingsDto.setProgFailPercentage(settings.getProgFailPercentage());
+		settingsDto.setTotalBeginnerMarks(settings.getTotalBeginnerMarks());
+		settingsDto.setTotalIntermediateMarks(settings.getTotalIntermediateMarks());
+		settingsDto.setTotalAdvancedMarks(settings.getTotalAdvancedMarks());
 		return settingsDto;
 
 	}
@@ -143,6 +149,9 @@ public class SettingsServiceImpl implements SettingsService {
 		settings.setFailPercentage(settingsDto.getFailPercentage());
 		settings.setProgPassPercentage(settingsDto.getProgPassPercentage());
 		settings.setProgFailPercentage(settingsDto.getProgFailPercentage());
+		settings.setTotalBeginnerMarks(settingsDto.getTotalBeginnerMarks());
+		settings.setTotalIntermediateMarks(settingsDto.getTotalIntermediateMarks());
+		settings.setTotalAdvancedMarks(settingsDto.getTotalAdvancedMarks());
 		
 		settingsRepository.save(settings);
 		resultDto.setMessage("Record Updated Successfully");

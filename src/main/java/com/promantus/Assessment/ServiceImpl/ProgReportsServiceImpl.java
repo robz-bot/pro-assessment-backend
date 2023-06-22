@@ -30,10 +30,12 @@ import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Dto.UserDto;
 import com.promantus.Assessment.Entity.ProgReports;
 import com.promantus.Assessment.Entity.Reports;
+import com.promantus.Assessment.Entity.Settings;
 import com.promantus.Assessment.Entity.Team;
 import com.promantus.Assessment.Entity.User;
 import com.promantus.Assessment.Repository.ProgReportsRepository;
 import com.promantus.Assessment.Repository.ReportsRepository;
+import com.promantus.Assessment.Repository.SettingsRepository;
 import com.promantus.Assessment.Repository.TeamRepository;
 import com.promantus.Assessment.Repository.UserRepository;
 import com.promantus.Assessment.Service.CommonService;
@@ -56,6 +58,9 @@ public class ProgReportsServiceImpl implements ProgReportsService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	SettingsRepository settingsRepository;
 
 	@Autowired
 	TeamRepository teamRepository;
@@ -67,23 +72,26 @@ public class ProgReportsServiceImpl implements ProgReportsService {
 	ResourceLoader resourceLoader;
 
 	@Override
-	public ProgReportsDto addProgReports(ProgReportsDto reportsDto, String lang) throws Exception {
+	public ProgReportsDto addProgReports(List<ProgReportsDto> reportsDto, String lang) throws Exception {
 		ProgReportsDto resultDto = new ProgReportsDto();
-		User repUser = userRepository.findById(reportsDto.getUserId());
+		for (ProgReportsDto progReportsDto : reportsDto) {
+			User repUser = userRepository.findById(progReportsDto.getUserId());
 
-		ProgReports reports = new ProgReports();
-		reports.setId(commonService.nextSequenceNumber());
+			ProgReports reports = new ProgReports();
+			reports.setId(commonService.nextSequenceNumber());
 
-		reports.setQuestion(reportsDto.getQuestion());
-		reports.setAnswer(reportsDto.getAnswer());
-		reports.setLevel(reportsDto.getLevel());
-		reports.setTeamId(reportsDto.getTeamId());
-		reports.setUserId(reportsDto.getUserId());
-		reports.setStatus(reportsDto.getStatus());
-		reports.setReportedOn(LocalDateTime.now().toString());
-		reports.setAttempts(repUser.getProgAttempts() + 1);
-		userRepository.save(repUser);
-		progReportsRepository.save(reports);
+			reports.setQuestion(progReportsDto.getQuestion());
+			reports.setAnswer(progReportsDto.getAnswer());
+			reports.setLevel(progReportsDto.getLevel());
+			reports.setTeamId(progReportsDto.getTeamId());
+			reports.setUserId(progReportsDto.getUserId());
+			reports.setStatus(progReportsDto.getStatus());
+			reports.setReportedOn(LocalDateTime.now().toString().split("T")[0]);
+			reports.setAttempts(repUser.getProgAttempts() + 1);
+			userRepository.save(repUser);
+			progReportsRepository.save(reports);
+		}
+		
 		resultDto.setMessage("Program Reports added successfully");
 
 		return resultDto;
@@ -108,6 +116,26 @@ public class ProgReportsServiceImpl implements ProgReportsService {
 		reportsDto.setUserId(reports.getUserId());
 		reportsDto.setTeamId(reports.getTeamId());
 		reportsDto.setPercentage(reports.getPercentage());
+		
+		reportsDto.setQuestion(reports.getQuestion());
+		reportsDto.setAnswer(reports.getAnswer());
+		
+		Settings settings =  settingsRepository.findAll().get(0);
+		
+		if(reports.getLevel().equals("B")) {
+			reportsDto.setLevel("Beginner");
+			reportsDto.setTotalMark(String.valueOf(settings.getTotalBeginnerMarks()));
+		}
+		if(reports.getLevel().equals("I")) {
+			reportsDto.setLevel("Intermediate");
+			reportsDto.setTotalMark(String.valueOf(settings.getTotalIntermediateMarks()));
+		}
+		if(reports.getLevel().equals("A")) {
+			reportsDto.setLevel("Advanced");
+			reportsDto.setTotalMark(String.valueOf(settings.getTotalAdvancedMarks()));
+		}		
+		
+		
 		reportsDto.setStatus(reports.getStatus());
 		reportsDto.setScoredMark(reportsDto.getScoredMark());
 		reportsDto.setRemarks(reportsDto.getRemarks());
@@ -153,7 +181,7 @@ public class ProgReportsServiceImpl implements ProgReportsService {
 		reports.setUserId(progReportsDto.getUserId());
 		reports.setScoredMark(progReportsDto.getScoredMark());
 		reports.setRemarks(progReportsDto.getRemarks());
-		reports.setReportedOn(LocalDateTime.now().toString());
+		reports.setReportedOn(LocalDateTime.now().toString().split("T")[0]);
 		reports.setAttempts(repUser.getProgAttempts() + 1);
 		userRepository.save(repUser);
 		progReportsRepository.save(reports);
