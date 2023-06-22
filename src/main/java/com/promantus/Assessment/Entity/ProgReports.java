@@ -13,15 +13,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  */
 
-@Document(collection = "progreports")
+@Document(collection = "progReports")
 public class ProgReports {
 
 	@Id
 	private Long id;
 	private Long userId;
+	private String firstName;
+	private String lastName;
+	private String empCode;
+	private String email;
 	private String teamId;
 	private String percentage;
-	private String status;
+	private String Status;
 
 	private String question;
 	private String answer;
@@ -31,7 +35,7 @@ public class ProgReports {
 	private String totalMark;
 	private String scoredMark;
 
-	private LocalDateTime reportedOn;
+	private String reportedOn;
 	private LocalDateTime updatedOn;
 
 	private String updatedBy;
@@ -72,11 +76,11 @@ public class ProgReports {
 	}
 
 	public String getStatus() {
-		return status;
+		return Status;
 	}
 
 	public void setStatus(String status) {
-		this.status = status;
+		Status = status;
 	}
 
 	public String getTotalMark() {
@@ -103,11 +107,11 @@ public class ProgReports {
 		this.remarks = remarks;
 	}
 
-	public LocalDateTime getReportedOn() {
+	public String getReportedOn() {
 		return reportedOn;
 	}
 
-	public void setReportedOn(LocalDateTime reportedOn) {
+	public void setReportedOn(String reportedOn) {
 		this.reportedOn = reportedOn;
 	}
 
@@ -174,5 +178,39 @@ public class ProgReports {
 	public void setMessage(String message) {
 		this.message = message;
 	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmpCode() {
+		return empCode;
+	}
+
+	public void setEmpCode(String empCode) {
+		this.empCode = empCode;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
 
 }

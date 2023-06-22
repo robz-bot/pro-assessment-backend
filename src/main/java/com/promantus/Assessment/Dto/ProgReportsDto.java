@@ -3,6 +3,7 @@
  */
 package com.promantus.Assessment.Dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
@@ -13,14 +14,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
  *
  */
 
-public class ProgReportsDto {
+public class ProgReportsDto implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	private Long id;
 	private Long userId;
 	private String teamId;
 	private String percentage;
-	private String status;
+	private String Status;
 	
 	private String teamName;
 	private String userName;
@@ -33,7 +36,7 @@ public class ProgReportsDto {
 	private String totalMark;
 	private String scoredMark;
 
-	private LocalDateTime reportedOn;
+	private String reportedOn;
 	private LocalDateTime updatedOn;
 	private String updatedBy;
 	private boolean isActive;
@@ -73,11 +76,11 @@ public class ProgReportsDto {
 	}
 
 	public String getStatus() {
-		return status;
+		return Status;
 	}
 
 	public void setStatus(String status) {
-		this.status = status;
+		Status = status;
 	}
 
 	public String getTotalMark() {
@@ -104,11 +107,11 @@ public class ProgReportsDto {
 		this.remarks = remarks;
 	}
 
-	public LocalDateTime getReportedOn() {
+	public String getReportedOn() {
 		return reportedOn;
 	}
 
-	public void setReportedOn(LocalDateTime reportedOn) {
+	public void setReportedOn(String reportedOn) {
 		this.reportedOn = reportedOn;
 	}
 

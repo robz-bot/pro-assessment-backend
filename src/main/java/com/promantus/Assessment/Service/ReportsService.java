@@ -35,9 +35,4 @@ public interface ReportsService {
 
 	Map<String, Object> searchReportPage(Pageable paging, String type, String keyword)throws Exception;
 
-	ProgReportsDto addProgReports(ProgReportsDto reportsDto, String lang) throws Exception;
-
-	List<ProgReportsDto> getAllProgReports() throws Exception;
-
-
 }

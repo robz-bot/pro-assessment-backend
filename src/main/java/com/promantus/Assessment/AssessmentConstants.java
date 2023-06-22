@@ -52,7 +52,6 @@ public final class AssessmentConstants {
 	public static final String TYPE16 = "program";
 	public static final String TYPE17 = "programLevel";
 
-
 //	Percentage Range
 	public static final String RANGE0 = "0-25";
 	public static final String RANGE1 = "26-50";
