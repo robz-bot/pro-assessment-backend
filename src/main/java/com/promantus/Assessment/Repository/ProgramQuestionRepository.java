@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
+import com.promantus.Assessment.Entity.ProgReports;
 import com.promantus.Assessment.Entity.ProgramQuestion;
 
 public interface ProgramQuestionRepository extends MongoRepository<ProgramQuestion, String> {
@@ -63,5 +64,7 @@ public interface ProgramQuestionRepository extends MongoRepository<ProgramQuesti
 	List<ProgramQuestion> findAllByTeamIdAndIsActive(Long parseLong, boolean b);
 
 	Page<ProgramQuestion> findByTeamIdRegex(String keyword, Pageable paging);
+
+	List<ProgReports> findAllByProgramLevel(String level);
 
 }

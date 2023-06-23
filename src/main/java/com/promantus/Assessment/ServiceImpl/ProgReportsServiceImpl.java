@@ -137,8 +137,8 @@ public class ProgReportsServiceImpl implements ProgReportsService {
 		
 		
 		reportsDto.setStatus(reports.getStatus());
-		reportsDto.setScoredMark(reportsDto.getScoredMark());
-		reportsDto.setRemarks(reportsDto.getRemarks());
+		reportsDto.setScoredMark(reports.getScoredMark());
+		reportsDto.setRemarks(reports.getRemarks());
 		reportsDto.setReportedOn(reports.getReportedOn());
 		reportsDto.setUpdatedOn(reports.getUpdatedOn());
 		reportsDto.setUpdatedBy(reports.getUpdatedBy());
@@ -181,7 +181,6 @@ public class ProgReportsServiceImpl implements ProgReportsService {
 		reports.setUserId(progReportsDto.getUserId());
 		reports.setScoredMark(progReportsDto.getScoredMark());
 		reports.setRemarks(progReportsDto.getRemarks());
-		reports.setReportedOn(LocalDateTime.now().toString().split("T")[0]);
 		reports.setAttempts(repUser.getProgAttempts() + 1);
 		userRepository.save(repUser);
 		progReportsRepository.save(reports);

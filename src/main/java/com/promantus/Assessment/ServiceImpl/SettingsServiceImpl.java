@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.promantus.Assessment.Dto.SettingsDto;
+import com.promantus.Assessment.Entity.ProgReports;
 import com.promantus.Assessment.Entity.Settings;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
 import com.promantus.Assessment.Repository.ProgramQuestionRepository;
@@ -28,13 +29,13 @@ public class SettingsServiceImpl implements SettingsService {
 
 	@Autowired
 	SettingsRepository settingsRepository;
-	
+
 	@Autowired
 	GeneralQuestionRepository generalQuestionRepository;
-	
+
 	@Autowired
 	TechQuestionRepository techQuestionRepository;
-	
+
 	@Autowired
 	ProgramQuestionRepository progQuestionRepository;
 
@@ -58,13 +59,13 @@ public class SettingsServiceImpl implements SettingsService {
 		setting.setTotalBeginnerMarks(100);
 		setting.setTotalIntermediateMarks(100);
 		setting.setTotalAdvancedMarks(100);
-		
+
 		settingsRepository.save(setting);
 
 		resultDto.setMessage("Settings added successfully");
 		return resultDto;
 	}
-	
+
 	@Override
 	public List<SettingsDto> getAllSettings() {
 		List<Settings> SettingsList = settingsRepository.findAll();
@@ -96,7 +97,7 @@ public class SettingsServiceImpl implements SettingsService {
 		return settingsDto;
 
 	}
-	
+
 	@Override
 	public SettingsDto updateSettings(SettingsDto settingsDto, String lang) {
 
@@ -109,33 +110,38 @@ public class SettingsServiceImpl implements SettingsService {
 			resultDto.setMessage("Settings does not exist");
 			return resultDto;
 		}
-		
+
 		int genQnsCount = generalQuestionRepository.findAll().size();
 		int techQnsCount = techQuestionRepository.findAll().size();
-		int beginner = progQuestionRepository.findAll().size();
-		int intermediate = progQuestionRepository.findAll().size();
-		int advanced= progQuestionRepository.findAll().size();
-		
-		if(settingsDto.getGenQns() > genQnsCount) {
-			resultDto.setMessage("General Questions should not exceed "+ genQnsCount);
+		List<ProgReports> beginnerList = progQuestionRepository.findAllByProgramLevel("B");
+		List<ProgReports> intermediateList = progQuestionRepository.findAllByProgramLevel("I");
+		List<ProgReports> advancedList = progQuestionRepository.findAllByProgramLevel("A");
+
+		if (settingsDto.getGenQns() > genQnsCount) {
+			resultDto.setMessage("General Questions should not exceed " + genQnsCount);
+			resultDto.setStatus(1);
 			return resultDto;
 		}
-		
-		if(settingsDto.getTechQns() > techQnsCount) {
-			resultDto.setMessage("Technical Questions should not exceed "+ techQnsCount);
+
+		if (settingsDto.getTechQns() > techQnsCount) {
+			resultDto.setMessage("Technical Questions should not exceed " + techQnsCount);
+			resultDto.setStatus(1);
 			return resultDto;
 		}
-		if(settingsDto.getBeginner() > beginner) {
-			resultDto.setMessage("Technical Questions should not exceed "+ beginner);
+		if (settingsDto.getBeginner() > beginnerList.size()) {
+			resultDto.setMessage("Beginner Question Count should not exceed " + beginnerList.size());
+			resultDto.setStatus(1);
 			return resultDto;
 		}
-		if(settingsDto.getIntermediate() > intermediate) {
-			resultDto.setMessage("Technical Questions should not exceed "+ intermediate);
+		if (settingsDto.getIntermediate() > intermediateList.size()) {
+			resultDto.setMessage("Intermediate Question Count should not exceed " + intermediateList.size());
+			resultDto.setStatus(1);
 			return resultDto;
 		}
-		
-		if(settingsDto.getAdvanced() > advanced) {
-			resultDto.setMessage("Technical Questions should not exceed "+ advanced);
+
+		if (settingsDto.getAdvanced() > advancedList.size()) {
+			resultDto.setMessage("Advanced Question Count should not exceed " + advancedList.size());
+			resultDto.setStatus(1);
 			return resultDto;
 		}
 
@@ -152,14 +158,12 @@ public class SettingsServiceImpl implements SettingsService {
 		settings.setTotalBeginnerMarks(settingsDto.getTotalBeginnerMarks());
 		settings.setTotalIntermediateMarks(settingsDto.getTotalIntermediateMarks());
 		settings.setTotalAdvancedMarks(settingsDto.getTotalAdvancedMarks());
-		
+		resultDto.setStatus(0);
+
 		settingsRepository.save(settings);
 		resultDto.setMessage("Record Updated Successfully");
 		return resultDto;
 
 	}
 
-
-
-	
 }
