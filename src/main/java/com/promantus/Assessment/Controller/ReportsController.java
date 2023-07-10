@@ -38,6 +38,7 @@ import com.google.common.net.HttpHeaders;
 import com.promantus.Assessment.AssessmentConstants;
 import com.promantus.Assessment.AssessmentUtil;
 import com.promantus.Assessment.TwilioMethods;
+import com.promantus.Assessment.Dto.ProgReportsDto;
 import com.promantus.Assessment.Dto.ReportsDto;
 import com.promantus.Assessment.Service.ReportsService;
 import com.twilio.Twilio;
@@ -56,7 +57,6 @@ public class ReportsController extends CommonController {
 
 	@Value("${download.path}")
 	private String downloadsPath;
-
 
 	@PostMapping("/addReports")
 	public ReportsDto addReports(@RequestBody ReportsDto reportsDto,
@@ -112,6 +112,7 @@ public class ReportsController extends CommonController {
 		return resultDto;
 	}
 
+
 	@GetMapping("/getAllReports")
 	public List<ReportsDto> getAllReports(@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -125,6 +126,7 @@ public class ReportsController extends CommonController {
 
 		return new ArrayList<ReportsDto>();
 	}
+	
 
 	@GetMapping("/getAllReportsPage")
 	public Map<String, Object> getAllReportsPage(@RequestParam(defaultValue = "0") int page,
@@ -245,7 +247,7 @@ public class ReportsController extends CommonController {
 
 		return reportsDto;
 	}
-	
+
 	@GetMapping("/searchReportPage/{type}/{keyword}")
 	public Map<String, Object> searchReportPage(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "3") int size, @PathVariable String keyword, @PathVariable String type,

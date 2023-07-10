@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -43,6 +44,7 @@ public class SettingsController extends CommonController {
 	@Autowired
 	SettingsService settingsService;
 
+	@PostMapping("/addSettings")
 	public SettingsDto addSettings(@RequestBody SettingsDto settingsDto,
 			@RequestHeader(name = "lang", required = false) String lang) {
 
@@ -53,32 +55,32 @@ public class SettingsController extends CommonController {
 			StringBuilder errorParam = new StringBuilder();
 
 			// Settings
-			if (settingsDto.getGenQns() == 0) {
-				errorParam.append("General Qns Count");
-			}
-
-			if (settingsDto.getTechQns() == 0) {
-				errorParam.append("General Qns Count");
-			}
-			
-
-			if (settingsDto.getPassPercentage() == 0) {
-				errorParam.append("Pass Percentage Required");
-			}
-			
-
-			if (settingsDto.getFailPercentage() == 0) {
-				errorParam.append("Fail Percentage Required");
-			}
-
-			if (errorParam.length() > 0) {
-				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
-				resultDto.setMessage(
-						super.getMessage("mandatory.input.param", new String[] { errorParam.toString() }, lang));
-
-				logger.info(resultDto.getMessage());
-				return resultDto;
-			}
+//			if (settingsDto.getGenQns() == 0) {
+//				errorParam.append("General Qns Count");
+//			}
+//
+//			if (settingsDto.getTechQns() == 0) {
+//				errorParam.append("General Qns Count");
+//			}
+//			
+//
+//			if (settingsDto.getPassPercentage() == 0) {
+//				errorParam.append("Pass Percentage Required");
+//			}
+//			
+//
+//			if (settingsDto.getFailPercentage() == 0) {
+//				errorParam.append("Fail Percentage Required");
+//			}
+//
+//			if (errorParam.length() > 0) {
+//				resultDto.setStatus(AssessmentConstants.RETURN_STATUS_ERROR);
+//				resultDto.setMessage(
+//						super.getMessage("mandatory.input.param", new String[] { errorParam.toString() }, lang));
+//
+//				logger.info(resultDto.getMessage());
+//				return resultDto;
+//			}
 
 			resultDto = settingsService.addSettings(settingsDto, lang);
 

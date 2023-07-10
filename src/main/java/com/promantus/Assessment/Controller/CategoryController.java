@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.promantus.Assessment.Dto.CategoryDto;
 import com.promantus.Assessment.Service.CategoryService;
 
-@CrossOrigin("*")
+@CrossOrigin("*")  
 @RestController
 @RequestMapping("/api/v1")
 public class CategoryController {

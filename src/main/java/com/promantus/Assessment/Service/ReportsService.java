@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
+import com.promantus.Assessment.Dto.ProgReportsDto;
 import com.promantus.Assessment.Dto.ReportsDto;
 
 public interface ReportsService {
@@ -33,6 +34,5 @@ public interface ReportsService {
 	Map<String, Object> getAllReportsPage(Pageable paging) throws IOException;
 
 	Map<String, Object> searchReportPage(Pageable paging, String type, String keyword)throws Exception;
-
 
 }
