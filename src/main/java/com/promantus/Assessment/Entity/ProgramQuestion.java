@@ -20,7 +20,6 @@ public class ProgramQuestion {
 		private String date;
 		private boolean isActive;
 		
-		
 		public Long getId() {
 			return id;
 		}

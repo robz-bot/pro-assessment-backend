@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.promantus.Assessment.Dto.SettingsDto;
 import com.promantus.Assessment.Entity.ProgReports;
+import com.promantus.Assessment.Entity.ProgramQuestion;
 import com.promantus.Assessment.Entity.Settings;
 import com.promantus.Assessment.Repository.GeneralQuestionRepository;
+import com.promantus.Assessment.Repository.ProgReportsRepository;
 import com.promantus.Assessment.Repository.ProgramQuestionRepository;
 import com.promantus.Assessment.Repository.SettingsRepository;
 import com.promantus.Assessment.Repository.TechQuestionRepository;
@@ -38,6 +40,10 @@ public class SettingsServiceImpl implements SettingsService {
 
 	@Autowired
 	ProgramQuestionRepository progQuestionRepository;
+	
+//	@Autowired
+//	ProgReportsRepository progReportsRepository;
+
 
 	@Override
 	public SettingsDto addSettings(SettingsDto settingsDto, String lang) throws Exception {
@@ -112,10 +118,10 @@ public class SettingsServiceImpl implements SettingsService {
 		}
 
 		int genQnsCount = generalQuestionRepository.findAll().size();
-		int techQnsCount = techQuestionRepository.findAll().size();
-		List<ProgReports> beginnerList = progQuestionRepository.findAllByProgramLevel("B");
-		List<ProgReports> intermediateList = progQuestionRepository.findAllByProgramLevel("I");
-		List<ProgReports> advancedList = progQuestionRepository.findAllByProgramLevel("A");
+		int techQnsCount = techQuestionRepository.findAll().size(); 
+		List<ProgramQuestion> beginnerList = progQuestionRepository.findAllByProgramLevel("B");
+		List<ProgramQuestion> intermediateList = progQuestionRepository.findAllByProgramLevel("I");
+		List<ProgramQuestion> advancedList = progQuestionRepository.findAllByProgramLevel("A");
 
 		if (settingsDto.getGenQns() > genQnsCount) {
 			resultDto.setMessage("General Questions should not exceed " + genQnsCount);

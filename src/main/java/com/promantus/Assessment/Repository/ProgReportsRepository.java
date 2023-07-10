@@ -25,6 +25,7 @@ public interface ProgReportsRepository extends MongoRepository<ProgReports, Stri
 
 	List<ProgReports> findByUserIdAndReportedOnRegex(Long userId, String reportedOn);
 	
+//	List<ProgReports> findAllByProgramLevel(String level);
 
 
 }

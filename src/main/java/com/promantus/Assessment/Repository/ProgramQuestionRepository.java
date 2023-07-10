@@ -65,6 +65,6 @@ public interface ProgramQuestionRepository extends MongoRepository<ProgramQuesti
 
 	Page<ProgramQuestion> findByTeamIdRegex(String keyword, Pageable paging);
 
-	List<ProgReports> findAllByProgramLevel(String level);
+	List<ProgramQuestion> findAllByProgramLevel(String level);
 
 }

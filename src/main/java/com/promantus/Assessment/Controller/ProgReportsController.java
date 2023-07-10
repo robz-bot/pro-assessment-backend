@@ -163,17 +163,18 @@ public class ProgReportsController extends CommonController {
 		
 			//Scored Marks
 			if (progReportsDto.getScoredMark() == null) {
-				errorParam.append("Question");
+				errorParam.append("Scored Marks");
 			}
 			//Remarks
 			if (progReportsDto.getRemarks()== null) {
-				errorParam.append("Answer");
+				errorParam.append(" Remarks");
 			}
 			
 
 			if (errorParam.length() > 0) {
 				resultDto.setMessage(
 						super.getMessage("mandatory.input.param", new String[] { errorParam.toString() }, lang));
+				resultDto.setStatus("1");
 
 				logger.info(resultDto.getMessage());
 				return resultDto;

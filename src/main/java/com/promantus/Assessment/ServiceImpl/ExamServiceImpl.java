@@ -141,24 +141,45 @@ public class ExamServiceImpl implements ExamService {
 
 		List<ProgramQuestion> progQns = progQnRepo.findAllByTeamIdAndIsActive(Long.parseLong(teamId), true);
 		progQns = progQnRepo.findAll();
-
+		
+		List<ProgramQuestion> progQnsForBeginner = progQnRepo.findAllByProgramLevel("B");
+		List<ProgramQuestion> progQnsForIntermediate = progQnRepo.findAllByProgramLevel("I");
+		List<ProgramQuestion> progQnsForAdvanced = progQnRepo.findAllByProgramLevel("A");
 		
 		int beginnerLen = settingsRepo.findAll().get(0).getBeginner();
 		int intermediateLen = settingsRepo.findAll().get(0).getIntermediate();
 		int advancedLen = settingsRepo.findAll().get(0).getAdvanced();
 		int progQnsLen = beginnerLen + intermediateLen + advancedLen;		
 
-		if (progQns.size() > 0) {
+		Collections.shuffle(progQnsForBeginner);
+		Collections.shuffle(progQnsForIntermediate);
+		Collections.shuffle(progQnsForAdvanced);
+
+		List<ProgramQuestion> resultProgramQuestion= new ArrayList<ProgramQuestion>();
+		
+		 for(int i = 0;i<beginnerLen;i++) {
+			 resultProgramQuestion.add(progQnsForBeginner.get(i));
+		 }
+		 
+		 for(int i = 0;i<intermediateLen;i++) {
+			 resultProgramQuestion.add(progQnsForIntermediate.get(i));
+		 }
+		 
+		 for(int i = 0;i<advancedLen;i++) {
+			 resultProgramQuestion.add(progQnsForAdvanced.get(i));
+		 }
+		
+		if (resultProgramQuestion.size()>0) {
 			// Randomize the Qns
-			Collections.shuffle(progQns);
+			Collections.shuffle(resultProgramQuestion);
 
 			Integer runningNumber = 0;
 
-			for (int i = 0; i < progQns.size(); i++) {
-				if (i < progQnsLen) {
+			for (int i = 0; i < resultProgramQuestion.size(); i++) {
+				if (i < resultProgramQuestion.size()) {
 					runningNumber++;
 					//progQns.get(i).getProgramLevel()
-					resultDto.add(this.getProgramQuestionDto(runningNumber, progQns.get(i),userId));
+					resultDto.add(this.getProgramQuestionDto(runningNumber, resultProgramQuestion.get(i),userId));
 				}
 			}
 
@@ -188,6 +209,7 @@ public class ExamServiceImpl implements ExamService {
 		resultDto.setTeamId(Long.parseLong(programQuestion.getTeamId()));
 		resultDto.setProgram(programQuestion.getProgram());
 		resultDto.setProgramLevel(programQuestion.getProgramLevel());
+	    
 		Team getTeam = teamRepo.findById(Long.parseLong(programQuestion.getTeamId()));
 		resultDto.setTeam(getTeam.getTeam());
 		User getUser = userRepo.findById(Long.parseLong(userId));
